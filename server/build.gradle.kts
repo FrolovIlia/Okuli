@@ -26,8 +26,6 @@ kotlin {
         }
     }
 
-    applyDefaultHierarchyTemplate()
-
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -53,7 +51,7 @@ kotlin {
                 implementation(libs.sqldelight.runtime)
                 implementation(libs.sqldelight.coroutines.extensions)
 
-                // DI - ТОЛЬКО koin-core в commonMain
+                // DI
                 implementation(libs.koin.core)
 
                 // Resources
@@ -69,7 +67,14 @@ kotlin {
                 implementation(libs.ktor.client.android)
                 implementation(libs.sqldelight.android.driver)
                 implementation(libs.koin.android)
-                implementation(libs.koin.androidx.compose)  // Правильная зависимость
+                implementation(libs.koin.compose)
+            }
+        }
+
+        val iosMain by getting {
+            dependencies {
+                implementation(libs.ktor.client.darwin)
+                implementation(libs.sqldelight.native.driver)
             }
         }
 
@@ -86,37 +91,3 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.pixelrabbit.oculi"
-        minSdk = 24
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-
-    buildFeatures {
-        compose = true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.10"
-    }
-
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
-}
-
-sqldelight {
-    databases {
-        create("AppDatabase") {
-            packageName.set("com.pixelrabbit.oculi.db")
-        }
-    }
-}
