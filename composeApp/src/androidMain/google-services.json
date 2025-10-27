@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "503243572659",
+    "project_id": "oculi-ed814",
+    "storage_bucket": "oculi-ed814.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:503243572659:android:fe0fb84b554413ef5a37c6",
+        "android_client_info": {
+          "package_name": "com.pixelrabbit.oculi"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNHbMO4Rt0Dgq94m9YP6IlQ6rsPNoZm2Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
