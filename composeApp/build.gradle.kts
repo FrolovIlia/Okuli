@@ -3,7 +3,6 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.kotlinSerialization)
-    alias(libs.plugins.sqlDelight)
 }
 
 kotlin {
@@ -37,6 +36,7 @@ kotlin {
                 implementation(compose.material3)
                 implementation(compose.ui)
                 implementation(compose.components.resources)
+                implementation(compose.materialIconsExtended)
 
                 // Network
                 implementation(libs.ktor.client.core)
@@ -49,12 +49,13 @@ kotlin {
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.kotlinx.datetime)
 
-                // Database
-                implementation(libs.sqldelight.runtime)
-                implementation(libs.sqldelight.coroutines.extensions)
-
-                // DI - ТОЛЬКО koin-core в commonMain
+                // DI
                 implementation(libs.koin.core)
+
+                // Navigation
+                implementation(libs.voyager.navigator)
+                implementation(libs.voyager.koin)
+                implementation(libs.voyager.transitions)
 
                 // Resources
                 implementation(libs.moko.resources)
@@ -64,12 +65,17 @@ kotlin {
 
         val androidMain by getting {
             dependencies {
+                implementation(libs.compose.ui.tooling)
                 implementation(libs.android.activity.compose)
-                implementation(compose.uiTooling)
                 implementation(libs.ktor.client.android)
-                implementation(libs.sqldelight.android.driver)
                 implementation(libs.koin.android)
-                implementation(libs.koin.androidx.compose)  // Правильная зависимость
+                implementation(libs.koin.androidx.compose)
+            }
+        }
+
+        val iosMain by getting {
+            dependencies {
+                implementation(libs.ktor.client.darwin)
             }
         }
 
@@ -109,14 +115,6 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
-}
-
-sqldelight {
-    databases {
-        create("AppDatabase") {
-            packageName.set("com.pixelrabbit.oculi.db")
         }
     }
 }

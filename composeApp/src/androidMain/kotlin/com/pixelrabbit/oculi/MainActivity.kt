@@ -12,9 +12,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
-        // Явное использование
         this.setContent {
-            App()
+            OculiApp()
         }
     }
 }
@@ -22,5 +21,5 @@ class MainActivity : ComponentActivity() {
 @Preview
 @Composable
 fun AppAndroidPreview() {
-    App()
+    OculiApp()
 }

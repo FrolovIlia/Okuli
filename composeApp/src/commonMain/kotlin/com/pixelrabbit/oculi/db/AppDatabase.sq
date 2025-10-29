@@ -1,0 +1,105 @@
+-- AppDatabase.sq (полная версия)
+CREATE TABLE exercise_session (
+    id TEXT PRIMARY KEY,
+    exercise_id TEXT NOT NULL,
+    started_at INTEGER NOT NULL,
+    duration INTEGER NOT NULL,
+    completed BOOLEAN DEFAULT 0
+);
+
+CREATE TABLE vision_test (
+    id TEXT PRIMARY KEY,
+    test_type TEXT NOT NULL,
+    test_date INTEGER NOT NULL,
+    left_eye_result REAL,
+    right_eye_result REAL,
+    additional_data TEXT
+);
+
+CREATE TABLE user_progress (
+    user_id TEXT PRIMARY KEY,
+    total_sessions INTEGER DEFAULT 0,
+    total_duration INTEGER DEFAULT 0,
+    current_streak INTEGER DEFAULT 0,
+    last_activity INTEGER
+);
+
+CREATE TABLE exercise (
+    id TEXT PRIMARY KEY,
+    title TEXT NOT NULL,
+    description TEXT NOT NULL,
+    duration INTEGER NOT NULL,
+    type TEXT NOT NULL,
+    difficulty TEXT NOT NULL,
+    is_premium BOOLEAN DEFAULT 0,
+    icon TEXT NOT NULL,
+    instructions TEXT NOT NULL
+);
+
+CREATE INDEX index_exercise_session_date ON exercise_session(started_at);
+CREATE INDEX index_vision_test_date ON vision_test(test_date);
+CREATE INDEX index_exercise_type ON exercise(type);
+
+-- Exercise Session Queries
+insertExerciseSession:
+INSERT INTO exercise_session (id, exercise_id, started_at, duration, completed)
+VALUES (?, ?, ?, ?, ?);
+
+getExerciseSessions:
+SELECT * FROM exercise_session ORDER BY started_at DESC;
+
+getExerciseSessionsByExerciseId:
+SELECT * FROM exercise_session WHERE exercise_id = ? ORDER BY started_at DESC;
+
+-- Vision Test Queries
+insertVisionTest:
+INSERT INTO vision_test (id, test_type, test_date, left_eye_result, right_eye_result, additional_data)
+VALUES (?, ?, ?, ?, ?, ?);
+
+getVisionTests:
+SELECT * FROM vision_test ORDER BY test_date DESC;
+
+getLatestVisionTest:
+SELECT * FROM vision_test WHERE test_type = ? ORDER BY test_date DESC LIMIT 1;
+
+-- User Progress Queries
+upsertUserProgress:
+INSERT OR REPLACE INTO user_progress (user_id, total_sessions, total_duration, current_streak, last_activity)
+VALUES (?, ?, ?, ?, ?);
+
+getUserProgress:
+SELECT * FROM user_progress WHERE user_id = ?;
+
+-- Exercise Queries
+insertExercise:
+INSERT OR REPLACE INTO exercise (id, title, description, duration, type, difficulty, is_premium, icon, instructions)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+getExercises:
+SELECT * FROM exercise ORDER BY title;
+
+getExerciseById:
+SELECT * FROM exercise WHERE id = ?;
+
+getExercisesByType:
+SELECT * FROM exercise WHERE type = ? ORDER BY title;
+
+-- Statistics Queries
+getTotalExerciseTime:
+SELECT SUM(duration) FROM exercise_session WHERE completed = 1;
+
+getCompletedSessionsCount:
+SELECT COUNT(*) FROM exercise_session WHERE completed = 1;
+
+-- Clear Data Queries (для тестирования)
+clearExerciseSessions:
+DELETE FROM exercise_session;
+
+clearVisionTests:
+DELETE FROM vision_test;
+
+clearUserProgress:
+DELETE FROM user_progress;
+
+clearExercises:
+DELETE FROM exercise;
