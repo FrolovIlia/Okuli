@@ -2,15 +2,21 @@ package com.pixelrabbit.oculi.domain.use_cases
 
 import com.pixelrabbit.oculi.domain.models.Exercise
 import com.pixelrabbit.oculi.domain.repositories.ExerciseRepository
-import com.pixelrabbit.oculi.domain.repositories.UserRepository
 
 class GetExercisesUseCase(
-    private val repository: ExerciseRepository,
-    private val userRepository: UserRepository
+    private val repository: ExerciseRepository
 ) {
     suspend operator fun invoke(): List<Exercise> {
-        val isPremium = userRepository.isPremiumUser()
         return repository.getAllExercises()
-            .filter { !it.isPremium || isPremium }
+    }
+
+    suspend operator fun invoke(type: String): List<Exercise> {
+        val exerciseType = when (type) {
+            "ACCOMMODATION" -> com.pixelrabbit.oculi.domain.models.ExerciseType.ACCOMMODATION
+            "RELAXATION" -> com.pixelrabbit.oculi.domain.models.ExerciseType.RELAXATION
+            "MOBILITY" -> com.pixelrabbit.oculi.domain.models.ExerciseType.MOBILITY
+            else -> com.pixelrabbit.oculi.domain.models.ExerciseType.ACCOMMODATION
+        }
+        return repository.getExercisesByType(exerciseType)
     }
 }

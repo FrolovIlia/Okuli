@@ -51,6 +51,7 @@ kotlin {
 
                 // DI
                 implementation(libs.koin.core)
+//                implementation(libs.koin.compose)
 
                 // Navigation
                 implementation(libs.voyager.navigator)
@@ -68,8 +69,8 @@ kotlin {
                 implementation(libs.compose.ui.tooling)
                 implementation(libs.android.activity.compose)
                 implementation(libs.ktor.client.android)
-                implementation(libs.koin.android)
-                implementation(libs.koin.androidx.compose)
+//                implementation(libs.koin.android)
+//                implementation(libs.koin.androidx.compose)
             }
         }
 
