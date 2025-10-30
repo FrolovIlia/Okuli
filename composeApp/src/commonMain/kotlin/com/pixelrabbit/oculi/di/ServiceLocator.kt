@@ -5,6 +5,7 @@ import com.pixelrabbit.oculi.data.repositories.StatsRepositoryImpl
 import com.pixelrabbit.oculi.domain.repositories.ExerciseRepository
 import com.pixelrabbit.oculi.domain.repositories.StatsRepository
 import com.pixelrabbit.oculi.domain.use_cases.GetExercisesUseCase
+import com.pixelrabbit.oculi.domain.use_cases.GetStatsUseCase
 import com.pixelrabbit.oculi.domain.use_cases.StartExerciseUseCase
 
 object ServiceLocator {
@@ -13,4 +14,5 @@ object ServiceLocator {
 
     val getExercisesUseCase: GetExercisesUseCase by lazy { GetExercisesUseCase(exerciseRepository) }
     val startExerciseUseCase: StartExerciseUseCase by lazy { StartExerciseUseCase(exerciseRepository) }
+    val getStatsUseCase: GetStatsUseCase by lazy { GetStatsUseCase(statsRepository) }
 }

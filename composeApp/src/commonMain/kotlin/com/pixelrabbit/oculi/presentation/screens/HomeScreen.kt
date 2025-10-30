@@ -8,21 +8,25 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.pixelrabbit.oculi.di.ServiceLocator
 
 object HomeScreen : Screen {
     @Composable
@@ -34,6 +38,21 @@ object HomeScreen : Screen {
 @Composable
 fun HomeContent() {
     val navigator = LocalNavigator.currentOrThrow
+
+    var stats by remember {
+        mutableStateOf(
+            com.pixelrabbit.oculi.domain.use_cases.StatsResult(
+                totalExercises = 0,
+                totalTime = 0,
+                currentStreak = 0,
+                todayExercises = 0
+            )
+        )
+    }
+
+    LaunchedEffect(Unit) {
+        stats = ServiceLocator.getStatsUseCase()
+    }
 
     Column(
         modifier = Modifier
@@ -60,7 +79,7 @@ fun HomeContent() {
         }
 
         // Статистика
-        StatsSection()
+        StatsSection(stats = stats)
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -114,7 +133,7 @@ fun HomeContent() {
 }
 
 @Composable
-fun StatsSection() {
+fun StatsSection(stats: com.pixelrabbit.oculi.domain.use_cases.StatsResult) {
     Card(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -134,18 +153,32 @@ fun StatsSection() {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 StatItem(
-                    value = "0",
+                    value = stats.totalExercises.toString(),
                     label = "Упражнений"
                 )
 
                 StatItem(
-                    value = "0 мин",
+                    value = "${stats.totalTime} мин",
                     label = "Время"
                 )
 
                 StatItem(
-                    value = "0 дн",
+                    value = "${stats.currentStreak} дн",
                     label = "Серия"
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Сегодняшняя статистика
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Сегодня: ${stats.todayExercises} упражнений",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
