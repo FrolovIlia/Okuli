@@ -82,7 +82,7 @@ fun ProgressContent() {
                     modifier = Modifier.padding(16.dp)
                 ) {
                     Text(
-                        text = "📊 Общая статистика",
+                        text = "Общая статистика",
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold
                     )
@@ -125,7 +125,7 @@ fun ProgressContent() {
                     modifier = Modifier.padding(16.dp)
                 ) {
                     Text(
-                        text = "🏆 Достижения",
+                        text = "Достижения",
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold
                     )
@@ -159,7 +159,7 @@ fun ProgressContent() {
                     modifier = Modifier.padding(16.dp)
                 ) {
                     Text(
-                        text = "💡 Советы",
+                        text = "Советы",
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold
                     )
@@ -210,37 +210,6 @@ fun StatRow(label: String, value: String, emoji: String) {
             style = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.Bold
         )
-    }
-}
-
-@Composable
-fun AchievementItem(title: String, description: String, completed: Boolean, emoji: String) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = if (completed) "✅" else "⏳",
-            modifier = Modifier.padding(end = 12.dp)
-        )
-
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = if (completed) FontWeight.Bold else FontWeight.Normal,
-                color = if (completed) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
-            )
-            Text(
-                text = description,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-
-        Text(text = emoji)
     }
 }
 

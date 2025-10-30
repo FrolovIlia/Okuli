@@ -27,6 +27,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.pixelrabbit.oculi.di.ServiceLocator
+import com.pixelrabbit.oculi.utils.getGreeting
 
 object HomeScreen : Screen {
     @Composable
@@ -68,44 +69,52 @@ fun HomeContent() {
             Text(
                 text = "👁️ Oculi",
                 style = MaterialTheme.typography.displayMedium,
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.Bold
+            )
+
+            Text(
+                text = "${getGreeting()}!",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface
             )
 
             Text(
                 text = "Тренировка зрения",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
 
         // Статистика
         StatsSection(stats = stats)
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         // Быстрый старт
         ElevatedCard(
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier.padding(20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "🚀 Быстрый старт",
+                    text = "Быстрый старт",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
                 Button(
                     onClick = {
                         navigator.push(ExercisesListScreen)
                     },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = MaterialTheme.shapes.medium
                 ) {
-                    Text("💪 Начать тренировку")
+                    Text("Начать тренировку")
                 }
             }
         }
@@ -115,27 +124,27 @@ fun HomeContent() {
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             FeatureButton(
-                text = "👁️ Проверка зрения",
+                text = "Проверка зрения",
                 onClick = { navigator.push(VisionTestScreen) }
             )
 
             FeatureButton(
-                text = "📊 Мой прогресс",
+                text = "Мой прогресс",
                 onClick = { navigator.push(ProgressScreen) }
             )
 
             FeatureButton(
-                text = "⚙️ Настройки",
-                onClick = { navigator.push(SettingsScreen) }
-            )
-
-            FeatureButton(
-                text = "🏆 Достижения",
+                text = "Достижения",
                 onClick = { navigator.push(AchievementsScreen) }
             )
 
             FeatureButton(
-                text = "ℹ️ О приложении",
+                text = "Настройки",
+                onClick = { navigator.push(SettingsScreen) }
+            )
+
+            FeatureButton(
+                text = "О приложении",
                 onClick = { navigator.push(AboutScreen) }
             )
         }
@@ -148,12 +157,13 @@ fun StatsSection(stats: com.pixelrabbit.oculi.domain.use_cases.StatsResult) {
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(20.dp)
         ) {
             Text(
-                text = "📈 Ваша статистика",
+                text = "Ваша статистика",
                 style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -178,7 +188,7 @@ fun StatsSection(stats: com.pixelrabbit.oculi.domain.use_cases.StatsResult) {
                 )
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             // Сегодняшняя статистика
             Row(
@@ -187,7 +197,7 @@ fun StatsSection(stats: com.pixelrabbit.oculi.domain.use_cases.StatsResult) {
             ) {
                 Text(
                     text = "Сегодня: ${stats.todayExercises} упражнений",
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
@@ -202,7 +212,7 @@ fun StatItem(value: String, label: String) {
     ) {
         Text(
             text = value,
-            style = MaterialTheme.typography.headlineSmall,
+            style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary
         )
@@ -219,7 +229,8 @@ fun StatItem(value: String, label: String) {
 fun FeatureButton(text: String, onClick: () -> Unit) {
     Button(
         onClick = onClick,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.medium
     ) {
         Text(text, style = MaterialTheme.typography.bodyLarge)
     }

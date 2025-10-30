@@ -57,8 +57,6 @@ fun SettingsContent() {
     var notificationsEnabled by remember { mutableStateOf(true) }
     var darkTheme by remember { mutableStateOf(false) }
     var reminderInterval by remember { mutableStateOf(60) }
-    var soundEnabled by remember { mutableStateOf(true) }
-    var vibrationEnabled by remember { mutableStateOf(true) }
 
     // Загружаем настройки
     LaunchedEffect(Unit) {
@@ -105,7 +103,7 @@ fun SettingsContent() {
                     modifier = Modifier.padding(16.dp)
                 ) {
                     Text(
-                        text = "🎨 Внешний вид",
+                        text = "Внешний вид",
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
@@ -131,7 +129,7 @@ fun SettingsContent() {
                     modifier = Modifier.padding(16.dp)
                 ) {
                     Text(
-                        text = "🔔 Уведомления",
+                        text = "Уведомления",
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
@@ -143,20 +141,6 @@ fun SettingsContent() {
                         text = "Включить уведомления",
                         checked = notificationsEnabled,
                         onCheckedChange = { notificationsEnabled = it }
-                    )
-
-                    SettingSwitch(
-                        text = "Звук уведомлений",
-                        checked = soundEnabled,
-                        onCheckedChange = { soundEnabled = it },
-                        enabled = notificationsEnabled
-                    )
-
-                    SettingSwitch(
-                        text = "Вибрация",
-                        checked = vibrationEnabled,
-                        onCheckedChange = { vibrationEnabled = it },
-                        enabled = notificationsEnabled
                     )
                 }
             }
@@ -171,7 +155,7 @@ fun SettingsContent() {
                     modifier = Modifier.padding(16.dp)
                 ) {
                     Text(
-                        text = "⏰ Напоминания",
+                        text = "Напоминания",
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
@@ -213,7 +197,7 @@ fun SettingsContent() {
                     modifier = Modifier.padding(16.dp)
                 ) {
                     Text(
-                        text = "ℹ️ О приложении",
+                        text = "О приложении",
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
@@ -235,32 +219,12 @@ fun SettingsContent() {
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    Button(
+                        onClick = { navigator.push(AboutScreen) },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = MaterialTheme.shapes.small
                     ) {
-                        Button(
-                            onClick = { navigator.push(AboutScreen) },
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = MaterialTheme.shapes.small
-                        ) {
-                            Text("📱 О приложении")
-                        }
-
-                        Button(
-                            onClick = { /* TODO */ },
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = MaterialTheme.shapes.small
-                        ) {
-                            Text("📄 Политика конфиденциальности")
-                        }
-
-                        Button(
-                            onClick = { /* TODO */ },
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = MaterialTheme.shapes.small
-                        ) {
-                            Text("📝 Условия использования")
-                        }
+                        Text("Об приложении")
                     }
                 }
             }

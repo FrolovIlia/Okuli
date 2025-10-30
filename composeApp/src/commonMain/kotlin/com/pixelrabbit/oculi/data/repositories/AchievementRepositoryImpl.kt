@@ -12,13 +12,15 @@ class AchievementRepositoryImpl : AchievementRepository {
             id = "first_exercise",
             title = "Первые шаги",
             description = "Выполните первое упражнение",
-            icon = "🎯"
+            icon = "🎯",
+            unlockedAt = "2024-01-15" // Демонстрационная дата
         ),
         Achievement(
             id = "weekly_streak",
             title = "Неделя заботы",
             description = "Тренируйтесь 7 дней подряд",
-            icon = "🔥"
+            icon = "🔥",
+            unlockedAt = null // Еще не разблокировано
         ),
         Achievement(
             id = "eye_master",

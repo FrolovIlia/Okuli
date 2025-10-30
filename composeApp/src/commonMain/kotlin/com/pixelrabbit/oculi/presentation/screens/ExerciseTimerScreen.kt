@@ -17,6 +17,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -108,8 +109,11 @@ fun ExerciseTimerContent(exerciseId: String) {
                         isCompleted = false
                     },
                     onComplete = {
-                        navigator.pop()
-                        navigator.pop() // Возврат к списку упражнений
+                        // Переход на экран завершения
+                        navigator.push(ExerciseCompleteScreen(
+                            exerciseName = exercise!!.title,
+                            duration = totalTime
+                        ))
                     }
                 )
             } else {
@@ -189,7 +193,7 @@ fun ExerciseTimerContent(
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
-                        text = "💡 Инструкция:",
+                        text = "Инструкция:",
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold
                     )
@@ -256,7 +260,7 @@ fun ExerciseTimerControls(
                 onClick = onComplete,
                 modifier = Modifier.weight(1f)
             ) {
-                Text("✅ Завершить")
+                Text("Завершить")
             }
         } else {
             if (isRunning) {
@@ -264,14 +268,14 @@ fun ExerciseTimerControls(
                     onClick = onPause,
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text("⏸️ Пауза")
+                    Text("Пауза")
                 }
             } else {
                 Button(
                     onClick = onStart,
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text("▶️ Старт")
+                    Text("Старт")
                 }
             }
 
@@ -279,7 +283,7 @@ fun ExerciseTimerControls(
                 onClick = onReset,
                 modifier = Modifier.weight(1f)
             ) {
-                Text("🔄 Сброс")
+                Text("Сброс")
             }
         }
     }

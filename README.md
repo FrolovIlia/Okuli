@@ -54,13 +54,20 @@ Oculi - это персональный цифровой тренер для з�
 ## 🏗 Архитектура проекта
 
 ``
-oculi/
-├── composeApp/ # KMP общий модуль
-│ ├── commonMain/ # Общая бизнес-логика
-│ ├── androidMain/ # Android реализации
-│ └── iosMain/ # iOS реализации
-├── iosApp/ # iOS специфичный код
-└── конфигурационные файлы...
+composeApp/src/commonMain/kotlin/com/pixelrabbit/oculi/
+├── domain/
+│   ├── models/          # Модели данных
+│   ├── repositories/    # Интерфейсы репозиториев  
+│   └── use_cases/       # Use Cases
+├── data/
+│   └── repositories/    # Реализации репозиториев
+├── presentation/
+│   ├── screens/         # Все экраны приложения
+│   ├── theme/           # Тема и стили
+│   └── components/      # Переиспользуемые компоненты
+├── di/                  # Dependency Injection
+├── utils/               # Вспомогательные утилиты
+└── OculiApp.kt         # Главный компонент
 ``
 
 
