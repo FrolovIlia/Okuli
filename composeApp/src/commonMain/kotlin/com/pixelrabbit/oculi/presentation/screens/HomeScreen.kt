@@ -128,6 +128,11 @@ fun HomeContent() {
                 text = "⚙️ Настройки",
                 onClick = { navigator.push(SettingsScreen) }
             )
+
+            FeatureButton(
+                text = "🏆 Достижения",
+                onClick = { navigator.push(AchievementsScreen) }
+            )
         }
     }
 }

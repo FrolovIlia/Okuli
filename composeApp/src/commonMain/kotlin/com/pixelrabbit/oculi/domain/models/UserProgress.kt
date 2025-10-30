@@ -8,11 +8,3 @@ data class UserProgress(
     val lastActivity: String? = null,
     val achievements: List<Achievement> = emptyList()
 )
-
-data class Achievement(
-    val id: String,
-    val title: String,
-    val description: String,
-    val icon: String,
-    val unlockedAt: String? = null
-)

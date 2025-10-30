@@ -132,26 +132,20 @@ fun ProgressContent() {
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    AchievementItem(
-                        title = "Первая тренировка",
-                        description = "Выполните первое упражнение",
-                        completed = stats.totalExercises > 0,
-                        emoji = "🎯"
+                    Text(
+                        text = "Отслеживайте свой прогресс и получайте достижения",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
 
-                    AchievementItem(
-                        title = "Неделя заботы",
-                        description = "Тренируйтесь 7 дней подряд",
-                        completed = stats.currentStreak >= 7,
-                        emoji = "📅"
-                    )
+                    Spacer(modifier = Modifier.height(12.dp))
 
-                    AchievementItem(
-                        title = "Мастер глаз",
-                        description = "Выполните 50 упражнений",
-                        completed = stats.totalExercises >= 50,
-                        emoji = "👑"
-                    )
+                    Button(
+                        onClick = { navigator.push(AchievementsScreen) },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Посмотреть все достижения")
+                    }
                 }
             }
 
