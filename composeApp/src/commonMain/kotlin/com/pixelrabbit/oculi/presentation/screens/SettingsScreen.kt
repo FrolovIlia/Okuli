@@ -39,7 +39,6 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.pixelrabbit.oculi.di.ServiceLocator
-import androidx.compose.runtime.LaunchedEffect
 
 
 object SettingsScreen : Screen {
@@ -177,8 +176,7 @@ fun SettingsContent() {
                             Button(
                                 onClick = { reminderInterval = interval },
                                 modifier = Modifier.weight(1f),
-                                enabled = reminderInterval != interval,
-                                shape = MaterialTheme.shapes.small
+                                enabled = reminderInterval != interval
                             ) {
                                 Text("$interval")
                             }
@@ -221,10 +219,9 @@ fun SettingsContent() {
 
                     Button(
                         onClick = { navigator.push(AboutScreen) },
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = MaterialTheme.shapes.small
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("Об приложении")
+                        Text("О приложении")
                     }
                 }
             }
@@ -233,8 +230,7 @@ fun SettingsContent() {
                 onClick = { navigator.pop() },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
-                shape = MaterialTheme.shapes.medium
+                    .padding(16.dp)
             ) {
                 Text("Назад")
             }

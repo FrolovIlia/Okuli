@@ -25,6 +25,9 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import androidx.compose.ui.platform.ClipboardManager
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
 
 object AboutScreen : Screen {
     @Composable
@@ -37,6 +40,7 @@ object AboutScreen : Screen {
 @Composable
 fun AboutContent() {
     val navigator = LocalNavigator.currentOrThrow
+    val clipboardManager: ClipboardManager = LocalClipboardManager.current
 
     Scaffold(
         topBar = {
@@ -94,7 +98,7 @@ fun AboutContent() {
                     modifier = Modifier.padding(16.dp)
                 ) {
                     Text(
-                        text = "📱 О приложении",
+                        text = "О приложении",
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold
                     )
@@ -125,7 +129,7 @@ fun AboutContent() {
                     modifier = Modifier.padding(16.dp)
                 ) {
                     Text(
-                        text = "📞 Поддержка",
+                        text = "Поддержка",
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold
                     )
@@ -152,24 +156,37 @@ fun AboutContent() {
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Button(
-                    onClick = { /* TODO: Открыть политику конфиденциальности */ },
-                    modifier = Modifier.fillMaxWidth()
+                    onClick = {
+                        // Открыть политику конфиденциальности
+                        // В реальном приложении здесь будет навигация на соответствующий экран
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = MaterialTheme.shapes.medium
                 ) {
-                    Text("📄 Политика конфиденциальности")
+                    Text("Политика конфиденциальности")
                 }
 
                 Button(
-                    onClick = { /* TODO: Открыть условия использования */ },
-                    modifier = Modifier.fillMaxWidth()
+                    onClick = {
+                        // Открыть условия использования
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = MaterialTheme.shapes.medium
                 ) {
-                    Text("📝 Условия использования")
+                    Text("Условия использования")
                 }
 
                 Button(
-                    onClick = { /* TODO: Поделиться приложением */ },
-                    modifier = Modifier.fillMaxWidth()
+                    onClick = {
+                        // Поделиться приложением
+                        val shareText = "Попробуйте Oculi - приложение для тренировки зрения и снятия цифрового напряжения глаз!"
+                        clipboardManager.setText(AnnotatedString(shareText))
+                        // В реальном приложении здесь будет системный шеринг
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = MaterialTheme.shapes.medium
                 ) {
-                    Text("📤 Поделиться приложением")
+                    Text("Поделиться приложением")
                 }
             }
 
@@ -177,7 +194,8 @@ fun AboutContent() {
                 onClick = { navigator.pop() },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding(16.dp),
+                shape = MaterialTheme.shapes.medium
             ) {
                 Text("Назад")
             }

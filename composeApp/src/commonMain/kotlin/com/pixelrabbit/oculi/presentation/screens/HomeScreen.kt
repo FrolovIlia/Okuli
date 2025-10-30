@@ -111,8 +111,7 @@ fun HomeContent() {
                     onClick = {
                         navigator.push(ExercisesListScreen)
                     },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = MaterialTheme.shapes.medium
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Начать тренировку")
                 }
@@ -229,8 +228,7 @@ fun StatItem(value: String, label: String) {
 fun FeatureButton(text: String, onClick: () -> Unit) {
     Button(
         onClick = onClick,
-        modifier = Modifier.fillMaxWidth(),
-        shape = MaterialTheme.shapes.medium
+        modifier = Modifier.fillMaxWidth()
     ) {
         Text(text, style = MaterialTheme.typography.bodyLarge)
     }

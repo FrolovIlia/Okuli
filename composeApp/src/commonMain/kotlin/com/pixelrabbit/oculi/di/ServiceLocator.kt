@@ -1,10 +1,10 @@
 package com.pixelrabbit.oculi.di
 
-import com.pixelrabbit.oculi.data.repositories.AchievementRepositoryImpl
+import com.pixelrabbit.oculi.data.repositories.RealAchievementRepository
+import com.pixelrabbit.oculi.data.repositories.RealStatsRepository
 import com.pixelrabbit.oculi.data.repositories.ExerciseRepositoryImpl
 import com.pixelrabbit.oculi.data.repositories.NotificationRepositoryImpl
 import com.pixelrabbit.oculi.data.repositories.SettingsRepositoryImpl
-import com.pixelrabbit.oculi.data.repositories.StatsRepositoryImpl
 import com.pixelrabbit.oculi.domain.repositories.AchievementRepository
 import com.pixelrabbit.oculi.domain.repositories.ExerciseRepository
 import com.pixelrabbit.oculi.domain.repositories.NotificationRepository
@@ -20,9 +20,9 @@ import com.pixelrabbit.oculi.domain.use_cases.UpdateSettingsUseCase
 
 object ServiceLocator {
     private val exerciseRepository: ExerciseRepository by lazy { ExerciseRepositoryImpl() }
-    private val statsRepository: StatsRepository by lazy { StatsRepositoryImpl() }
+    private val statsRepository: StatsRepository by lazy { RealStatsRepository() }
     private val notificationRepository: NotificationRepository by lazy { NotificationRepositoryImpl() }
-    private val achievementRepository: AchievementRepository by lazy { AchievementRepositoryImpl() }
+    private val achievementRepository: AchievementRepository by lazy { RealAchievementRepository() }
     private val settingsRepository: SettingsRepository by lazy { SettingsRepositoryImpl() }
 
     val getExercisesUseCase: GetExercisesUseCase by lazy { GetExercisesUseCase(exerciseRepository) }
