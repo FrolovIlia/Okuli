@@ -133,6 +133,11 @@ fun HomeContent() {
                 text = "🏆 Достижения",
                 onClick = { navigator.push(AchievementsScreen) }
             )
+
+            FeatureButton(
+                text = "ℹ️ О приложении",
+                onClick = { navigator.push(AboutScreen) }
+            )
         }
     }
 }

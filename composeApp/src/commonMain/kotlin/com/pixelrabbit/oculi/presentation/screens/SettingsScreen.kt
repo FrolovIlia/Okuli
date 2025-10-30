@@ -39,6 +39,8 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.pixelrabbit.oculi.di.ServiceLocator
+import androidx.compose.runtime.LaunchedEffect
+
 
 object SettingsScreen : Screen {
     @Composable
@@ -53,12 +55,27 @@ fun SettingsContent() {
     val navigator = LocalNavigator.currentOrThrow
 
     var notificationsEnabled by remember { mutableStateOf(true) }
-    var themeMode by remember { mutableStateOf("system") } // system, light, dark
+    var darkTheme by remember { mutableStateOf(false) }
     var reminderInterval by remember { mutableStateOf(60) }
     var soundEnabled by remember { mutableStateOf(true) }
     var vibrationEnabled by remember { mutableStateOf(true) }
 
-    LaunchedEffect(notificationsEnabled, reminderInterval) {
+    // Загружаем настройки
+    LaunchedEffect(Unit) {
+        val settings = ServiceLocator.getSettingsUseCase()
+        notificationsEnabled = settings.notificationsEnabled
+        darkTheme = settings.darkThemeEnabled
+        reminderInterval = settings.reminderInterval
+    }
+
+    // Сохраняем настройки при изменении
+    LaunchedEffect(notificationsEnabled, darkTheme, reminderInterval) {
+        ServiceLocator.updateSettingsUseCase(
+            darkThemeEnabled = darkTheme,
+            notificationsEnabled = notificationsEnabled,
+            reminderInterval = reminderInterval
+        )
+
         ServiceLocator.manageNotificationsUseCase(
             enabled = notificationsEnabled,
             intervalMinutes = reminderInterval
@@ -96,41 +113,11 @@ fun SettingsContent() {
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    Text(
-                        text = "Тема приложения",
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.padding(bottom = 8.dp)
+                    SettingSwitch(
+                        text = "Темная тема",
+                        checked = darkTheme,
+                        onCheckedChange = { darkTheme = it }
                     )
-
-                    SingleChoiceSegmentedButtonRow(
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        SegmentedButton(
-                            selected = themeMode == "light",
-                            onClick = { themeMode = "light" },
-                            shape = SegmentedButtonDefaults.itemShape(index = 0, count = 3),
-                            icon = { Icon(Icons.Default.LightMode, "Светлая") }
-                        ) {
-                            Text("Светлая")
-                        }
-
-                        SegmentedButton(
-                            selected = themeMode == "system",
-                            onClick = { themeMode = "system" },
-                            shape = SegmentedButtonDefaults.itemShape(index = 1, count = 3),
-                        ) {
-                            Text("Системная")
-                        }
-
-                        SegmentedButton(
-                            selected = themeMode == "dark",
-                            onClick = { themeMode = "dark" },
-                            shape = SegmentedButtonDefaults.itemShape(index = 2, count = 3),
-                            icon = { Icon(Icons.Default.DarkMode, "Тёмная") }
-                        ) {
-                            Text("Тёмная")
-                        }
-                    }
                 }
             }
 
@@ -252,6 +239,14 @@ fun SettingsContent() {
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Button(
+                            onClick = { navigator.push(AboutScreen) },
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = MaterialTheme.shapes.small
+                        ) {
+                            Text("📱 О приложении")
+                        }
+
+                        Button(
                             onClick = { /* TODO */ },
                             modifier = Modifier.fillMaxWidth(),
                             shape = MaterialTheme.shapes.small
@@ -265,14 +260,6 @@ fun SettingsContent() {
                             shape = MaterialTheme.shapes.small
                         ) {
                             Text("📝 Условия использования")
-                        }
-
-                        Button(
-                            onClick = { /* TODO */ },
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = MaterialTheme.shapes.small
-                        ) {
-                            Text("📤 Поделиться приложением")
                         }
                     }
                 }
