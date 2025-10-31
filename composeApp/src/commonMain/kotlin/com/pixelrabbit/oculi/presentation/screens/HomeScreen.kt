@@ -57,13 +57,14 @@ object HomeScreen : Screen {
     }
 }
 
+
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun HomeContent() {
     val navigator = LocalNavigator.currentOrThrow
     val density = LocalDensity.current
 
-    // ✅ Вычисляем только системные отступы для статус-бара и навигационного бара
+    // Вычисляем только системные отступы
     val statusBarTop = with(density) {
         WindowInsets.statusBars.getTop(this).toDp()
     }
@@ -90,11 +91,9 @@ fun HomeContent() {
         modifier = Modifier
             .fillMaxSize()
             .padding(
-                // ✅ Применяем системный отступ + отступ содержимого (24.dp)
                 top = statusBarTop + 24.dp,
                 start = 24.dp,
                 end = 24.dp
-                // ❌ Удален bottomPadding из Column
             ),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
@@ -158,7 +157,8 @@ fun HomeContent() {
 
                 Button(
                     onClick = {
-                        // TODO: replace with navigation
+                        // ✅ ИСПРАВЛЕНО
+                        navigator.push(ExercisesListScreen)
                     },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp)
@@ -169,7 +169,6 @@ fun HomeContent() {
         }
 
         // Основные функции в виде компактных кнопок
-        // ✅ Передаем системный отступ в компонент сетки
         FeatureButtonsGrid(navigator, navigationBarBottom)
     }
 }
@@ -248,15 +247,15 @@ fun StatItem(value: String, label: String) {
     }
 }
 
-// ✅ Обновленная сигнатура для приема нижнего отступа
 @Composable
 fun FeatureButtonsGrid(navigator: Navigator, navigationBarBottom: androidx.compose.ui.unit.Dp) {
     val features = listOf(
-        "Проверка зрения" to { /* navigator.push(VisionTestScreen) */ },
-        "Мой прогресс" to { /* navigator.push(ProgressScreen) */ },
-        "Достижения" to { /* navigator.push(AchievementsScreen) */ },
-        "Настройки" to { /* navigator.push(SettingsScreen) */ },
-        "О приложении" to { /* navigator.push(AboutScreen) */ }
+        // ✅ ИСПРАВЛЕНО: Восстановлены вызовы навигации
+        "Проверка зрения" to { navigator.push(VisionTestScreen) },
+        "Мой прогресс" to { navigator.push(ProgressScreen) },
+        "Достижения" to { navigator.push(AchievementsScreen) },
+        "Настройки" to { navigator.push(SettingsScreen) },
+        "О приложении" to { navigator.push(AboutScreen) }
     )
 
     LazyVerticalGrid(
@@ -264,7 +263,6 @@ fun FeatureButtonsGrid(navigator: Navigator, navigationBarBottom: androidx.compo
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         modifier = Modifier.fillMaxWidth(),
-        // ✅ Применяем системный отступ + отступ содержимого (24.dp) как contentPadding
         contentPadding = PaddingValues(bottom = navigationBarBottom + 24.dp)
     ) {
         items(features) { (text, onClick) ->
