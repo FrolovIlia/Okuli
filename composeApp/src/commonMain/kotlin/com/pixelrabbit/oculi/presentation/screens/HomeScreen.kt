@@ -1,14 +1,27 @@
 package com.pixelrabbit.oculi.presentation.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
@@ -21,13 +34,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.pixelrabbit.oculi.di.ServiceLocator
 import com.pixelrabbit.oculi.utils.getGreeting
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.painterResource
+
 
 object HomeScreen : Screen {
     @Composable
@@ -36,9 +57,19 @@ object HomeScreen : Screen {
     }
 }
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun HomeContent() {
     val navigator = LocalNavigator.currentOrThrow
+    val density = LocalDensity.current
+
+    // Учет отступов от системных тулбаров
+    val topPadding = with(density) {
+        24.dp + WindowInsets.statusBars.getTop(this).dp
+    }
+    val bottomPadding = with(density) {
+        24.dp + WindowInsets.navigationBars.getBottom(this).dp
+    }
 
     var stats by remember {
         mutableStateOf(
@@ -58,20 +89,37 @@ fun HomeContent() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
+            .padding(
+                top = topPadding,
+                bottom = bottomPadding,
+                start = 24.dp,
+                end = 24.dp
+            ),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
-        // Заголовок
+        // Заголовок с логотипом
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(
-                text = "👁️ Oculi",
-                style = MaterialTheme.typography.displayMedium,
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.Bold
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Image(
+                    painter = painterResource(org.jetbrains.compose.resources.DrawableResource("drawable/ic_logo_standart.png")),
+                    contentDescription = "Oculi Logo",
+                    modifier = Modifier.size(50.dp),
+                    contentScale = ContentScale.Fit
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Oculi",
+                    style = MaterialTheme.typography.displayMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold
+                )
+            }
 
             Text(
                 text = "${getGreeting()}!",
@@ -111,42 +159,16 @@ fun HomeContent() {
                     onClick = {
                         navigator.push(ExercisesListScreen)
                     },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp)
                 ) {
                     Text("Начать тренировку")
                 }
             }
         }
 
-        // Основные функции
-        Column(
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            FeatureButton(
-                text = "Проверка зрения",
-                onClick = { navigator.push(VisionTestScreen) }
-            )
-
-            FeatureButton(
-                text = "Мой прогресс",
-                onClick = { navigator.push(ProgressScreen) }
-            )
-
-            FeatureButton(
-                text = "Достижения",
-                onClick = { navigator.push(AchievementsScreen) }
-            )
-
-            FeatureButton(
-                text = "Настройки",
-                onClick = { navigator.push(SettingsScreen) }
-            )
-
-            FeatureButton(
-                text = "О приложении",
-                onClick = { navigator.push(AboutScreen) }
-            )
-        }
+        // Основные функции в виде компактных кнопок
+        FeatureButtonsGrid(navigator)
     }
 }
 
@@ -225,11 +247,58 @@ fun StatItem(value: String, label: String) {
 }
 
 @Composable
-fun FeatureButton(text: String, onClick: () -> Unit) {
-    Button(
-        onClick = onClick,
+fun FeatureButtonsGrid(navigator: Navigator) {
+    val features = listOf(
+        "Проверка зрения" to { navigator.push(VisionTestScreen) },
+        "Мой прогресс" to { navigator.push(ProgressScreen) },
+        "Достижения" to { navigator.push(AchievementsScreen) },
+        "Настройки" to { navigator.push(SettingsScreen) },
+        "О приложении" to { navigator.push(AboutScreen) }
+    )
+
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
-        Text(text, style = MaterialTheme.typography.bodyLarge)
+        items(features) { (text, onClick) ->
+            CompactFeatureButton(
+                text = text,
+                onClick = onClick
+            )
+        }
+    }
+}
+
+@Composable
+fun CompactFeatureButton(text: String, onClick: () -> Unit) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(80.dp),
+        shape = RoundedCornerShape(16.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+        ),
+        contentPadding = PaddingValues(0.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 8.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = text,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Medium,
+                textAlign = TextAlign.Center,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
     }
 }
