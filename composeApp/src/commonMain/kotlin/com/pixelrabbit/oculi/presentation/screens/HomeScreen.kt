@@ -63,12 +63,12 @@ fun HomeContent() {
     val navigator = LocalNavigator.currentOrThrow
     val density = LocalDensity.current
 
-    // Учет отступов от системных тулбаров
-    val topPadding = with(density) {
-        24.dp + WindowInsets.statusBars.getTop(this).dp
+    // ✅ Вычисляем только системные отступы для статус-бара и навигационного бара
+    val statusBarTop = with(density) {
+        WindowInsets.statusBars.getTop(this).toDp()
     }
-    val bottomPadding = with(density) {
-        24.dp + WindowInsets.navigationBars.getBottom(this).dp
+    val navigationBarBottom = with(density) {
+        WindowInsets.navigationBars.getBottom(this).toDp()
     }
 
     var stats by remember {
@@ -90,10 +90,11 @@ fun HomeContent() {
         modifier = Modifier
             .fillMaxSize()
             .padding(
-                top = topPadding,
-                bottom = bottomPadding,
+                // ✅ Применяем системный отступ + отступ содержимого (24.dp)
+                top = statusBarTop + 24.dp,
                 start = 24.dp,
                 end = 24.dp
+                // ❌ Удален bottomPadding из Column
             ),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
@@ -157,7 +158,7 @@ fun HomeContent() {
 
                 Button(
                     onClick = {
-                        navigator.push(ExercisesListScreen)
+                        // TODO: replace with navigation
                     },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp)
@@ -168,7 +169,8 @@ fun HomeContent() {
         }
 
         // Основные функции в виде компактных кнопок
-        FeatureButtonsGrid(navigator)
+        // ✅ Передаем системный отступ в компонент сетки
+        FeatureButtonsGrid(navigator, navigationBarBottom)
     }
 }
 
@@ -246,21 +248,24 @@ fun StatItem(value: String, label: String) {
     }
 }
 
+// ✅ Обновленная сигнатура для приема нижнего отступа
 @Composable
-fun FeatureButtonsGrid(navigator: Navigator) {
+fun FeatureButtonsGrid(navigator: Navigator, navigationBarBottom: androidx.compose.ui.unit.Dp) {
     val features = listOf(
-        "Проверка зрения" to { navigator.push(VisionTestScreen) },
-        "Мой прогресс" to { navigator.push(ProgressScreen) },
-        "Достижения" to { navigator.push(AchievementsScreen) },
-        "Настройки" to { navigator.push(SettingsScreen) },
-        "О приложении" to { navigator.push(AboutScreen) }
+        "Проверка зрения" to { /* navigator.push(VisionTestScreen) */ },
+        "Мой прогресс" to { /* navigator.push(ProgressScreen) */ },
+        "Достижения" to { /* navigator.push(AchievementsScreen) */ },
+        "Настройки" to { /* navigator.push(SettingsScreen) */ },
+        "О приложении" to { /* navigator.push(AboutScreen) */ }
     )
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        // ✅ Применяем системный отступ + отступ содержимого (24.dp) как contentPadding
+        contentPadding = PaddingValues(bottom = navigationBarBottom + 24.dp)
     ) {
         items(features) { (text, onClick) ->
             CompactFeatureButton(
