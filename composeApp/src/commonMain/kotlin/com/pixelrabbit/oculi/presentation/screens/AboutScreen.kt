@@ -33,6 +33,7 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
+import com.pixelrabbit.oculi.AppInfo
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
@@ -92,7 +93,7 @@ fun AboutContent() {
                     }
 
                     Text(
-                        text = "v1.0.0",
+                        text = "v${AppInfo.versionName}",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(top = 4.dp)

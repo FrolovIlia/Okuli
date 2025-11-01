@@ -1,16 +1,18 @@
+import com.codingfeline.buildkonfig.compiler.FieldSpec
+import com.android.build.gradle.internal.dsl.BaseAppModuleExtension
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.kotlinSerialization)
+    id("com.codingfeline.buildkonfig") version "0.15.1"
 }
 
 kotlin {
     androidTarget {
         compilations.all {
-            kotlinOptions {
-                jvmTarget = "11"
-            }
+            kotlinOptions.jvmTarget = "11"
         }
     }
 
@@ -18,8 +20,8 @@ kotlin {
         iosX64(),
         iosArm64(),
         iosSimulatorArm64()
-    ).forEach { iosTarget ->
-        iosTarget.binaries.framework {
+    ).forEach {
+        it.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
         }
@@ -30,7 +32,6 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                // Compose Multiplatform
                 implementation(compose.runtime)
                 implementation(compose.foundation)
                 implementation(compose.material3)
@@ -38,27 +39,20 @@ kotlin {
                 implementation(compose.components.resources)
                 implementation(compose.materialIconsExtended)
 
-                // Network
                 implementation(libs.ktor.client.core)
                 implementation(libs.ktor.client.content.negotiation)
                 implementation(libs.ktor.client.serialization)
                 implementation(libs.ktor.client.logging)
 
-                // Serialization
                 implementation(libs.kotlinx.serialization.json)
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.kotlinx.datetime)
 
-                // DI
                 implementation(libs.koin.core)
-//                implementation(libs.koin.compose)
-
-                // Navigation
                 implementation(libs.voyager.navigator)
                 implementation(libs.voyager.koin)
                 implementation(libs.voyager.transitions)
 
-                // Resources
                 implementation(libs.moko.resources)
                 implementation(libs.moko.resources.compose)
             }
@@ -69,8 +63,6 @@ kotlin {
                 implementation(libs.compose.ui.tooling)
                 implementation(libs.android.activity.compose)
                 implementation(libs.ktor.client.android)
-//                implementation(libs.koin.android)
-//                implementation(libs.koin.androidx.compose)
             }
         }
 
@@ -97,7 +89,7 @@ android {
         minSdk = 24
         targetSdk = 34
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0.0"
     }
 
     compileOptions {
@@ -114,8 +106,21 @@ android {
     }
 
     packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
+        resources.excludes += "/META-INF/{AL2.0,LGPL2.1}"
+    }
+}
+
+// --- 🔧 BuildKonfig для общей версии приложения ---
+buildkonfig {
+    packageName = "com.pixelrabbit.oculi"
+
+    val androidExt = extensions.getByType(BaseAppModuleExtension::class)
+
+    defaultConfigs {
+        buildConfigField(
+            FieldSpec.Type.STRING,
+            "VERSION_NAME",
+            androidExt.defaultConfig.versionName
+        )
     }
 }
