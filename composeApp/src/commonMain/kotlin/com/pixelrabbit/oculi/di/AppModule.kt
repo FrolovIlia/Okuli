@@ -1,6 +1,6 @@
 package com.pixelrabbit.oculi.di
 
-import com.pixelrabbit.oculi.data.repositories.ExerciseRepositoryImpl
+import com.pixelrabbit.oculi.domain.repositories.ExerciseRepositoryImpl
 import com.pixelrabbit.oculi.domain.repositories.ExerciseRepository
 import com.pixelrabbit.oculi.domain.use_cases.GetExercisesUseCase
 import com.pixelrabbit.oculi.domain.use_cases.StartExerciseUseCase

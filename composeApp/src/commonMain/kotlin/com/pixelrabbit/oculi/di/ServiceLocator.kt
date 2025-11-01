@@ -2,7 +2,7 @@ package com.pixelrabbit.oculi.di
 
 import com.pixelrabbit.oculi.data.repositories.RealAchievementRepository
 import com.pixelrabbit.oculi.data.repositories.RealStatsRepository
-import com.pixelrabbit.oculi.data.repositories.ExerciseRepositoryImpl
+import com.pixelrabbit.oculi.domain.repositories.ExerciseRepositoryImpl
 import com.pixelrabbit.oculi.data.repositories.NotificationRepositoryImpl
 import com.pixelrabbit.oculi.data.repositories.SettingsRepositoryImpl
 import com.pixelrabbit.oculi.domain.repositories.AchievementRepository

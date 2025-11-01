@@ -1,9 +1,8 @@
-package com.pixelrabbit.oculi.data.repositories
+package com.pixelrabbit.oculi.domain.repositories
 
+import com.pixelrabbit.oculi.domain.models.Difficulty
 import com.pixelrabbit.oculi.domain.models.Exercise
 import com.pixelrabbit.oculi.domain.models.ExerciseType
-import com.pixelrabbit.oculi.domain.repositories.ExerciseRepository
-import kotlinx.coroutines.flow.Flow
 
 class ExerciseRepositoryImpl : ExerciseRepository {
 
@@ -15,7 +14,7 @@ class ExerciseRepositoryImpl : ExerciseRepository {
             description = "Слежение за движущимся объектом для тренировки аккомодации глаз",
             duration = 120,
             type = ExerciseType.ACCOMMODATION,
-            difficulty = com.pixelrabbit.oculi.domain.models.Difficulty.BEGINNER,
+            difficulty = Difficulty.BEGINNER,
             isPremium = false,
             icon = "🎯",
             instructions = listOf(
@@ -31,7 +30,7 @@ class ExerciseRepositoryImpl : ExerciseRepository {
             description = "Чередование ближнего и дальнего зрения для снятия цифрового напряжения",
             duration = 180,
             type = ExerciseType.ACCOMMODATION,
-            difficulty = com.pixelrabbit.oculi.domain.models.Difficulty.BEGINNER,
+            difficulty = Difficulty.BEGINNER,
             isPremium = false,
             icon = "🔍",
             instructions = listOf(
@@ -47,7 +46,7 @@ class ExerciseRepositoryImpl : ExerciseRepository {
             description = "Техника полного расслабления глаз через затемнение",
             duration = 300,
             type = ExerciseType.RELAXATION,
-            difficulty = com.pixelrabbit.oculi.domain.models.Difficulty.BEGINNER,
+            difficulty = Difficulty.BEGINNER,
             isPremium = true,
             icon = "👐",
             instructions = listOf(
@@ -63,7 +62,7 @@ class ExerciseRepositoryImpl : ExerciseRepository {
             description = "Движение глаз по траектории восьмерки для улучшения подвижности",
             duration = 120,
             type = ExerciseType.MOBILITY,
-            difficulty = com.pixelrabbit.oculi.domain.models.Difficulty.INTERMEDIATE,
+            difficulty = Difficulty.INTERMEDIATE,
             isPremium = true,
             icon = "∞",
             instructions = listOf(

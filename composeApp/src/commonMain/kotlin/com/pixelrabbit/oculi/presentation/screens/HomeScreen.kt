@@ -157,7 +157,6 @@ fun HomeContent() {
 
                 Button(
                     onClick = {
-                        // ✅ ИСПРАВЛЕНО
                         navigator.push(ExercisesListScreen)
                     },
                     modifier = Modifier.fillMaxWidth(),
@@ -167,8 +166,6 @@ fun HomeContent() {
                 }
             }
         }
-
-        // Основные функции в виде компактных кнопок
         FeatureButtonsGrid(navigator, navigationBarBottom)
     }
 }
@@ -250,7 +247,6 @@ fun StatItem(value: String, label: String) {
 @Composable
 fun FeatureButtonsGrid(navigator: Navigator, navigationBarBottom: androidx.compose.ui.unit.Dp) {
     val features = listOf(
-        // ✅ ИСПРАВЛЕНО: Восстановлены вызовы навигации
         "Проверка зрения" to { navigator.push(VisionTestScreen) },
         "Мой прогресс" to { navigator.push(ProgressScreen) },
         "Достижения" to { navigator.push(AchievementsScreen) },
