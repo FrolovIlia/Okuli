@@ -9,7 +9,8 @@ data class Exercise(
     val difficulty: Difficulty,
     val isPremium: Boolean = false,
     val icon: String,
-    val instructions: List<String>
+    val instructions: List<String>,
+    val imageName: String? = null
 )
 
 enum class ExerciseType {

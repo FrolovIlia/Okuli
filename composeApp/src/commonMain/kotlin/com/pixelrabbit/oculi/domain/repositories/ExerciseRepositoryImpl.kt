@@ -1,5 +1,6 @@
 package com.pixelrabbit.oculi.domain.repositories
 
+import androidx.compose.ui.input.key.Key.Companion.R
 import com.pixelrabbit.oculi.domain.models.Difficulty
 import com.pixelrabbit.oculi.domain.models.Exercise
 import com.pixelrabbit.oculi.domain.models.ExerciseType
@@ -22,7 +23,8 @@ class ExerciseRepositoryImpl : ExerciseRepository {
                 "Расслабьтесь и закройте глаза",
                 "Двигайте ими, изображая разные фигуры",
                 "Повторяйте 10-12 раз"
-            )
+            ),
+            imageName = "sledovanie_za"
         ),
         Exercise(
             id = "focus_shift",
@@ -38,7 +40,8 @@ class ExerciseRepositoryImpl : ExerciseRepository {
                 "Не двигайте головой",
                 "Следите за кончиком пальца \nприближая и удаляя его от кончика носа",
                 "Повторяйте 10-15 раз"
-            )
+            ),
+            imageName = "focus"
         ),
         Exercise(
             id = "palming",
@@ -54,7 +57,8 @@ class ExerciseRepositoryImpl : ExerciseRepository {
                 "Закройте глаза ладонями без давления",
                 "Представьте абсолютную темноту",
                 "Дышите глубоко и расслабленно"
-            )
+            ),
+            imageName = "palming"
         ),
         Exercise(
             id = "figure_eight",
@@ -70,7 +74,8 @@ class ExerciseRepositoryImpl : ExerciseRepository {
                 "Медленно обводите ее контур глазами",
                 "Сначала по часовой стрелке, затем против",
                 "Не двигайте головой"
-            )
+            ),
+            imageName = "vosmerka"
         )
     )
 

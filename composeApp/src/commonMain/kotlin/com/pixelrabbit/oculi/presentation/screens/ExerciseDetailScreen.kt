@@ -1,10 +1,13 @@
 package com.pixelrabbit.oculi.presentation.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -24,12 +27,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.pixelrabbit.oculi.di.ServiceLocator
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.painterResource
+import okuli.composeapp.generated.resources.Res // 👈 авто-сгенерированный класс Res
+import okuli.composeapp.generated.resources.*      // 👈 чтобы обращаться к Res.drawable.*
 
 data class ExerciseDetailScreen(
     val exerciseId: String
@@ -73,6 +81,7 @@ fun ExerciseDetailContent(exerciseId: String) {
     }
 }
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun ExerciseDetailContent(
     exercise: com.pixelrabbit.oculi.domain.models.Exercise,
@@ -138,6 +147,30 @@ fun ExerciseDetailContent(
                         text = "${index + 1}. $instruction",
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(vertical = 4.dp)
+                    )
+                }
+            }
+        }
+
+        // 🔥 Блок изображения — используем painterResource(Res.drawable.*)
+        exercise.imageName?.let { name ->
+            val painter = when (name) {
+                "sledovanie_za" -> painterResource(Res.drawable.sledovanie_za)
+                "focus" -> painterResource(Res.drawable.focus)
+                "palming" -> painterResource(Res.drawable.palming)
+                "vosmerka" -> painterResource(Res.drawable.vosmerka)
+                else -> null
+            }
+
+            painter?.let {
+                Card {
+                    Image(
+                        painter = it,
+                        contentDescription = exercise.title,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(16f / 9f),
+                        contentScale = ContentScale.Crop
                     )
                 }
             }
