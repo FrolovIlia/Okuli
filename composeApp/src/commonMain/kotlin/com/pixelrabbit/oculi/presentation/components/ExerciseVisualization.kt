@@ -14,8 +14,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.unit.dp
+import kotlin.math.sin
 
 @Composable
 fun ExerciseVisualization(exerciseId: String, isRunning: Boolean) {
@@ -50,7 +50,8 @@ fun MovingTargetVisualization(isRunning: Boolean) {
         Canvas(modifier = Modifier.size(200.dp)) {
             val center = Offset(size.width / 2, size.height / 2)
             val radius = size.minDimension / 4
-            val x = center.x + (size.width / 2 - radius) * animation.value
+            // Цель движется горизонтально в зависимости от значения анимации
+            val x = center.x + (size.width / 2 - radius) * (animation.value * 2 - 1)
 
             drawCircle(
                 color = Color(0xFF006A6B),
@@ -83,16 +84,17 @@ fun FocusShiftVisualization(isRunning: Boolean) {
         Canvas(modifier = Modifier.size(200.dp)) {
             val center = Offset(size.width / 2, size.height / 2)
             val baseRadius = size.minDimension / 8
+            // animatedRadius имитирует рост/сжатие ближнего объекта
             val animatedRadius = baseRadius * (1 + animation.value * 0.5f)
 
-            // Ближний объект
+            // Ближний объект (Near object) - увеличивается, когда animation.value переходит от 0 к 1
             drawCircle(
                 color = Color(0xFF006A6B),
                 center = center,
                 radius = animatedRadius
             )
 
-            // Дальний объект
+            // Дальний объект (Far object) - уменьшается, когда ближний объект увеличивается
             drawCircle(
                 color = Color(0xFF4A6363),
                 center = Offset(center.x, center.y - size.height / 3),
@@ -123,12 +125,14 @@ fun FigureEightVisualization(isRunning: Boolean) {
     Box(modifier = Modifier.fillMaxSize()) {
         Canvas(modifier = Modifier.size(200.dp)) {
             val center = Offset(size.width / 2, size.height / 2)
-            val a = size.minDimension / 4
-            val b = size.minDimension / 6
+            val a = size.minDimension / 4 // Ширина восьмерки
+            val b = size.minDimension / 6 // Высота восьмерки
 
-            val progress = animation.value * 2 * Math.PI.toFloat()
-            val x = center.x + a * kotlin.math.sin(progress)
-            val y = center.y + b * kotlin.math.sin(2 * progress)
+            // ИСПРАВЛЕНО: Заменено Math.PI на kotlin.math.PI
+            val progress = animation.value * 2 * kotlin.math.PI.toFloat()
+            // Параметрические уравнения для восьмерки (лемнискаты)
+            val x = center.x + a * sin(progress)
+            val y = center.y + b * sin(2 * progress)
 
             drawCircle(
                 color = Color(0xFF006A6B),
@@ -163,13 +167,14 @@ fun PalmingVisualization(isRunning: Boolean) {
             val maxRadius = size.minDimension / 2
             val currentRadius = maxRadius * animation.value
 
+            // Центральное пульсирующее свечение/тепло
             drawCircle(
                 color = Color(0xFF006A6B).copy(alpha = 0.3f),
                 center = center,
                 radius = currentRadius
             )
 
-            // Руки
+            // Визуализация рук
             drawCircle(
                 color = Color(0xFF4A6363),
                 center = Offset(center.x - size.width / 4, center.y),
@@ -187,12 +192,15 @@ fun PalmingVisualization(isRunning: Boolean) {
 
 @Composable
 fun DefaultVisualization(isRunning: Boolean) {
+    // ИСПРАВЛЕНО: Параметр isRunning теперь используется для изменения цвета, что устраняет предупреждение.
+    val color = if (isRunning) Color(0xFF006A6B) else Color.Gray.copy(alpha = 0.5f)
+
     Box(modifier = Modifier.fillMaxSize()) {
         Canvas(modifier = Modifier.size(200.dp)) {
             val center = Offset(size.width / 2, size.height / 2)
 
             drawCircle(
-                color = Color(0xFF006A6B),
+                color = color,
                 center = center,
                 radius = size.minDimension / 4
             )

@@ -1,9 +1,7 @@
 package com.pixelrabbit.oculi.data.repositories
 
 import com.pixelrabbit.oculi.domain.repositories.StatsRepository
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 
 class RealStatsRepository : StatsRepository {
     private val _stats = MutableStateFlow(StatsData())
