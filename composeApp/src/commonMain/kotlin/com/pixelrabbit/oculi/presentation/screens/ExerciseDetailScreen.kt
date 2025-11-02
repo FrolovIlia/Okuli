@@ -36,8 +36,8 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.pixelrabbit.oculi.di.ServiceLocator
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
-import okuli.composeapp.generated.resources.Res // 👈 авто-сгенерированный класс Res
-import okuli.composeapp.generated.resources.*      // 👈 чтобы обращаться к Res.drawable.*
+import okuli.composeapp.generated.resources.Res
+import okuli.composeapp.generated.resources.*
 
 data class ExerciseDetailScreen(
     val exerciseId: String
@@ -62,9 +62,9 @@ fun ExerciseDetailContent(exerciseId: String) {
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Упражнение") }
-            )
+//            TopAppBar(
+//                title = { Text("Упражнение") }
+//            )
         }
     ) { paddingValues ->
         Column(
@@ -109,11 +109,11 @@ fun ExerciseDetailContent(
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold
                 )
-                Text(
-                    text = "Тип: ${exercise.type} • Сложность: ${exercise.difficulty}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+//                Text(
+//                    text = "Тип: ${exercise.type} • Сложность: ${exercise.difficulty}",
+//                    style = MaterialTheme.typography.bodyMedium,
+//                    color = MaterialTheme.colorScheme.onSurfaceVariant
+//                )
             }
         }
 
