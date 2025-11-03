@@ -74,11 +74,11 @@ fun SettingsContent() {
     }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Настройки") }
-            )
-        }
+//        topBar = {
+//            TopAppBar(
+//                title = { Text("Настройки") }
+//            )
+//        }
     ) { paddingValues ->
         Column(
             modifier = Modifier

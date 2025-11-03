@@ -51,11 +51,11 @@ fun AboutContent() {
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("О приложении") }
-            )
-        }
+//        topBar = {
+//            TopAppBar(
+//                title = { Text("О приложении") }
+//            )
+//        }
     ) { paddingValues ->
         Column(
             modifier = Modifier

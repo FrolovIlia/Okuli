@@ -60,11 +60,11 @@ fun ProgressContent() {
     }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Мой прогресс") }
-            )
-        }
+//        topBar = {
+//            TopAppBar(
+//                title = { Text("Мой прогресс") }
+//            )
+//        }
     ) { paddingValues ->
         Column(
             modifier = Modifier
