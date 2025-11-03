@@ -7,15 +7,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,122 +32,122 @@ object VisionTestScreen : Screen {
     }
 }
 
+// Модель для теста зрения
+data class VisionTest(
+    val title: String,
+    val description: String,
+    val duration: String
+)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VisionTestContent() {
     val navigator = LocalNavigator.currentOrThrow
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Проверка зрения") }
-            )
-        }
-    ) { paddingValues ->
-        Column(
+    val testTypes = listOf(
+        VisionTest("👁️ Острота зрения", "Проверка по таблице Сивцева", "2-3 минуты"),
+        VisionTest("🔴 Астигматизм", "Тест на искажение зрения", "1-2 минуты"),
+        VisionTest("🎨 Цветовосприятие", "Проверка цветового зрения", "2 минуты")
+    )
+
+    Scaffold { paddingValues ->
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
-                .verticalScroll(rememberScrollState())
+                .padding(paddingValues),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 16.dp, vertical = 8.dp)
         ) {
             // Заголовок
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+            item {
+                Card(
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(
-                        text = "👁️ Проверка зрения",
-                        style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary,
-                        textAlign = TextAlign.Center
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Text(
-                        text = "Регулярная проверка помогает отслеживать здоровье ваших глаз",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
-
-            // Типы тестов
-            Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                TestTypeCard(
-                    title = "👁️ Острота зрения",
-                    description = "Проверка по таблице Сивцева",
-                    duration = "2-3 минуты",
-                    onClick = { navigator.push(AcuityTestScreen) }
-                )
-
-                TestTypeCard(
-                    title = "🔴 Астигматизм",
-                    description = "Тест на искажение зрения",
-                    duration = "1-2 минуты",
-                    onClick = { navigator.push(AstigmatismTestScreen) }
-                )
-
-                TestTypeCard(
-                    title = "🎨 Цветовосприятие",
-                    description = "Проверка цветового зрения",
-                    duration = "2 минуты",
-                    onClick = { navigator.push(ColorTestScreen) }
-                )
-            }
-
-            // История тестов
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text(
-                        text = "📊 История проверок",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    Text(
-                        text = "Здесь будет отображаться история ваших проверок зрения",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Button(
-                        onClick = { /* TODO: Показать историю */ },
-                        modifier = Modifier.fillMaxWidth(),
-                        enabled = false
+                    Column(
+                        modifier = Modifier.padding(24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text("Показать историю")
+                        Text(
+                            text = "Проверки зрения",
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary,
+                            textAlign = TextAlign.Center
+                        )
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Text(
+                            text = "Помогают отслеживать здоровье ваших глаз",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center
+                        )
                     }
                 }
             }
 
-            Button(
-                onClick = { navigator.pop() },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Text("Назад")
+            // Список тестов
+            items(testTypes) { test ->
+                TestTypeCard(
+                    title = test.title,
+                    description = test.description,
+                    duration = test.duration,
+                    onClick = {
+                        when (test.title) {
+                            "👁️ Острота зрения" -> navigator.push(AcuityTestScreen)
+                            "🔴 Астигматизм" -> navigator.push(AstigmatismTestScreen)
+                            "🎨 Цветовосприятие" -> navigator.push(ColorTestScreen)
+                        }
+                    }
+                )
+            }
+
+            // История проверок
+            item {
+                Card(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        Text(
+                            text = "📊 История проверок",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        Text(
+                            text = "Здесь будет отображаться история ваших проверок зрения",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Button(
+                            onClick = { /* TODO: Показать историю */ },
+                            modifier = Modifier.fillMaxWidth(),
+                            enabled = false
+                        ) {
+                            Text("Показать историю")
+                        }
+                    }
+                }
+            }
+
+            // Кнопка Назад
+            item {
+                Button(
+                    onClick = { navigator.pop() },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
+                ) {
+                    Text("Назад")
+                }
             }
         }
     }
