@@ -156,10 +156,10 @@ fun ExerciseTimerContent(
         )
 
         // Визуализация упражнения
-        ExerciseVisualization(
-            exerciseId = exercise.id,
-            isRunning = isRunning
-        )
+//        ExerciseVisualization(
+//            exerciseId = exercise.id,
+//            isRunning = isRunning
+//        )
 
         // Круговой прогресс
         BoxWithProgress(

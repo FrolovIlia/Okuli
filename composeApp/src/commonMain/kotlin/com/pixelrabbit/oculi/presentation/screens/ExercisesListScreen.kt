@@ -112,14 +112,14 @@ fun ExerciseCard(
                 modifier = Modifier.padding(top = 8.dp)
             )
 
-            if (exercise.isPremium) {
-                Text(
-                    text = "💎 ПРЕМИУМ",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
-            }
+//            if (exercise.isPremium) {
+//                Text(
+//                    text = "💎 ПРЕМИУМ",
+//                    style = MaterialTheme.typography.labelSmall,
+//                    color = MaterialTheme.colorScheme.primary,
+//                    modifier = Modifier.padding(top = 4.dp)
+//                )
+//            }
         }
     }
 }
