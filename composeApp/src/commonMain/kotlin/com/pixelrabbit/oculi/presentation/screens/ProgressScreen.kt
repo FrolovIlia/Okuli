@@ -116,38 +116,38 @@ fun ProgressContent() {
             }
 
             // Достижения
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text(
-                        text = "Достижения",
-                        style = MaterialTheme.typography.headlineSmall,
-                        fontWeight = FontWeight.Bold
-                    )
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    Text(
-                        text = "Отслеживайте свой прогресс и получайте достижения",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    Button(
-                        onClick = { navigator.push(AchievementsScreen) },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text("Посмотреть все достижения")
-                    }
-                }
-            }
+//            Card(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(16.dp)
+//            ) {
+//                Column(
+//                    modifier = Modifier.padding(16.dp)
+//                ) {
+//                    Text(
+//                        text = "Достижения",
+//                        style = MaterialTheme.typography.headlineSmall,
+//                        fontWeight = FontWeight.Bold
+//                    )
+//
+//                    Spacer(modifier = Modifier.height(12.dp))
+//
+//                    Text(
+//                        text = "Отслеживайте свой прогресс и получайте достижения",
+//                        style = MaterialTheme.typography.bodyMedium,
+//                        color = MaterialTheme.colorScheme.onSurfaceVariant
+//                    )
+//
+//                    Spacer(modifier = Modifier.height(12.dp))
+//
+//                    Button(
+//                        onClick = { navigator.push(AchievementsScreen) },
+//                        modifier = Modifier.fillMaxWidth()
+//                    ) {
+//                        Text("Посмотреть все достижения")
+//                    }
+//                }
+//            }
 
             // Советы
             Card(
