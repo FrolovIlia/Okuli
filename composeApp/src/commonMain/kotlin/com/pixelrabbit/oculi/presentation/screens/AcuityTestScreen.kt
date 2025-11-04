@@ -1,6 +1,7 @@
 package com.pixelrabbit.oculi.presentation.screens
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,13 +10,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -45,23 +47,106 @@ object AcuityTestScreen : Screen {
 fun AcuityTestContent() {
     val navigator = LocalNavigator.currentOrThrow
 
+    var currentEye by remember { mutableStateOf(Eye.LEFT) }
     var currentLine by remember { mutableStateOf(0) }
     var currentLetter by remember { mutableStateOf(0) }
     var testCompleted by remember { mutableStateOf(false) }
-    var distance by remember { mutableStateOf(2f) } // в метрах
+    var showEyeSwitchDialog by remember { mutableStateOf(false) }
+
+    var leftEyeResult by remember { mutableStateOf<Int?>(null) }
+    var rightEyeResult by remember { mutableStateOf<Int?>(null) }
 
     val testLines = listOf(
-        listOf("Ш", "Б", "М", "Н", "К", "Ы", "И"),
-        listOf("М", "Н", "К", "Ш", "Ы", "Б", "И"),
-        listOf("И", "М", "Ш", "Ы", "Н", "Б", "К"),
+        listOf("Ш", "Б"),
+        listOf("М", "Н", "К"),
+        listOf("Ы", "М", "Б", "Ш"),
+        listOf("Б", "Ы", "Н", "К", "М"),
+        listOf("И", "Н", "Ш", "К", "Ы", "Б"),
+        listOf("Ш", "И", "Н", "К", "Ы", "Б", "М"),
         listOf("Б", "Ы", "Ш", "И", "К", "М", "Н"),
-        listOf("Ш", "И", "Н", "К", "М", "Б", "Ы")
+        listOf("И", "М", "Ш", "Ы", "Н", "Б", "К"),
+        listOf("М", "Н", "К", "Ш", "Ы", "Б", "И"),
+        listOf("Ш", "Б", "М", "Н", "К", "Ы", "И"),
+        listOf("Б", "Ы", "М", "Ш", "И", "Н", "К"),
+        listOf("К", "Ш", "М", "Ы", "И", "Б", "Н")
     )
+
+    val fontSizeForLine = listOf(
+        72.sp, 64.sp, 56.sp, 48.sp, 40.sp,
+        36.sp, 32.sp, 28.sp, 24.sp, 20.sp,
+        18.sp, 16.sp
+    )
+
+    // Фиксированная высота для контейнера букв (достаточная для самой большой буквы)
+    val fixedLetterContainerHeight = 180.dp
+
+    fun handleCorrectAnswer() {
+        if (currentLetter < testLines[currentLine].size - 1) {
+            currentLetter++
+        } else {
+            currentLetter = 0
+            if (currentLine < testLines.size - 1) {
+                currentLine++
+            } else {
+                when (currentEye) {
+                    Eye.LEFT -> {
+                        leftEyeResult = currentLine + 1
+                        showEyeSwitchDialog = true
+                    }
+                    Eye.RIGHT -> {
+                        rightEyeResult = currentLine + 1
+                        testCompleted = true
+                    }
+                }
+            }
+        }
+    }
+
+    fun handleIncorrectAnswer() {
+        when (currentEye) {
+            Eye.LEFT -> {
+                leftEyeResult = currentLine
+                showEyeSwitchDialog = true
+            }
+            Eye.RIGHT -> {
+                rightEyeResult = currentLine
+                testCompleted = true
+            }
+        }
+    }
+
+    fun switchToNextEye() {
+        if (rightEyeResult == null) {
+            currentEye = Eye.RIGHT
+            currentLine = 0
+            currentLetter = 0
+            showEyeSwitchDialog = false
+        } else {
+            testCompleted = true
+        }
+    }
+
+    fun manuallySwitchEye() {
+        // Сбрасываем прогресс для текущего глаза при ручном переключении
+        when (currentEye) {
+            Eye.LEFT -> {
+                leftEyeResult = null // Сбрасываем результат левого глаза
+                currentEye = Eye.RIGHT
+            }
+            Eye.RIGHT -> {
+                rightEyeResult = null // Сбрасываем результат правого глаза
+                currentEye = Eye.LEFT
+            }
+        }
+        currentLine = 0
+        currentLetter = 0
+        showEyeSwitchDialog = false
+    }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Острота зрения") }
+                title = { Text("Проверка остроты зрения") }
             )
         }
     ) { paddingValues ->
@@ -69,97 +154,12 @@ fun AcuityTestContent() {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             if (!testCompleted) {
-                // Прогресс теста
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = "Прогресс теста",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    CircularProgressIndicator(
-                        progress = { (currentLine + 1).toFloat() / testLines.size },
-                        modifier = Modifier.size(60.dp),
-                        strokeWidth = 4.dp
-                    )
-
-                    Text(
-                        text = "${currentLine + 1} из ${testLines.size}",
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(top = 8.dp)
-                    )
-                }
-
-                // Отображение букв
-                Card(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Column(
-                        modifier = Modifier.padding(32.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "Что вы видите?",
-                            style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier.padding(bottom = 24.dp)
-                        )
-
-                        Text(
-                            text = testLines[currentLine][currentLetter],
-                            style = MaterialTheme.typography.displayLarge,
-                            fontSize = (120 - currentLine * 20).sp,
-                            fontWeight = FontWeight.Bold
-                        )
-
-                        Spacer(modifier = Modifier.height(32.dp))
-
-                        // Кнопки ответа
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Button(
-                                onClick = {
-                                    // Правильный ответ
-                                    if (currentLetter < testLines[currentLine].size - 1) {
-                                        currentLetter++
-                                    } else {
-                                        currentLetter = 0
-                                        if (currentLine < testLines.size - 1) {
-                                            currentLine++
-                                        } else {
-                                            testCompleted = true
-                                        }
-                                    }
-                                },
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                Text("Вижу")
-                            }
-
-                            Button(
-                                onClick = {
-                                    // Не видит - завершаем тест
-                                    testCompleted = true
-                                },
-                                modifier = Modifier.weight(1f),
-                                shape = MaterialTheme.shapes.medium
-                            ) {
-                                Text("Не вижу")
-                            }
-                        }
-                    }
-                }
-
-                // Настройка расстояния
+                // Информация о тестировании - ПЕРВЫМ БЛОКОМ
                 Card(
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -167,27 +167,196 @@ fun AcuityTestContent() {
                         modifier = Modifier.padding(16.dp)
                     ) {
                         Text(
-                            text = "Расстояние до экрана: ${formatDistance(distance)} м",
-                            style = MaterialTheme.typography.titleMedium
+                            text = "💡 Как проводить тест:",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
                         )
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        Slider(
-                            value = distance,
-                            onValueChange = { distance = it },
-                            valueRange = 1f..4f,
-                            steps = 6,
-                            modifier = Modifier.fillMaxWidth()
+                        Text(
+                            text = "• Держите телефон на расстоянии вытянутой руки",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        Text(
+                            text = "• Закройте ${if (currentEye == Eye.LEFT) "правый" else "левый"} глаз ладонью",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        Text(
+                            text = "• Большими пальцами нажимайте кнопки внизу",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        Text(
+                            text = "• Не щурьтесь и не наклоняйте голову",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        Text(
+                            text = "• Проводите тест при хорошем освещении",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                }
+
+                // Индикатор текущего глаза
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = { showEyeSwitchDialog = true }
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "👁️ Сейчас проверяем:",
+                            style = MaterialTheme.typography.titleSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Text(
+                            text = if (currentEye == Eye.LEFT) "ЛЕВЫЙ ГЛАЗ" else "ПРАВЫЙ ГЛАЗ",
+                            style = MaterialTheme.typography.headlineSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+
+                        // Показываем прогресс для каждого глаза
+                        val currentProgress = when (currentEye) {
+                            Eye.LEFT -> leftEyeResult ?: currentLine
+                            Eye.RIGHT -> rightEyeResult ?: currentLine
+                        }
+
+                        Text(
+                            text = "Прогресс: $currentProgress/${testLines.size} строк",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
 
                         Text(
-                            text = "Отойдите на указанное расстояние от экрана",
+                            text = "↕️ Нажмите чтобы сменить глаз",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
+
+                // Линейный прогресс бар для текущего глаза
+                Card(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = "Прогресс ${if (currentEye == Eye.LEFT) "левого" else "правого"} глаза:",
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                            Text(
+                                text = "${currentLine + 1}/${testLines.size}",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        LinearProgressIndicator(
+                            progress = { (currentLine + 1).toFloat() / testLines.size },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(12.dp),
+                            trackColor = MaterialTheme.colorScheme.surfaceVariant
+                        )
+
+                        Spacer(modifier = Modifier.height(4.dp))
+
+                        Text(
+                            text = "Строка ${currentLine + 1} из ${testLines.size}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+
+                // Отображение букв с ФИКСИРОВАННОЙ высотой
+                Card(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .padding(24.dp)
+                            .fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "Какая эта буква?",
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(bottom = 16.dp),
+                            textAlign = TextAlign.Center
+                        )
+
+                        // Контейнер с фиксированной высотой
+                        Box(
+                            modifier = Modifier
+                                .height(fixedLetterContainerHeight)
+                                .fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = testLines[currentLine][currentLetter],
+                                style = MaterialTheme.typography.displayLarge,
+                                fontSize = fontSizeForLine[currentLine],
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.align(Alignment.Center)
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        // Кнопки ответа - РАСПОЛОЖЕНЫ ДЛЯ УДОБСТВА ОДНОЙ РУКОЙ
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(12.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Button(
+                                onClick = { handleCorrectAnswer() },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = MaterialTheme.shapes.large
+                            ) {
+                                Text(
+                                    text = "✅ ВИЖУ",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+
+                            Button(
+                                onClick = { handleIncorrectAnswer() },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = MaterialTheme.shapes.large
+                            ) {
+                                Text(
+                                    text = "❌ НЕ ВИЖУ",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Text(
+                            text = "👆 Нажимайте большими пальцами",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+
             } else {
                 // Результаты теста
                 Card(
@@ -206,33 +375,30 @@ fun AcuityTestContent() {
 
                         Spacer(modifier = Modifier.height(24.dp))
 
-                        Text(
-                            text = "Ваша острота зрения:",
-                            style = MaterialTheme.typography.titleLarge
-                        )
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            ResultItem(
+                                eye = "Левый глаз",
+                                linesPassed = leftEyeResult ?: 0,
+                                totalLines = testLines.size
+                            )
 
-                        Text(
-                            text = calculateAcuity(currentLine, distance),
-                            style = MaterialTheme.typography.displaySmall,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.padding(vertical = 16.dp)
-                        )
-
-                        Text(
-                            text = "Пройдено строк: ${currentLine + 1}",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                            ResultItem(
+                                eye = "Правый глаз",
+                                linesPassed = rightEyeResult ?: 0,
+                                totalLines = testLines.size
+                            )
+                        }
 
                         Spacer(modifier = Modifier.height(24.dp))
 
                         Button(
-                            onClick = {
-                                // Сохранить результат и вернуться
-                                navigator.pop()
-                            },
-                            modifier = Modifier.fillMaxWidth()
+                            onClick = { navigator.pop() },
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = MaterialTheme.shapes.large
                         ) {
                             Text("Сохранить результат")
                         }
@@ -242,36 +408,161 @@ fun AcuityTestContent() {
 
             Button(
                 onClick = { navigator.pop() },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.large
             ) {
                 Text("Назад")
             }
         }
     }
-}
 
-fun formatDistance(distance: Float): String {
-    val distanceStr = distance.toString()
-    return if (distanceStr.contains('.')) {
-        val parts = distanceStr.split('.')
-        "${parts[0]}.${parts[1].take(1)}"
-    } else {
-        "$distance.0"
+    // Диалог смены глаза
+    if (showEyeSwitchDialog) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { showEyeSwitchDialog = false },
+            title = {
+                Text(
+                    "Смена глаза",
+                    style = MaterialTheme.typography.titleLarge
+                )
+            },
+            text = {
+                Column {
+                    Text(
+                        "Вы хотите переключиться на проверку другого глаза?",
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+
+                    // Показываем текущий прогресс по глазам
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(12.dp)
+                        ) {
+                            Text(
+                                "Текущий прогресс:",
+                                style = MaterialTheme.typography.bodySmall,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                "Левый глаз: ${leftEyeResult ?: currentLine} строк",
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                            Text(
+                                "Правый глаз: ${rightEyeResult ?: currentLine} строк",
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+                    }
+
+                    Text(
+                        "При смене глаза прогресс текущего глаза будет сохранен.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        if (currentEye == Eye.LEFT && leftEyeResult == null) {
+                            leftEyeResult = currentLine // Сохраняем прогресс перед сменой
+                        } else if (currentEye == Eye.RIGHT && rightEyeResult == null) {
+                            rightEyeResult = currentLine // Сохраняем прогресс перед сменой
+                        }
+                        manuallySwitchEye()
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = MaterialTheme.shapes.large
+                ) {
+                    Text("Переключить на ${if (currentEye == Eye.LEFT) "правый" else "левый"} глаз")
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = { showEyeSwitchDialog = false },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = MaterialTheme.shapes.large
+                ) {
+                    Text("Продолжить текущий глаз")
+                }
+            }
+        )
     }
 }
 
-fun calculateAcuity(line: Int, distance: Float): String {
-    val baseAcuity = 1.0 - (line * 0.1)
-    val distanceFactor = distance / 2.0 // Нормальное расстояние 2 метра
-    val finalAcuity = baseAcuity * distanceFactor
-    val acuityValue = finalAcuity.coerceAtLeast(0.1)
+@Composable
+fun ResultItem(eye: String, linesPassed: Int, totalLines: Int) {
+    Card(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = eye,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
 
-    // Форматируем до двух знаков после запятой
-    val acuityStr = acuityValue.toString()
-    return if (acuityStr.contains('.')) {
-        val parts = acuityStr.split('.')
-        "${parts[0]}.${parts[1].take(2).padEnd(2, '0')}"
-    } else {
-        "$acuityStr.00"
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = "Пройдено строк: $linesPassed из $totalLines",
+                style = MaterialTheme.typography.bodyMedium
+            )
+
+            Text(
+                text = "Острота зрения: ${formatAcuityValue(calculateAcuityForLines(linesPassed))}",
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
+        }
     }
+}
+
+fun calculateAcuityForLines(linesPassed: Int): Double {
+    return when (linesPassed) {
+        12 -> 2.0
+        11 -> 1.5
+        10 -> 1.2
+        9 -> 1.0
+        8 -> 0.9
+        7 -> 0.8
+        6 -> 0.7
+        5 -> 0.6
+        4 -> 0.5
+        3 -> 0.4
+        2 -> 0.3
+        1 -> 0.2
+        else -> 0.1
+    }
+}
+
+fun formatAcuityValue(acuity: Double): String {
+    val formatted = when {
+        acuity >= 1.0 -> acuity.toInt().toString() + ".0"
+        else -> acuity.toString()
+    }
+
+    return if (formatted.contains('.')) {
+        val parts = formatted.split('.')
+        if (parts[1].length > 1) {
+            "${parts[0]}.${parts[1].substring(0, 1)}"
+        } else {
+            formatted
+        }
+    } else {
+        "$formatted.0"
+    }
+}
+
+enum class Eye {
+    LEFT, RIGHT
 }
