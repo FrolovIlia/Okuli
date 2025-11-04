@@ -72,9 +72,9 @@ fun AcuityTestContent() {
     )
 
     val fontSizeForLine = listOf(
-        72.sp, 64.sp, 56.sp, 48.sp, 40.sp,
-        36.sp, 32.sp, 28.sp, 24.sp, 20.sp,
-        18.sp, 16.sp
+        70.sp, 35.sp, 23.sp, 17.sp, 14.sp,
+        11.sp, 9.sp, 7.sp, 6.sp, 5.sp,
+        4.sp, 3.sp
     )
 
     val fixedLetterContainerHeight = 180.dp
