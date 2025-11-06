@@ -10,6 +10,7 @@ kotlinxCoroutines = "1.7.3"
 kotlinxDateTime = "0.4.1"
 androidActivityCompose = "1.8.2"
 voyager = "1.0.0"
+foundationLayout = "1.9.4"
 
 [libraries]
 # Ktor Client
@@ -48,6 +49,7 @@ compose-foundation = { module = "androidx.compose.foundation:foundation" }
 compose-material3 = { module = "androidx.compose.material3:material3" }
 compose-runtime = { module = "androidx.compose.runtime:runtime" }
 compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
+foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "foundationLayout" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

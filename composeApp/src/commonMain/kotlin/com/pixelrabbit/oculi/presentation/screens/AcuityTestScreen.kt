@@ -547,6 +547,6 @@ fun formatAcuityValue(acuity: Double): String {
     }
 }
 
-enum class Eye {
-    LEFT, RIGHT
-}
+//enum class Eye {
+//    LEFT, RIGHT
+//}
