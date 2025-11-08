@@ -34,21 +34,20 @@ actual fun ColorPlateDisplay(
     Card(modifier = modifier) {
         Column(
             modifier = Modifier
-                .padding(16.dp) // Уменьшили отступы с 24dp до 16dp
+                .padding(16.dp)
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = "Какую цифру вы видите?",
                 style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(bottom = 12.dp), // Уменьшили отступ
+                modifier = Modifier.padding(bottom = 12.dp),
                 textAlign = TextAlign.Center
             )
 
-            // Ещё больше увеличиваем изображение пластины для iOS
             Box(
                 modifier = Modifier
-                    .height(320.dp) // Увеличили высоту до 320dp
+                    .height(320.dp)
                     .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.surfaceVariant),
                 contentAlignment = Alignment.Center
@@ -71,9 +70,8 @@ actual fun ColorPlateDisplay(
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp)) // Уменьшили отступ
+            Spacer(modifier = Modifier.height(16.dp))
 
-            // 4 кнопки ответов в одну линию
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)
@@ -90,9 +88,9 @@ actual fun ColorPlateDisplay(
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp)) // Уменьшили отступ
+            Spacer(modifier = Modifier.height(12.dp))
 
-            // Кнопка "Дальше" всегда на экране
+
             Button(
                 onClick = onNextPlate,
                 modifier = Modifier.fillMaxWidth(),
@@ -124,7 +122,6 @@ fun AnswerButton(
     modifier: Modifier = Modifier
 ) {
     val (backgroundColor, textColor, borderColor) = when {
-        // До выбора ответа
         !answerChecked -> when {
             isSelected -> Triple(
                 MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
@@ -138,7 +135,6 @@ fun AnswerButton(
             )
         }
 
-        // После выбора ответа
         else -> when {
             // Правильный ответ (зеленый)
             isCorrect -> Triple(

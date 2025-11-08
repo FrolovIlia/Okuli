@@ -13,14 +13,19 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -30,10 +35,8 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import androidx.compose.ui.platform.ClipboardManager
-import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.text.AnnotatedString
 import com.pixelrabbit.oculi.AppInfo
+import com.pixelrabbit.oculi.utils.ShareManager
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
@@ -48,14 +51,33 @@ object AboutScreen : Screen {
 @Composable
 fun AboutContent() {
     val navigator = LocalNavigator.currentOrThrow
-    val clipboardManager: ClipboardManager = LocalClipboardManager.current
+    val shareManager = getShareManager()
+
+    val shareText = remember {
+        "Попробуйте Oculi - приложение для тренировки зрения и снятия цифрового напряжения глаз! " +
+                "Скачайте в Google Play: https://play.google.com/store/apps/details?id=com.pixelrabbit.oculi&hl=ru"
+    }
 
     Scaffold(
-//        topBar = {
-//            TopAppBar(
-//                title = { Text("О приложении") }
-//            )
-//        }
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(
+                        "О приложении",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = { navigator.pop() }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Назад"
+                        )
+                    }
+                }
+            )
+        }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -162,7 +184,7 @@ fun AboutContent() {
                     )
 
                     Text(
-                        text = "support@pixelrabbit.com",
+                        text = "pixel.rabbit.soft@gmail.com",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.padding(top = 4.dp)
@@ -177,8 +199,7 @@ fun AboutContent() {
             ) {
                 Button(
                     onClick = {
-                        // Открыть политику конфиденциальности
-                        // В реальном приложении здесь будет навигация на соответствующий экран
+                        navigator.push(PrivacyPolicyScreen)
                     },
                     modifier = Modifier.fillMaxWidth(),
                     shape = MaterialTheme.shapes.medium
@@ -188,7 +209,7 @@ fun AboutContent() {
 
                 Button(
                     onClick = {
-                        // Открыть условия использования
+                        navigator.push(TermsOfUseScreen)
                     },
                     modifier = Modifier.fillMaxWidth(),
                     shape = MaterialTheme.shapes.medium
@@ -198,10 +219,7 @@ fun AboutContent() {
 
                 Button(
                     onClick = {
-                        // Поделиться приложением
-                        val shareText = "Попробуйте Oculi - приложение для тренировки зрения и снятия цифрового напряжения глаз!"
-                        clipboardManager.setText(AnnotatedString(shareText))
-                        // В реальном приложении здесь будет системный шеринг
+                        shareManager.shareText(shareText)
                     },
                     modifier = Modifier.fillMaxWidth(),
                     shape = MaterialTheme.shapes.medium
@@ -210,17 +228,10 @@ fun AboutContent() {
                 }
             }
 
-            Button(
-                onClick = { navigator.pop() },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                shape = MaterialTheme.shapes.medium
-            ) {
-                Text("Назад")
-            }
-
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
+
+@Composable
+expect fun getShareManager(): ShareManager
