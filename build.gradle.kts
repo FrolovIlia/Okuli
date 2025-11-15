@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.androidApplication) apply false
     alias(libs.plugins.jetbrainsCompose) apply false
     alias(libs.plugins.kotlinSerialization) apply false
+    id("io.realm.kotlin") version "3.0.0" apply false
 }
 
 allprojects {

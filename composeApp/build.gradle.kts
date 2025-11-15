@@ -55,6 +55,8 @@ kotlin {
 
                 implementation(libs.moko.resources)
                 implementation(libs.moko.resources.compose)
+
+                implementation(libs.library.base)
             }
         }
 
