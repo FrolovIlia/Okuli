@@ -28,6 +28,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,7 +39,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.pixelrabbit.oculi.di.ServiceLocator
 import com.pixelrabbit.oculi.domain.models.Achievement
-
+import kotlinx.coroutines.launch
 
 object AchievementsScreen : Screen {
     @Composable
@@ -51,22 +52,40 @@ object AchievementsScreen : Screen {
 @Composable
 fun AchievementsContent() {
     val navigator = LocalNavigator.currentOrThrow
+    val coroutineScope = rememberCoroutineScope()
 
     var achievements by remember {
         mutableStateOf(emptyList<Achievement>())
     }
 
+    var isLoading by remember { mutableStateOf(true) }
+
     // Используем Flow для реального времени обновления достижений
     val achievementsFlow = ServiceLocator.getAchievementsUseCase.getAchievementsFlow()
 
     LaunchedEffect(Unit) {
+        println("🎯 ACHIEVEMENTS SCREEN: Initializing...")
+
         // Инициализируем начальные данные
         achievements = ServiceLocator.getAchievementsUseCase()
+        isLoading = false
 
-        // Подписываемся на обновления
+        println("🎯 ACHIEVEMENTS SCREEN: Initial data loaded - ${achievements.size} achievements")
+
+        // Подписываемся на обновления через Flow
         achievementsFlow.collect { newAchievements ->
+            val unlockedCount = newAchievements.count { it.unlockedAt != null }
+            println("🎯 ACHIEVEMENTS SCREEN: Flow update - ${newAchievements.size} achievements, $unlockedCount unlocked")
             achievements = newAchievements
         }
+    }
+
+    // 🔥 ДОБАВЛЕНО: При открытии экрана проверяем актуальность ачивок
+    LaunchedEffect(Unit) {
+        // Даем время на загрузку初始数据，然后检查成就
+        kotlinx.coroutines.delay(500)
+        println("🎯 ACHIEVEMENTS SCREEN: Checking for new achievements...")
+        ServiceLocator.achievementRepository().checkAndUnlockAchievements()
     }
 
     val unlockedCount = achievements.count { it.unlockedAt != null }
@@ -84,70 +103,124 @@ fun AchievementsContent() {
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            // Статистика достижений
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
+            if (isLoading) {
+                // Показываем индикатор загрузки
                 Column(
-                    modifier = Modifier.padding(20.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    Text(
-                        text = "🏆 Ваши достижения",
-                        style = MaterialTheme.typography.headlineSmall,
-                        fontWeight = FontWeight.Bold
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceEvenly,
-                        modifier = Modifier.fillMaxWidth()
+                    Text("Загрузка достижений...")
+                }
+            } else {
+                // Статистика достижений
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(20.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        AchievementStat(
-                            value = "$unlockedCount/$totalCount",
-                            label = "Разблокировано"
+                        Text(
+                            text = "🏆 Ваши достижения",
+                            style = MaterialTheme.typography.headlineSmall,
+                            fontWeight = FontWeight.Bold
                         )
 
-                        AchievementStat(
-                            value = "${(unlockedCount.toFloat() / totalCount * 100).toInt()}%",
-                            label = "Прогресс"
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            AchievementStat(
+                                value = "$unlockedCount/$totalCount",
+                                label = "Разблокировано"
+                            )
+
+                            AchievementStat(
+                                value = "${(unlockedCount.toFloat() / totalCount.coerceAtLeast(1) * 100).toInt()}%",
+                                label = "Прогресс"
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        LinearProgressIndicator(
+                            progress = { unlockedCount.toFloat() / totalCount.coerceAtLeast(1) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(8.dp)
                         )
+
+                        // 🔥 ДОБАВЛЕНО: Кнопка принудительного обновления
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Button(
+                            onClick = {
+                                println("🎯 ACHIEVEMENTS SCREEN: Manual refresh triggered")
+                                coroutineScope.launch {
+                                    ServiceLocator.achievementRepository().checkAndUnlockAchievements()
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth(0.8f)
+                        ) {
+                            Text("Обновить достижения")
+                        }
                     }
+                }
 
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    LinearProgressIndicator(
-                        progress = unlockedCount.toFloat() / totalCount.coerceAtLeast(1),
+                // Список достижений
+                if (achievements.isEmpty()) {
+                    // Показываем сообщение если ачивок нет
+                    Column(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .height(8.dp),
-                        color = MaterialTheme.colorScheme.primary
-                    )
+                            .fillMaxSize()
+                            .padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = "Достижения не найдены",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Button(
+                            onClick = {
+                                println("🎯 ACHIEVEMENTS SCREEN: Retrying achievements load")
+                                coroutineScope.launch {
+                                    ServiceLocator.achievementRepository().checkAndUnlockAchievements()
+                                }
+                            }
+                        ) {
+                            Text("Попробовать снова")
+                        }
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(horizontal = 16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(achievements) { achievement ->
+                            AchievementItem(achievement = achievement)
+                        }
+                    }
                 }
-            }
 
-            // Список достижений
-            LazyColumn(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                items(achievements) { achievement ->
-                    AchievementItem(achievement = achievement)
+                Button(
+                    onClick = { navigator.pop() },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Text("Назад")
                 }
-            }
-
-            Button(
-                onClick = { navigator.pop() },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Text("Назад")
             }
         }
     }
@@ -213,7 +286,9 @@ fun AchievementItem(achievement: Achievement) {
                     Text(
                         text = achievement.title,
                         style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        color = if (isUnlocked) MaterialTheme.colorScheme.primary
+                        else MaterialTheme.colorScheme.onSurface
                     )
 
                     Text(
@@ -227,7 +302,7 @@ fun AchievementItem(achievement: Achievement) {
                     // Прогресс
                     if (!isUnlocked) {
                         LinearProgressIndicator(
-                            progress = achievement.progress,
+                            progress = { achievement.progress },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(6.dp)
@@ -240,13 +315,21 @@ fun AchievementItem(achievement: Achievement) {
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
+                    } else {
+                        Text(
+                            text = "Выполнено",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.primary
+                        )
                     }
                 }
             }
 
             // Статус достижения
             Text(
-                text = if (isUnlocked) "✅ Достижение получено!" else "🔒 Заблокировано",
+                text = if (isUnlocked) {
+                    "🎉 Получено: только что"
+                } else "🔒 Заблокировано",
                 style = MaterialTheme.typography.labelMedium,
                 color = if (isUnlocked) MaterialTheme.colorScheme.primary
                 else MaterialTheme.colorScheme.onSurfaceVariant,
