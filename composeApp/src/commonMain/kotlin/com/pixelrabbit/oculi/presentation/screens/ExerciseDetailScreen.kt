@@ -198,7 +198,13 @@ fun ExerciseDetailContent(
                 } else if (isRunning && timeLeft == 0) {
                     isRunning = false
                     isCompleted = true
-                    ServiceLocator.startExerciseUseCase(exercise.id, exercise.duration)
+                    ServiceLocator.startExerciseUseCase(
+                        exerciseId = exercise.id,
+                        exerciseName = exercise.title,
+                        actualDuration = exercise.duration,
+                        difficulty = exercise.difficulty.name,
+                        successRate = 100f
+                    )
                 }
             }
 

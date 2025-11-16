@@ -45,10 +45,10 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.pixelrabbit.oculi.di.ServiceLocator
+import com.pixelrabbit.oculi.domain.models.UserProgress
 import com.pixelrabbit.oculi.utils.getGreeting
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
-
 
 object HomeScreen : Screen {
     @Composable
@@ -56,7 +56,6 @@ object HomeScreen : Screen {
         HomeContent()
     }
 }
-
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
@@ -72,19 +71,21 @@ fun HomeContent() {
         WindowInsets.navigationBars.getBottom(this).toDp()
     }
 
-    var stats by remember {
-        mutableStateOf(
-            com.pixelrabbit.oculi.domain.use_cases.StatsResult(
-                totalExercises = 0,
-                totalTime = 0,
-                currentStreak = 0,
-                todayExercises = 0
-            )
-        )
+    var userProgress by remember {
+        mutableStateOf(UserProgress())
     }
 
+    // Используем Flow для реального времени обновления статистики
+    val statsFlow = ServiceLocator.getStatsUseCase.getStatsFlow()
+
     LaunchedEffect(Unit) {
-        stats = ServiceLocator.getStatsUseCase()
+        // Инициализируем начальные данные
+        userProgress = ServiceLocator.getStatsUseCase()
+
+        // Подписываемся на обновления
+        statsFlow.collect { progress ->
+            userProgress = progress
+        }
     }
 
     Column(
@@ -135,7 +136,7 @@ fun HomeContent() {
         }
 
         // Статистика
-        StatsSection(stats = stats)
+        StatsSection(userProgress = userProgress)
 
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -171,7 +172,7 @@ fun HomeContent() {
 }
 
 @Composable
-fun StatsSection(stats: com.pixelrabbit.oculi.domain.use_cases.StatsResult) {
+fun StatsSection(userProgress: UserProgress) {
     Card(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -192,17 +193,17 @@ fun StatsSection(stats: com.pixelrabbit.oculi.domain.use_cases.StatsResult) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 StatItem(
-                    value = stats.totalExercises.toString(),
+                    value = userProgress.totalExercises.toString(),
                     label = "Упражнений"
                 )
 
                 StatItem(
-                    value = "${stats.totalTime} мин",
+                    value = "${userProgress.totalTime} мин",
                     label = "Время"
                 )
 
                 StatItem(
-                    value = "${stats.currentStreak} дн",
+                    value = "${userProgress.currentStreak} дн",
                     label = "Серия"
                 )
             }
@@ -215,7 +216,7 @@ fun StatsSection(stats: com.pixelrabbit.oculi.domain.use_cases.StatsResult) {
                 horizontalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "Сегодня: ${stats.todayExercises} упражнений",
+                    text = "Сегодня: ${userProgress.todayExercises} упражнений",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

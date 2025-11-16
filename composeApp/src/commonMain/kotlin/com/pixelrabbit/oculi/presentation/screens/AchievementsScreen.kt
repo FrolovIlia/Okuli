@@ -12,8 +12,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.LockOpen
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,6 +37,8 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.pixelrabbit.oculi.di.ServiceLocator
+import com.pixelrabbit.oculi.domain.models.Achievement
+
 
 object AchievementsScreen : Screen {
     @Composable
@@ -50,19 +52,32 @@ object AchievementsScreen : Screen {
 fun AchievementsContent() {
     val navigator = LocalNavigator.currentOrThrow
 
-    var achievements by remember { mutableStateOf(emptyList<com.pixelrabbit.oculi.domain.models.Achievement>()) }
-
-    LaunchedEffect(Unit) {
-        val allAchievements = ServiceLocator.getAchievementsUseCase()
-        achievements = allAchievements
+    var achievements by remember {
+        mutableStateOf(emptyList<Achievement>())
     }
 
+    // Используем Flow для реального времени обновления достижений
+    val achievementsFlow = ServiceLocator.getAchievementsUseCase.getAchievementsFlow()
+
+    LaunchedEffect(Unit) {
+        // Инициализируем начальные данные
+        achievements = ServiceLocator.getAchievementsUseCase()
+
+        // Подписываемся на обновления
+        achievementsFlow.collect { newAchievements ->
+            achievements = newAchievements
+        }
+    }
+
+    val unlockedCount = achievements.count { it.unlockedAt != null }
+    val totalCount = achievements.size
+
     Scaffold(
-//        topBar = {
-//            TopAppBar(
-//                title = { Text("Достижения") }
-//            )
-//        }
+        topBar = {
+            TopAppBar(
+                title = { Text("Достижения") }
+            )
+        }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -92,15 +107,25 @@ fun AchievementsContent() {
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         AchievementStat(
-                            value = achievements.size.toString(),
-                            label = "Всего достижений"
+                            value = "$unlockedCount/$totalCount",
+                            label = "Разблокировано"
                         )
 
                         AchievementStat(
-                            value = "6", // Фиксированное количество для демонстрации
-                            label = "Доступно"
+                            value = "${(unlockedCount.toFloat() / totalCount * 100).toInt()}%",
+                            label = "Прогресс"
                         )
                     }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    LinearProgressIndicator(
+                        progress = unlockedCount.toFloat() / totalCount.coerceAtLeast(1),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(8.dp),
+                        color = MaterialTheme.colorScheme.primary
+                    )
                 }
             }
 
@@ -148,64 +173,85 @@ fun AchievementStat(value: String, label: String) {
 }
 
 @Composable
-fun AchievementItem(achievement: com.pixelrabbit.oculi.domain.models.Achievement) {
-    // Временно считаем все достижения разблокированными для демонстрации
+fun AchievementItem(achievement: Achievement) {
     val isUnlocked = achievement.unlockedAt != null
 
     Card(
         modifier = Modifier.fillMaxWidth()
     ) {
-        Row(
-            modifier = Modifier.padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+        Column(
+            modifier = Modifier.padding(16.dp)
         ) {
-            // Иконка достижения
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(end = 16.dp)
+            Row(
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = achievement.icon,
-                    style = MaterialTheme.typography.headlineMedium
-                )
+                // Иконка достижения
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.padding(end = 16.dp)
+                ) {
+                    Text(
+                        text = achievement.icon,
+                        style = MaterialTheme.typography.headlineMedium
+                    )
 
-                Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(4.dp))
 
-                Icon(
-                    imageVector = if (isUnlocked) Icons.Default.LockOpen else Icons.Default.Lock,
-                    contentDescription = if (isUnlocked) "Разблокировано" else "Заблокировано",
-                    modifier = Modifier.size(16.dp),
-                    tint = if (isUnlocked) MaterialTheme.colorScheme.primary
-                    else MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                    Icon(
+                        imageVector = if (isUnlocked) Icons.Default.Done else Icons.Default.Lock,
+                        contentDescription = if (isUnlocked) "Разблокировано" else "Заблокировано",
+                        modifier = Modifier.size(16.dp),
+                        tint = if (isUnlocked) MaterialTheme.colorScheme.primary
+                        else MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+
+                // Информация о достижении
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(
+                        text = achievement.title,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Text(
+                        text = achievement.description,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    // Прогресс
+                    if (!isUnlocked) {
+                        LinearProgressIndicator(
+                            progress = achievement.progress,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(6.dp)
+                        )
+
+                        Spacer(modifier = Modifier.height(4.dp))
+
+                        Text(
+                            text = "${achievement.currentValue}/${achievement.targetValue}",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
             }
 
-            // Информация о достижении
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
-                Text(
-                    text = achievement.title,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-
-                Text(
-                    text = achievement.description,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                // Статус достижения
-                Text(
-                    text = if (isUnlocked) "✅ Достижение получено!" else "🔒 Заблокировано",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = if (isUnlocked) MaterialTheme.colorScheme.primary
-                    else MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
+            // Статус достижения
+            Text(
+                text = if (isUnlocked) "✅ Достижение получено!" else "🔒 Заблокировано",
+                style = MaterialTheme.typography.labelMedium,
+                color = if (isUnlocked) MaterialTheme.colorScheme.primary
+                else MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(top = 8.dp)
+            )
         }
     }
 }

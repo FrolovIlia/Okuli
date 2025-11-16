@@ -1,8 +1,17 @@
 package com.pixelrabbit.oculi.domain.repositories
 
+import com.pixelrabbit.oculi.domain.models.UserProgress
+import kotlinx.coroutines.flow.Flow
+
 interface StatsRepository {
-    suspend fun getTotalExercises(): Int
-    suspend fun getTotalTime(): Int // в минутах
-    suspend fun getCurrentStreak(): Int // дней подряд
-    suspend fun getTodayExercises(): Int
+    suspend fun getUserProgress(): UserProgress
+    fun getUserProgressFlow(): Flow<UserProgress>
+    suspend fun addExerciseCompletion(
+        exerciseId: String,
+        exerciseName: String,
+        duration: Int,
+        difficulty: String,
+        successRate: Float
+    )
+    suspend fun resetDailyStats()
 }

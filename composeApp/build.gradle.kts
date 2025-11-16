@@ -1,33 +1,19 @@
-import com.codingfeline.buildkonfig.compiler.FieldSpec
-import com.android.build.gradle.internal.dsl.BaseAppModuleExtension
-
 plugins {
-    alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidApplication)
-    alias(libs.plugins.jetbrainsCompose)
-    alias(libs.plugins.kotlinSerialization)
-    id("com.codingfeline.buildkonfig") version "0.15.1"
+    kotlin("multiplatform")
+    id("com.android.application")
+    id("org.jetbrains.compose")
+    id("org.jetbrains.kotlin.plugin.serialization")
+    id("io.realm.kotlin") version "1.15.0"
 }
 
 kotlin {
     androidTarget {
         compilations.all {
-            kotlinOptions.jvmTarget = "11"
+            kotlinOptions {
+                jvmTarget = "1.8" // Устанавливаем Java 8 для Kotlin
+            }
         }
     }
-
-    listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64()
-    ).forEach {
-        it.binaries.framework {
-            baseName = "ComposeApp"
-            isStatic = true
-        }
-    }
-
-    applyDefaultHierarchyTemplate()
 
     sourceSets {
         val commonMain by getting {
@@ -37,46 +23,30 @@ kotlin {
                 implementation(compose.material3)
                 implementation(compose.ui)
                 implementation(compose.components.resources)
-                implementation(compose.materialIconsExtended)
+                implementation(compose.components.uiToolingPreview)
 
-                implementation(libs.ktor.client.core)
-                implementation(libs.ktor.client.content.negotiation)
-                implementation(libs.ktor.client.serialization)
-                implementation(libs.ktor.client.logging)
+                // Realm
+                implementation("io.realm.kotlin:library-base:1.15.0")
 
-                implementation(libs.kotlinx.serialization.json)
-                implementation(libs.kotlinx.coroutines.core)
-                implementation(libs.kotlinx.datetime)
+                // Voyager
+                implementation("cafe.adriel.voyager:voyager-navigator:1.0.0")
+                implementation("cafe.adriel.voyager:voyager-koin:1.0.0")
+                implementation("cafe.adriel.voyager:voyager-transitions:1.0.0")
 
-                implementation(libs.koin.core)
-                implementation(libs.voyager.navigator)
-                implementation(libs.voyager.koin)
-                implementation(libs.voyager.transitions)
+                // Kotlinx
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 
-                implementation(libs.moko.resources)
-                implementation(libs.moko.resources.compose)
-
-                implementation(libs.library.base)
+                // Koin
+                implementation("io.insert-koin:koin-core:3.5.3")
             }
         }
 
         val androidMain by getting {
             dependencies {
-                implementation(libs.compose.ui.tooling)
-                implementation(libs.android.activity.compose)
-                implementation(libs.ktor.client.android)
-            }
-        }
-
-        val iosMain by getting {
-            dependencies {
-                implementation(libs.ktor.client.darwin)
-            }
-        }
-
-        val commonTest by getting {
-            dependencies {
-                implementation(kotlin("test"))
+                implementation("androidx.activity:activity-compose:1.8.2")
+                implementation("androidx.compose.ui:ui-tooling:1.6.0")
             }
         }
     }
@@ -86,17 +56,21 @@ android {
     namespace = "com.pixelrabbit.oculi"
     compileSdk = 34
 
+    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
+    sourceSets["main"].res.srcDirs("src/androidMain/res")
+    sourceSets["main"].resources.srcDirs("src/commonMain/resources")
+
     defaultConfig {
         applicationId = "com.pixelrabbit.oculi"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
-        versionName = "1.0.0"
+        versionName = "1.0"
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
 
     buildFeatures {
@@ -104,25 +78,12 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.10"
+        kotlinCompilerExtensionVersion = "1.5.11"
     }
 
     packaging {
-        resources.excludes += "/META-INF/{AL2.0,LGPL2.1}"
-    }
-}
-
-// --- 🔧 BuildKonfig для общей версии приложения ---
-buildkonfig {
-    packageName = "com.pixelrabbit.oculi"
-
-    val androidExt = extensions.getByType(BaseAppModuleExtension::class)
-
-    defaultConfigs {
-        buildConfigField(
-            FieldSpec.Type.STRING,
-            "VERSION_NAME",
-            androidExt.defaultConfig.versionName
-        )
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
     }
 }

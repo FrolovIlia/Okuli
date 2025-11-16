@@ -5,7 +5,7 @@ jetbrainsCompose = "1.6.0"
 kotlinxDatetimeVersion = "0.7.1"
 ktor = "2.3.8"
 koin = "3.5.3"
-libraryBase = "3.0.0"
+realm = "1.15.0"
 mokoResources = "0.25.1"
 kotlinxSerialization = "1.6.3"
 kotlinxCoroutines = "1.7.3"
@@ -15,6 +15,9 @@ voyager = "1.0.0"
 foundationLayout = "1.9.4"
 
 [libraries]
+# Realm
+realm-library-base = { module = "io.realm.kotlin:library-base", version.ref = "realm" }
+
 # Ktor Client
 kotlinx-datetime-v071 = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetimeVersion" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
@@ -31,7 +34,6 @@ android-activity-compose = { module = "androidx.activity:activity-compose", vers
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 
 # Moko Resources
-library-base = { module = "io.realm.kotlin:library-base", version.ref = "libraryBase" }
 moko-resources = { module = "dev.icerock.moko:resources", version.ref = "mokoResources" }
 moko-resources-compose = { module = "dev.icerock.moko:resources-compose", version.ref = "mokoResources" }
 
@@ -60,3 +62,4 @@ androidApplication = { id = "com.android.application", version.ref = "agp" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "jetbrainsCompose" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+realmKotlin = { id = "io.realm.kotlin", version.ref = "realm" }

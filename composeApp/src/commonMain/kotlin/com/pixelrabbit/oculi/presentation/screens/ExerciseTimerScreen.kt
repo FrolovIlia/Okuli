@@ -75,7 +75,13 @@ fun ExerciseTimerContent(exerciseId: String) {
             isCompleted = true
             // Сохраняем результат
             exercise?.let {
-                ServiceLocator.startExerciseUseCase(it.id, totalTime)
+                ServiceLocator.startExerciseUseCase(
+                    exerciseId = it.id,
+                    exerciseName = it.title,
+                    actualDuration = totalTime,
+                    difficulty = it.difficulty.name,
+                    successRate = 100f
+                )
             }
         }
     }

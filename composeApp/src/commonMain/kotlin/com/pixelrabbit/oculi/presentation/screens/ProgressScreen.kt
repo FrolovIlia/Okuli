@@ -31,6 +31,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.pixelrabbit.oculi.di.ServiceLocator
+import com.pixelrabbit.oculi.domain.models.UserProgress
 
 object ProgressScreen : Screen {
     @Composable
@@ -44,27 +45,29 @@ object ProgressScreen : Screen {
 fun ProgressContent() {
     val navigator = LocalNavigator.currentOrThrow
 
-    var stats by remember {
-        mutableStateOf(
-            com.pixelrabbit.oculi.domain.use_cases.StatsResult(
-                totalExercises = 0,
-                totalTime = 0,
-                currentStreak = 0,
-                todayExercises = 0
-            )
-        )
+    var userProgress by remember {
+        mutableStateOf(UserProgress())
     }
 
+    // Используем Flow для реального времени обновления статистики
+    val statsFlow = ServiceLocator.getStatsUseCase.getStatsFlow()
+
     LaunchedEffect(Unit) {
-        stats = ServiceLocator.getStatsUseCase()
+        // Инициализируем начальные данные
+        userProgress = ServiceLocator.getStatsUseCase()
+
+        // Подписываемся на обновления
+        statsFlow.collect { progress ->
+            userProgress = progress
+        }
     }
 
     Scaffold(
-//        topBar = {
-//            TopAppBar(
-//                title = { Text("Мой прогресс") }
-//            )
-//        }
+        topBar = {
+            TopAppBar(
+                title = { Text("Мой прогресс") }
+            )
+        }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -91,63 +94,63 @@ fun ProgressContent() {
 
                     StatRow(
                         label = "Всего упражнений",
-                        value = stats.totalExercises.toString(),
+                        value = userProgress.totalExercises.toString(),
                         emoji = "💪"
                     )
 
                     StatRow(
                         label = "Общее время",
-                        value = "${stats.totalTime} минут",
+                        value = "${userProgress.totalTime} минут",
                         emoji = "⏱️"
                     )
 
                     StatRow(
                         label = "Текущая серия",
-                        value = "${stats.currentStreak} дней",
+                        value = "${userProgress.currentStreak} дней",
                         emoji = "🔥"
                     )
 
                     StatRow(
                         label = "Сегодня",
-                        value = "${stats.todayExercises} упражнений",
+                        value = "${userProgress.todayExercises} упражнений",
                         emoji = "📅"
                     )
                 }
             }
 
             // Достижения
-//            Card(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(16.dp)
-//            ) {
-//                Column(
-//                    modifier = Modifier.padding(16.dp)
-//                ) {
-//                    Text(
-//                        text = "Достижения",
-//                        style = MaterialTheme.typography.headlineSmall,
-//                        fontWeight = FontWeight.Bold
-//                    )
-//
-//                    Spacer(modifier = Modifier.height(12.dp))
-//
-//                    Text(
-//                        text = "Отслеживайте свой прогресс и получайте достижения",
-//                        style = MaterialTheme.typography.bodyMedium,
-//                        color = MaterialTheme.colorScheme.onSurfaceVariant
-//                    )
-//
-//                    Spacer(modifier = Modifier.height(12.dp))
-//
-//                    Button(
-//                        onClick = { navigator.push(AchievementsScreen) },
-//                        modifier = Modifier.fillMaxWidth()
-//                    ) {
-//                        Text("Посмотреть все достижения")
-//                    }
-//                }
-//            }
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Text(
+                        text = "Достижения",
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Text(
+                        text = "Отслеживайте свой прогресс и получайте достижения",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Button(
+                        onClick = { navigator.push(AchievementsScreen) },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Посмотреть все достижения")
+                    }
+                }
+            }
 
             // Советы
             Card(
