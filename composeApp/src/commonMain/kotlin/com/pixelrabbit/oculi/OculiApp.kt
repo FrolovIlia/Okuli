@@ -1,4 +1,3 @@
-// OculiApp.kt
 package com.pixelrabbit.oculi
 
 import androidx.compose.foundation.layout.Box
@@ -29,6 +28,7 @@ fun OculiApp() {
     val appSettings = remember { AppSettings() }
 
     LaunchedEffect(Unit) {
+
         // Загружаем настройки темы
         val settings = ServiceLocator.getSettingsUseCase()
         darkTheme = settings.darkThemeEnabled
@@ -51,6 +51,7 @@ fun OculiApp() {
         }
     }
 }
+
 
 @Composable
 fun LoadingScreen() {
