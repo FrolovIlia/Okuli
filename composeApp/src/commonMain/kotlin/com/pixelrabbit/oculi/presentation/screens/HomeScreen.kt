@@ -47,8 +47,10 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.pixelrabbit.oculi.di.ServiceLocator
 import com.pixelrabbit.oculi.domain.models.UserProgress
 import com.pixelrabbit.oculi.utils.getGreeting
+import com.pixelrabbit.oculi.utils.formatTotalTime
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+
 
 object HomeScreen : Screen {
     @Composable
@@ -197,8 +199,9 @@ fun StatsSection(userProgress: UserProgress) {
                     label = "Упражнений"
                 )
 
+                // ✅ Используем функцию, предполагая, что она импортирована из utils
                 StatItem(
-                    value = "${userProgress.totalTime} мин",
+                    value = formatTotalTime(userProgress.totalTime),
                     label = "Время"
                 )
 
@@ -251,8 +254,8 @@ fun FeatureButtonsGrid(navigator: Navigator, navigationBarBottom: androidx.compo
         "Проверка зрения" to { navigator.push(VisionTestScreen) },
         "Мой прогресс" to { navigator.push(ProgressScreen) },
         "Достижения" to { navigator.push(AchievementsScreen) },
-        "Настройки" to { navigator.push(SettingsScreen) },
-        "О приложении" to { navigator.push(AboutScreen) }
+        "Настройки" to { /* TODO: navigator.push(SettingsScreen) */ },
+        "О приложении" to { /* TODO: navigator.push(AboutScreen) */ }
     )
 
     LazyVerticalGrid(
