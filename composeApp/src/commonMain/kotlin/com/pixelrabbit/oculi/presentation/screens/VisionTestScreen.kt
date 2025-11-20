@@ -103,40 +103,40 @@ fun VisionTestContent() {
                 )
             }
 
-            // История проверок
-            item {
-                Card(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        Text(
-                            text = "📊 История проверок",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
-                        )
-
-                        Spacer(modifier = Modifier.height(12.dp))
-
-                        Text(
-                            text = "Здесь будет отображаться история ваших проверок зрения",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        Button(
-                            onClick = { /* TODO: Показать историю */ },
-                            modifier = Modifier.fillMaxWidth(),
-                            enabled = false
-                        ) {
-                            Text("Показать историю")
-                        }
-                    }
-                }
-            }
+//            // История проверок
+//            item {
+//                Card(
+//                    modifier = Modifier.fillMaxWidth()
+//                ) {
+//                    Column(
+//                        modifier = Modifier.padding(16.dp)
+//                    ) {
+//                        Text(
+//                            text = "📊 История проверок",
+//                            style = MaterialTheme.typography.titleMedium,
+//                            fontWeight = FontWeight.Bold
+//                        )
+//
+//                        Spacer(modifier = Modifier.height(12.dp))
+//
+//                        Text(
+//                            text = "Здесь будет отображаться история ваших проверок зрения",
+//                            style = MaterialTheme.typography.bodyMedium,
+//                            color = MaterialTheme.colorScheme.onSurfaceVariant
+//                        )
+//
+//                        Spacer(modifier = Modifier.height(8.dp))
+//
+//                        Button(
+//                            onClick = { /* TODO: Показать историю */ },
+//                            modifier = Modifier.fillMaxWidth(),
+//                            enabled = false
+//                        ) {
+//                            Text("Показать историю")
+//                        }
+//                    }
+//                }
+//            }
 
             // Кнопка Назад
             item {
