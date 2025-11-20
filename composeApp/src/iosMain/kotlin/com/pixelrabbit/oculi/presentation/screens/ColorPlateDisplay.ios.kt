@@ -2,18 +2,8 @@ package com.pixelrabbit.oculi.presentation.screens
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -74,7 +64,7 @@ actual fun ColorPlateDisplay(
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 plate.options.forEach { option ->
                     AnswerButton(
@@ -89,7 +79,6 @@ actual fun ColorPlateDisplay(
             }
 
             Spacer(modifier = Modifier.height(12.dp))
-
 
             Button(
                 onClick = onNextPlate,
@@ -134,21 +123,17 @@ fun AnswerButton(
                 Color.Transparent
             )
         }
-
         else -> when {
-            // Правильный ответ (зеленый)
             isCorrect -> Triple(
                 MaterialTheme.colorScheme.primaryContainer,
                 MaterialTheme.colorScheme.onPrimaryContainer,
                 MaterialTheme.colorScheme.primary
             )
-            // Неправильный выбранный ответ (красный)
             isSelected && !isCorrect -> Triple(
                 MaterialTheme.colorScheme.errorContainer,
                 MaterialTheme.colorScheme.onErrorContainer,
                 MaterialTheme.colorScheme.error
             )
-            // Остальные ответы (серые)
             else -> Triple(
                 MaterialTheme.colorScheme.surfaceVariant,
                 MaterialTheme.colorScheme.onSurfaceVariant,

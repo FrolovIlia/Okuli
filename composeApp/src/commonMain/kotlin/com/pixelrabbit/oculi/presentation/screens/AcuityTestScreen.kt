@@ -151,10 +151,11 @@ fun AcuityTestContent() {
         testCompleted = true
     }
 
-    Scaffold {
+    Scaffold { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(innerPadding)
                 .systemBarsPadding() // ЗАЩИЩАЕМ от системных баров
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -228,8 +229,10 @@ fun AcuityTestContent() {
                         )
 
                         // Показываем прогресс для каждого глаза
-                        val leftProgress = leftEyeResult ?: if (currentEye == Eye.LEFT) currentLine else 0
-                        val rightProgress = rightEyeResult ?: if (currentEye == Eye.RIGHT) currentLine else 0
+                        val leftProgress =
+                            leftEyeResult ?: if (currentEye == Eye.LEFT) currentLine else 0
+                        val rightProgress =
+                            rightEyeResult ?: if (currentEye == Eye.RIGHT) currentLine else 0
 
                         Text(
                             text = "Левый: $leftProgress/${testLines.size} | Правый: $rightProgress/${testLines.size}",
@@ -415,16 +418,6 @@ fun AcuityTestContent() {
                                 linesPassed = rightEyeResult ?: 0,
                                 totalLines = testLines.size
                             )
-                        }
-
-                        Spacer(modifier = Modifier.height(24.dp))
-
-                        Button(
-                            onClick = { navigator.pop() },
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = MaterialTheme.shapes.large
-                        ) {
-                            Text("Сохранить результат")
                         }
                     }
                 }

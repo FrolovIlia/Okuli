@@ -33,6 +33,8 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 
 object ColorTestScreen : Screen {
+    private fun readResolve(): Any = ColorTestScreen
+
     @Composable
     override fun Content() {
         ColorTestContent()
@@ -152,10 +154,11 @@ fun ColorTestContent() {
         testCompleted = true
     }
 
-    Scaffold {
+    Scaffold { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(innerPadding)
                 .systemBarsPadding()
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -286,7 +289,7 @@ fun ColorTestContent() {
                     plate = testPlates[currentPlate],
                     selectedAnswer = selectedAnswer,
                     answerChecked = answerChecked,
-                    onAnswerSelect = { answer -> handleAnswerSelect(answer) },
+                    onAnswerSelect = { answer: String -> handleAnswerSelect(answer) },
                     onNextPlate = { moveToNextPlate() },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -360,14 +363,6 @@ fun ColorTestContent() {
                                     textAlign = TextAlign.Center
                                 )
                             }
-                        }
-                        Spacer(modifier = Modifier.height(24.dp))
-                        Button(
-                            onClick = { navigator.pop() },
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = MaterialTheme.shapes.large
-                        ) {
-                            Text("Сохранить результат")
                         }
                     }
                 }
@@ -451,22 +446,7 @@ fun calculateColorVisionScore(correctAnswers: Int, totalPlates: Int): String {
     }
 }
 
-data class ColorPlate(
-    val number: Int,
-    val correctAnswer: String,
-    val description: String,
-    val options: List<String>
-)
 
-@Composable
-expect fun ColorPlateDisplay(
-    plate: ColorPlate,
-    selectedAnswer: String?,
-    answerChecked: Boolean,
-    onAnswerSelect: (String) -> Unit,
-    onNextPlate: () -> Unit,
-    modifier: Modifier = Modifier
-)
 
 enum class Eye {
     LEFT, RIGHT

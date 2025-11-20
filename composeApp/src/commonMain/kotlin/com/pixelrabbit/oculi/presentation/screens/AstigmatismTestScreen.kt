@@ -61,10 +61,11 @@ fun AstigmatismTestContent() {
         "Изучите концентрические круги. Все круги должны быть ровными, а линии четкими без размытия в определенных направлениях."
     )
 
-    Scaffold {
+    Scaffold { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(innerPadding)
                 .systemBarsPadding()
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -319,16 +320,6 @@ fun AstigmatismTestContent() {
                             textAlign = TextAlign.Center,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
-
-                        Spacer(modifier = Modifier.height(24.dp))
-
-                        Button(
-                            onClick = { navigator.pop() },
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = MaterialTheme.shapes.large
-                        ) {
-                            Text("Сохранить результат")
-                        }
                     }
                 }
             }

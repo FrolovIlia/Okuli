@@ -10,8 +10,15 @@ kotlin {
     androidTarget {
         compilations.all {
             kotlinOptions {
-                jvmTarget = "1.8" // Устанавливаем Java 8 для Kotlin
+                jvmTarget = "1.8"
             }
+        }
+    }
+
+    // iOS target (поддержка всех симуляторов и реальных устройств)
+    ios {
+        binaries {
+            framework()
         }
     }
 
@@ -47,6 +54,13 @@ kotlin {
             dependencies {
                 implementation("androidx.activity:activity-compose:1.8.2")
                 implementation("androidx.compose.ui:ui-tooling:1.6.0")
+            }
+        }
+
+        // iOS source set для actual-функций
+        val iosMain by getting {
+            dependencies {
+                // Здесь можно подключать зависимости для iOS, если нужно
             }
         }
     }

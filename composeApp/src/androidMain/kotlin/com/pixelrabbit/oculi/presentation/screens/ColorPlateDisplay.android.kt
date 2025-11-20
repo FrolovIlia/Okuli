@@ -2,19 +2,8 @@ package com.pixelrabbit.oculi.presentation.screens
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,25 +26,23 @@ actual fun ColorPlateDisplay(
     Card(modifier = modifier) {
         Column(
             modifier = Modifier
-                .padding(16.dp) // Уменьшили отступы с 24dp до 16dp
+                .padding(16.dp)
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = "Какую цифру вы видите?",
                 style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(bottom = 12.dp), // Уменьшили отступ
+                modifier = Modifier.padding(bottom = 12.dp),
                 textAlign = TextAlign.Center
             )
 
-            // Ещё больше увеличиваем изображение пластины
             Box(
                 modifier = Modifier
-                    .height(320.dp) // Увеличили высоту до 320dp
+                    .height(320.dp)
                     .fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
-                // Используем реальные изображения
                 val imageRes = when (plate.number) {
                     1 -> R.drawable.plate_12
                     2 -> R.drawable.plate_2
@@ -69,18 +56,17 @@ actual fun ColorPlateDisplay(
                     painter = painterResource(id = imageRes),
                     contentDescription = "Цветовая тестовая пластина ${plate.number}",
                     modifier = Modifier
-                        .fillMaxWidth(0.95f) // Увеличили ширину до 95%
-                        .height(340.dp), // Увеличили высоту изображения до 300dp
+                        .fillMaxWidth(0.95f)
+                        .height(340.dp),
                     alignment = Alignment.Center
                 )
             }
 
-            Spacer(modifier = Modifier.height(16.dp)) // Уменьшили отступ
+            Spacer(modifier = Modifier.height(16.dp))
 
-            // 4 кнопки ответов в одну линию
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 plate.options.forEach { option ->
                     AnswerButton(
@@ -94,9 +80,8 @@ actual fun ColorPlateDisplay(
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp)) // Уменьшили отступ
+            Spacer(modifier = Modifier.height(12.dp))
 
-            // Кнопка "Дальше" всегда на экране
             Button(
                 onClick = onNextPlate,
                 modifier = Modifier.fillMaxWidth(),
@@ -128,7 +113,6 @@ fun AnswerButton(
     modifier: Modifier = Modifier
 ) {
     val (backgroundColor, textColor, borderColor) = when {
-        // До выбора ответа
         !answerChecked -> when {
             isSelected -> Triple(
                 MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
@@ -141,22 +125,17 @@ fun AnswerButton(
                 Color.Transparent
             )
         }
-
-        // После выбора ответа
         else -> when {
-            // Правильный ответ (зеленый)
             isCorrect -> Triple(
                 MaterialTheme.colorScheme.primaryContainer,
                 MaterialTheme.colorScheme.onPrimaryContainer,
                 MaterialTheme.colorScheme.primary
             )
-            // Неправильный выбранный ответ (красный)
             isSelected && !isCorrect -> Triple(
                 MaterialTheme.colorScheme.errorContainer,
                 MaterialTheme.colorScheme.onErrorContainer,
                 MaterialTheme.colorScheme.error
             )
-            // Остальные ответы (серые)
             else -> Triple(
                 MaterialTheme.colorScheme.surfaceVariant,
                 MaterialTheme.colorScheme.onSurfaceVariant,
