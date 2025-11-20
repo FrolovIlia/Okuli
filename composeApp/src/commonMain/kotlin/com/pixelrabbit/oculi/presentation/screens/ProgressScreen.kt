@@ -32,6 +32,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.pixelrabbit.oculi.di.ServiceLocator
 import com.pixelrabbit.oculi.domain.models.UserProgress
+import com.pixelrabbit.oculi.utils.formatTotalTime
 
 object ProgressScreen : Screen {
     @Composable
@@ -100,7 +101,7 @@ fun ProgressContent() {
 
                     StatRow(
                         label = "Общее время",
-                        value = "${userProgress.totalTime} минут",
+                        value = formatTotalTime(userProgress.totalTime),
                         emoji = "⏱️"
                     )
 

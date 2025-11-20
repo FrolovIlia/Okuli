@@ -20,8 +20,11 @@ class RealStatsRepository : StatsRepository {
     private val realm = RealmManager.getRealm()
     private val userId = "default_user"
 
+    private val zone: TimeZone
+        get() = TimeZone.currentSystemDefault()
+
     override suspend fun getUserProgress(): UserProgress {
-        // 🔥 КМР ПРАКТИКА: Ленивый сброс до 0 при ЧТЕНИИ статистики
+        // 🔥 Ленивая проверка streak при чтении
         checkAndResetStreakIfNecessary()
 
         val realmProgress = getOrCreateUserProgress()
@@ -34,9 +37,7 @@ class RealStatsRepository : StatsRepository {
     }
 
     override fun getUserProgressFlow(): Flow<UserProgress> {
-        // NOTE: Flow не может вызывать suspend функцию. Для гарантии сброса
-        // разработчик должен вызвать checkAndResetStreakIfNecessary() перед началом
-        // подписки на этот Flow в UseCase или ViewModel.
+        // Важно: ленивая проверка streak вызывается перед подпиской на Flow (в UI)
         return realm.query<RealmUserProgress>("userId == $0", userId)
             .asFlow()
             .map { results ->
@@ -91,11 +92,10 @@ class RealStatsRepository : StatsRepository {
                 })
             } else {
                 val latestProgress = findLatest(progress) ?: return@write
-
-                // 🔥 ИСПОЛЬЗУЕМ ЛОГИКУ ТРАНЗАКЦИИ
                 latestProgress.updateProgressInternal(durationInMinutes, currentTime)
             }
         }
+
         ServiceLocator.achievementRepository().checkAndUnlockAchievements()
     }
 
@@ -121,46 +121,44 @@ class RealStatsRepository : StatsRepository {
 
     private suspend fun createUserProgress(): RealmUserProgress {
         return realm.write {
+            val now = Clock.System.now().toEpochMilliseconds()
             val newProgress = RealmUserProgress().apply {
                 this.userId = this@RealStatsRepository.userId
-                this.createdAt = Clock.System.now().toEpochMilliseconds()
-                this.updatedAt = Clock.System.now().toEpochMilliseconds()
-                this.lastActivityDate = Clock.System.now().toEpochMilliseconds()
+                this.createdAt = now
+                this.updatedAt = now
+                this.lastActivityDate = now
             }
             copyToRealm(newProgress)
             newProgress
         }
     }
 
-    // 🔥 НОВЫЙ МЕТОД: Ленивый сброс серии до 0 (для чтения)
+    // 🔥 Ленивая проверка обнуления streak
     private suspend fun checkAndResetStreakIfNecessary() {
         val realmProgress = getOrCreateUserProgress()
 
-        // Сброс не нужен, если серия уже 0 или дата активности не установлена
         if (realmProgress.currentStreak == 0 || realmProgress.lastActivityDate == 0L) return
 
         val lastActivityTime = realmProgress.lastActivityDate
 
-        // 🔥 ПРАКТИКА UTC: Сравниваем даты в UTC для надежности
-        val today = Clock.System.now().toLocalDateTime(TimeZone.UTC).date
+        // Используем локальную дату
+        val today = Clock.System.now().toLocalDateTime(zone).date
         val lastActivityDate = Instant.fromEpochMilliseconds(lastActivityTime)
-            .toLocalDateTime(TimeZone.UTC).date
+            .toLocalDateTime(zone).date
 
         val yesterday = today.minus(1, DateTimeUnit.DAY)
 
-        // Если последняя активность была позавчера или раньше, сбрасываем серию до 0
+        // Если последняя активность была позавчера или раньше → streak = 0
         if (lastActivityDate < yesterday) {
             realm.write {
-                val latestProgress = findLatest(realmProgress) ?: return@write
-                // Сброс серии до 0 (состояние, которое увидит пользователь до начала тренировки)
-                latestProgress.currentStreak = 0
-                latestProgress.updatedAt = Clock.System.now().toEpochMilliseconds()
-                println("DEBUG: Streak reset to 0 by KMP Lazy Reset.")
+                val latest = findLatest(realmProgress) ?: return@write
+                latest.currentStreak = 0
+                latest.updatedAt = Clock.System.now().toEpochMilliseconds()
             }
         }
     }
 
-    // 🔥 ЧИСТАЯ ЛОГИКА ТРАНЗАКЦИИ: Обрабатывает только результат выполнения упражнения
+    // 🔥 Логика обновления прогресса при выполнении упражнения
     private fun RealmUserProgress.updateProgressInternal(
         durationInMinutes: Int,
         currentTime: Long
@@ -168,30 +166,29 @@ class RealStatsRepository : StatsRepository {
         this.totalExercises += 1
         this.totalTime += durationInMinutes.toLong()
 
-        val today = Clock.System.now().toLocalDateTime(TimeZone.UTC).date
+        val today = Clock.System.now().toLocalDateTime(zone).date
 
         val lastActivityDate = if (this.lastActivityDate > 0L) {
             Instant.fromEpochMilliseconds(this.lastActivityDate)
-                .toLocalDateTime(TimeZone.UTC).date
+                .toLocalDateTime(zone).date
         } else {
             today.minus(2, DateTimeUnit.DAY)
         }
 
         if (today == lastActivityDate) {
-            // Активность уже была сегодня
+            // Уже была активность сегодня
             this.todayExercises += 1
         } else {
-            // Активность сегодня первая
+            // Первая активность за день
             this.todayExercises = 1
 
             val yesterday = today.minus(1, DateTimeUnit.DAY)
 
             if (lastActivityDate == yesterday) {
-                // СЦЕНАРИЙ 1: Продолжение серии
+                // Продолжение streak
                 this.currentStreak += 1
             } else {
-                // СЦЕНАРИЙ 2: Пропуск дня (серия была сброшена до 0 или была > 0, неважно).
-                // Начинаем новую серию с 1.
+                // Новый streak
                 this.currentStreak = 1
             }
         }
