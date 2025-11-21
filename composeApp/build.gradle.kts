@@ -15,7 +15,6 @@ kotlin {
         }
     }
 
-    // iOS target (поддержка всех симуляторов и реальных устройств)
     ios {
         binaries {
             framework()
@@ -29,38 +28,30 @@ kotlin {
                 implementation(compose.foundation)
                 implementation(compose.material3)
                 implementation(compose.ui)
+
                 implementation(compose.components.resources)
                 implementation(compose.components.uiToolingPreview)
 
-                // Realm
                 implementation("io.realm.kotlin:library-base:1.15.0")
 
-                // Voyager
                 implementation("cafe.adriel.voyager:voyager-navigator:1.0.0")
                 implementation("cafe.adriel.voyager:voyager-koin:1.0.0")
                 implementation("cafe.adriel.voyager:voyager-transitions:1.0.0")
 
-                // Kotlinx
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1")
 
-                // Koin
                 implementation("io.insert-koin:koin-core:3.5.3")
             }
         }
 
         val androidMain by getting {
             dependencies {
-                implementation("androidx.activity:activity-compose:1.8.2")
-                implementation("androidx.compose.ui:ui-tooling:1.6.0")
-            }
-        }
-
-        // iOS source set для actual-функций
-        val iosMain by getting {
-            dependencies {
-                // Здесь можно подключать зависимости для iOS, если нужно
+                implementation("androidx.activity:activity-compose:1.9.0")
+                implementation("androidx.compose.ui:ui-tooling:1.7.0")
+                implementation("androidx.compose.ui:ui:1.7.0")
+                implementation("androidx.compose.material3:material3:1.2.1")
             }
         }
     }
@@ -77,9 +68,25 @@ android {
     defaultConfig {
         applicationId = "com.pixelrabbit.oculi"
         minSdk = 24
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        targetSdk = 35
+        versionCode = 5
+        versionName = "4.1"
+
+        ndk {
+            debugSymbolLevel = "FULL"
+        }
+    }
+
+    buildTypes {
+        getByName("release") {
+            isMinifyEnabled = true
+            isShrinkResources = true
+
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
     }
 
     compileOptions {
@@ -92,7 +99,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.11"
+        kotlinCompilerExtensionVersion = "1.5.14"
     }
 
     packaging {
