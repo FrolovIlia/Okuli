@@ -254,8 +254,8 @@ fun FeatureButtonsGrid(navigator: Navigator, navigationBarBottom: androidx.compo
         "Проверка зрения" to { navigator.push(VisionTestScreen) },
         "Мой прогресс" to { navigator.push(ProgressScreen) },
         "Достижения" to { navigator.push(AchievementsScreen) },
-        "Настройки" to { /* TODO: navigator.push(SettingsScreen) */ },
-        "О приложении" to { /* TODO: navigator.push(AboutScreen) */ }
+        "Настройки" to { navigator.push(SettingsScreen) },
+        "О приложении" to { navigator.push(AboutScreen) }
     )
 
     LazyVerticalGrid(
