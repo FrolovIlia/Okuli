@@ -1,7 +1,7 @@
 plugins {
     kotlin("multiplatform")
     id("com.android.application")
-    id("org.jetbrains.compose")
+    id("org.jetbrains.compose") // JetBrains Compose Multiplatform plugin
     id("org.jetbrains.kotlin.plugin.serialization")
     id("io.realm.kotlin") version "1.15.0"
 }
@@ -28,7 +28,6 @@ kotlin {
                 implementation(compose.foundation)
                 implementation(compose.material3)
                 implementation(compose.ui)
-
                 implementation(compose.components.resources)
                 implementation(compose.components.uiToolingPreview)
 
@@ -38,9 +37,9 @@ kotlin {
                 implementation("cafe.adriel.voyager:voyager-koin:1.0.0")
                 implementation("cafe.adriel.voyager:voyager-transitions:1.0.0")
 
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
-                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 
                 implementation("io.insert-koin:koin-core:3.5.3")
             }
@@ -48,18 +47,20 @@ kotlin {
 
         val androidMain by getting {
             dependencies {
-                implementation("androidx.activity:activity-compose:1.9.0")
-                implementation("androidx.compose.ui:ui-tooling:1.7.0")
-                implementation("androidx.compose.ui:ui:1.7.0")
-                implementation("androidx.compose.material3:material3:1.2.1")
+                implementation("androidx.activity:activity-compose:1.8.2")
+                implementation("androidx.compose.ui:ui-tooling:1.6.0")
+                implementation("androidx.compose.ui:ui:1.6.0")
+                implementation("androidx.compose.material3:material3:1.0.1") // оставьте вашу версию или обновите при желании
             }
         }
+
+        val iosMain by getting
     }
 }
 
 android {
     namespace = "com.pixelrabbit.oculi"
-    compileSdk = 34
+    compileSdk = 36
 
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     sourceSets["main"].res.srcDirs("src/androidMain/res")
@@ -69,8 +70,8 @@ android {
         applicationId = "com.pixelrabbit.oculi"
         minSdk = 24
         targetSdk = 35
-        versionCode = 5
-        versionName = "4.1"
+        versionCode = 6
+        versionName = "4.2"
 
         ndk {
             debugSymbolLevel = "FULL"
@@ -98,8 +99,10 @@ android {
         compose = true
     }
 
+    // ВАЖНО: kotlinCompilerExtensionVersion должен быть совместим с Kotlin 1.9.22.
+    // Для Kotlin 1.9.22 безопасный выбор — 1.5.10 (см. карту совместимости).
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.14"
+        kotlinCompilerExtensionVersion = "1.5.10"
     }
 
     packaging {

@@ -1,5 +1,5 @@
 #############################################
-## Compose – prevent broken Modifier keys
+## Compose – минимальные правила
 #############################################
 -keep class androidx.compose.** { *; }
 -dontwarn androidx.compose.**
@@ -8,37 +8,31 @@
 -keepclassmembers class * extends androidx.compose.ui.Modifier$Node { *; }
 
 #############################################
-## Voyager transitions – avoid R8 merging keys
+## Voyager transitions – оставить классы
 #############################################
 -keep class cafe.adriel.voyager.transitions.** { *; }
 -dontwarn cafe.adriel.voyager.transitions.**
 
 #############################################
-## Kotlin reflection / coroutines
+## KotlinX / coroutines / serialization / Realm
 #############################################
 -keep class kotlinx.coroutines.** { *; }
 -dontwarn kotlinx.coroutines.**
 
-#############################################
-## Realm Kotlin
-#############################################
+-keep class kotlinx.serialization.** { *; }
+-dontwarn kotlinx.serialization.**
+
 -keep class io.realm.** { *; }
 -dontwarn io.realm.**
 
 #############################################
-## Serialization
-#############################################
--keep class kotlinx.serialization.** { *; }
--dontwarn kotlinx.serialization.**
-
-#############################################
-## Prevent removing @Composable methods
+## Сохранить ваши @Composable методы
 #############################################
 -keepclassmembers class ** {
     @androidx.compose.runtime.Composable *;
 }
 
 #############################################
-## Prevent removal of your app's classes
+## Сохранить ваши app-классы (на время)
 #############################################
 -keep class com.pixelrabbit.oculi.** { *; }

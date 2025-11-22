@@ -10,9 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.Navigator
-import cafe.adriel.voyager.transitions.SlideTransition
 import com.pixelrabbit.oculi.presentation.screens.HomeScreen
 import com.pixelrabbit.oculi.presentation.screens.OnboardingScreen
 import com.pixelrabbit.oculi.presentation.theme.OculiTheme
@@ -28,7 +26,6 @@ fun OculiApp() {
     val appSettings = remember { AppSettings() }
 
     LaunchedEffect(Unit) {
-
         // Загружаем настройки темы
         val settings = ServiceLocator.getSettingsUseCase()
         darkTheme = settings.darkThemeEnabled
@@ -40,23 +37,20 @@ fun OculiApp() {
 
     OculiTheme(darkTheme = darkTheme) {
         if (isLoading) {
-            // Простой лоадер
             LoadingScreen()
         } else {
+            // Используем Navigator без transitions в commonMain
             Navigator(
                 screen = if (shouldShowOnboarding) OnboardingScreen else HomeScreen
-            ) { navigator ->
-                SlideTransition(navigator)
-            }
+            )
         }
     }
 }
 
-
 @Composable
 fun LoadingScreen() {
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = androidx.compose.ui.Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         Text("Загрузка...")
