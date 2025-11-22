@@ -51,7 +51,6 @@ import com.pixelrabbit.oculi.utils.formatTotalTime
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
-
 object HomeScreen : Screen {
     @Composable
     override fun Content() {
@@ -65,27 +64,13 @@ fun HomeContent() {
     val navigator = LocalNavigator.currentOrThrow
     val density = LocalDensity.current
 
-    // Вычисляем только системные отступы
-    val statusBarTop = with(density) {
-        WindowInsets.statusBars.getTop(this).toDp()
-    }
-    val navigationBarBottom = with(density) {
-        WindowInsets.navigationBars.getBottom(this).toDp()
-    }
+    val statusBarTop = with(density) { WindowInsets.statusBars.getTop(this).toDp() }
+    val navigationBarBottom = with(density) { WindowInsets.navigationBars.getBottom(this).toDp() }
 
-    var userProgress by remember {
-        mutableStateOf(UserProgress())
-    }
-
-    // Используем Flow для реального времени обновления статистики
-    val statsFlow = ServiceLocator.getStatsUseCase.getStatsFlow()
+    var userProgress by remember { mutableStateOf(UserProgress()) }
 
     LaunchedEffect(Unit) {
-        // Инициализируем начальные данные
-        userProgress = ServiceLocator.getStatsUseCase()
-
-        // Подписываемся на обновления
-        statsFlow.collect { progress ->
+        ServiceLocator.getStatsUseCase.getStatsFlow().collect { progress ->
             userProgress = progress
         }
     }
@@ -93,22 +78,11 @@ fun HomeContent() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(
-                top = statusBarTop + 24.dp,
-                start = 24.dp,
-                end = 24.dp
-            ),
+            .padding(top = statusBarTop + 24.dp, start = 24.dp, end = 24.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
-        // Заголовок с логотипом
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
                 Image(
                     painter = painterResource(org.jetbrains.compose.resources.DrawableResource("drawable/ic_logo_standart.png")),
                     contentDescription = "Oculi Logo",
@@ -137,19 +111,12 @@ fun HomeContent() {
             )
         }
 
-        // Статистика
         StatsSection(userProgress = userProgress)
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Быстрый старт
-        ElevatedCard(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Column(
-                modifier = Modifier.padding(20.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+        ElevatedCard(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
                     text = "Быстрый старт",
                     style = MaterialTheme.typography.titleMedium,
@@ -159,9 +126,7 @@ fun HomeContent() {
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Button(
-                    onClick = {
-                        navigator.push(ExercisesListScreen)
-                    },
+                    onClick = { navigator.push(ExercisesListScreen) },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp)
                 ) {
@@ -169,18 +134,15 @@ fun HomeContent() {
                 }
             }
         }
+
         FeatureButtonsGrid(navigator, navigationBarBottom)
     }
 }
 
 @Composable
 fun StatsSection(userProgress: UserProgress) {
-    Card(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Column(
-            modifier = Modifier.padding(20.dp)
-        ) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(20.dp)) {
             Text(
                 text = "Ваша статистика",
                 style = MaterialTheme.typography.titleMedium,
@@ -190,34 +152,15 @@ fun StatsSection(userProgress: UserProgress) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Row(
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                StatItem(
-                    value = userProgress.totalExercises.toString(),
-                    label = "Упражнений"
-                )
-
-                // ✅ Используем функцию, предполагая, что она импортирована из utils
-                StatItem(
-                    value = formatTotalTime(userProgress.totalTime),
-                    label = "Время"
-                )
-
-                StatItem(
-                    value = "${userProgress.currentStreak} дн",
-                    label = "Серия"
-                )
+            Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()) {
+                StatItem(value = userProgress.totalExercises.toString(), label = "Упражнений")
+                StatItem(value = formatTotalTime(userProgress.totalTime), label = "Время")
+                StatItem(value = "${userProgress.currentStreak} дн", label = "Серия")
             }
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Сегодняшняя статистика
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 Text(
                     text = "Сегодня: ${userProgress.todayExercises} упражнений",
                     style = MaterialTheme.typography.bodyMedium,
@@ -230,16 +173,13 @@ fun StatsSection(userProgress: UserProgress) {
 
 @Composable
 fun StatItem(value: String, label: String) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = value,
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary
         )
-
         Text(
             text = label,
             style = MaterialTheme.typography.bodySmall,
@@ -266,10 +206,7 @@ fun FeatureButtonsGrid(navigator: Navigator, navigationBarBottom: androidx.compo
         contentPadding = PaddingValues(bottom = navigationBarBottom + 24.dp)
     ) {
         items(features) { (text, onClick) ->
-            CompactFeatureButton(
-                text = text,
-                onClick = onClick
-            )
+            CompactFeatureButton(text = text, onClick = onClick)
         }
     }
 }
@@ -278,9 +215,7 @@ fun FeatureButtonsGrid(navigator: Navigator, navigationBarBottom: androidx.compo
 fun CompactFeatureButton(text: String, onClick: () -> Unit) {
     Button(
         onClick = onClick,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(80.dp),
+        modifier = Modifier.fillMaxWidth().height(80.dp),
         shape = RoundedCornerShape(16.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant,
@@ -288,12 +223,7 @@ fun CompactFeatureButton(text: String, onClick: () -> Unit) {
         ),
         contentPadding = PaddingValues(0.dp)
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 8.dp),
-            contentAlignment = Alignment.Center
-        ) {
+        Box(modifier = Modifier.fillMaxSize().padding(horizontal = 8.dp), contentAlignment = Alignment.Center) {
             Text(
                 text = text,
                 style = MaterialTheme.typography.bodyLarge,
