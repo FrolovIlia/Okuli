@@ -1,13 +1,14 @@
 package com.pixelrabbit.oculi.data.managers
 
+import com.pixelrabbit.oculi.core.AppIODispatcher
 import com.pixelrabbit.oculi.di.ServiceLocator
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 object ExerciseCompletionManager {
-    private val scope = CoroutineScope(Dispatchers.IO + Job())
+
+    private val scope = CoroutineScope(AppIODispatcher + Job())
     private val pendingCompletions = mutableSetOf<String>()
 
     fun saveExerciseCompletion(
@@ -17,7 +18,6 @@ object ExerciseCompletionManager {
         difficulty: String,
         successRate: Float = 100f
     ) {
-        // Проверяем, не сохраняем ли мы уже это упражнение
         if (pendingCompletions.contains(exerciseId)) {
             println("DEBUG: Exercise $exerciseId already being saved, skipping")
             return
