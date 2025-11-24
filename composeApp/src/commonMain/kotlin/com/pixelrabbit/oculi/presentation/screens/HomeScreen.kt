@@ -1,37 +1,23 @@
 package com.pixelrabbit.oculi.presentation.screens
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -46,8 +32,9 @@ import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.pixelrabbit.oculi.di.ServiceLocator
 import com.pixelrabbit.oculi.domain.models.UserProgress
-import com.pixelrabbit.oculi.utils.getGreeting
+import com.pixelrabbit.oculi.presentation.theme.ThemeController
 import com.pixelrabbit.oculi.utils.formatTotalTime
+import com.pixelrabbit.oculi.utils.getGreeting
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
@@ -55,13 +42,14 @@ import org.jetbrains.compose.resources.painterResource
 object HomeScreen : Screen {
     @Composable
     override fun Content() {
-        HomeContent()
+        val darkTheme by ThemeController.themeState.collectAsState()
+        HomeContent(darkTheme)
     }
 }
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun HomeContent() {
+fun HomeContent(darkTheme: Boolean) {
     val navigator = LocalNavigator.currentOrThrow
     val density = LocalDensity.current
 
@@ -71,82 +59,80 @@ fun HomeContent() {
     var userProgress by remember { mutableStateOf(UserProgress()) }
 
     LaunchedEffect(Unit) {
-        // Комбинируем Flow из репозитория и принудительные обновления
         ServiceLocator.getStatsUseCase.getStatsFlow().collect { progress ->
             userProgress = progress
-            println("DEBUG: HomeScreen - Progress updated: $progress")
         }
-    }
-
-    // Принудительно загружаем данные при каждом появлении экрана
-    LaunchedEffect(Unit) {
         delay(500)
-        val freshProgress = ServiceLocator.getStatsUseCase()
-        userProgress = freshProgress
-        println("DEBUG: HomeScreen - Fresh progress loaded: $freshProgress")
+        userProgress = ServiceLocator.getStatsUseCase()
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(top = statusBarTop + 24.dp, start = 24.dp, end = 24.dp),
-        verticalArrangement = Arrangement.spacedBy(24.dp)
+    Surface(
+        color = MaterialTheme.colorScheme.background,
+        modifier = Modifier.fillMaxSize()
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
-                Image(
-                    painter = painterResource(org.jetbrains.compose.resources.DrawableResource("drawable/ic_logo_standart.png")),
-                    contentDescription = "Oculi Logo",
-                    modifier = Modifier.size(50.dp),
-                    contentScale = ContentScale.Fit
-                )
-                Spacer(modifier = Modifier.width(8.dp))
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = statusBarTop + 24.dp, start = 24.dp, end = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(24.dp)
+        ) {
+            // Логотип и приветствие
+            Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
+                    Image(
+                        painter = painterResource(org.jetbrains.compose.resources.DrawableResource("drawable/ic_logo_standart.png")),
+                        contentDescription = "Oculi Logo",
+                        modifier = Modifier.size(50.dp),
+                        contentScale = ContentScale.Fit
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Oculi",
+                        style = MaterialTheme.typography.displayMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
                 Text(
-                    text = "Oculi",
-                    style = MaterialTheme.typography.displayMedium,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Bold
+                    text = "${getGreeting()}!",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+
+                Text(
+                    text = "Тренировка зрения",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
-            Text(
-                text = "${getGreeting()}!",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface
-            )
+            StatsSection(userProgress = userProgress)
 
-            Text(
-                text = "Тренировка зрения",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
+            Spacer(modifier = Modifier.height(8.dp))
 
-        StatsSection(userProgress = userProgress)
+            ElevatedCard(modifier = Modifier.fillMaxWidth()) {
+                Column(modifier = Modifier.padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = "Быстрый старт",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
 
-        Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
-        ElevatedCard(modifier = Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
-                    text = "Быстрый старт",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Button(
-                    onClick = { navigator.push(ExercisesListScreen) },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Text("Начать тренировку")
+                    Button(
+                        onClick = { navigator.push(ExercisesListScreen) },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text("Начать тренировку")
+                    }
                 }
             }
-        }
 
-        FeatureButtonsGrid(navigator, navigationBarBottom)
+            FeatureButtonsGrid(navigator, navigationBarBottom)
+        }
     }
 }
 

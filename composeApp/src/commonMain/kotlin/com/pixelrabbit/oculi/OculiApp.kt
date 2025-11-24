@@ -3,34 +3,27 @@ package com.pixelrabbit.oculi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import cafe.adriel.voyager.navigator.Navigator
 import com.pixelrabbit.oculi.presentation.screens.HomeScreen
 import com.pixelrabbit.oculi.presentation.screens.OnboardingScreen
 import com.pixelrabbit.oculi.presentation.theme.OculiTheme
-import com.pixelrabbit.oculi.utils.AppSettings
+import com.pixelrabbit.oculi.presentation.theme.ThemeController
 import com.pixelrabbit.oculi.di.ServiceLocator
+import com.pixelrabbit.oculi.utils.AppSettings
 
 @Composable
 fun OculiApp() {
-    var darkTheme by remember { mutableStateOf(false) }
     var shouldShowOnboarding by remember { mutableStateOf(true) }
     var isLoading by remember { mutableStateOf(true) }
 
     val appSettings = remember { AppSettings() }
+    val darkTheme by ThemeController.themeState.collectAsState()
 
     LaunchedEffect(Unit) {
-        // Загружаем настройки темы
         val settings = ServiceLocator.getSettingsUseCase()
-        darkTheme = settings.darkThemeEnabled
-
-        // Проверяем, нужно ли показывать онбординг
+        ThemeController.setDarkTheme(settings.darkThemeEnabled)
         shouldShowOnboarding = !appSettings.isOnboardingCompleted
         isLoading = false
     }
@@ -39,10 +32,7 @@ fun OculiApp() {
         if (isLoading) {
             LoadingScreen()
         } else {
-            // Используем Navigator без transitions в commonMain
-            Navigator(
-                screen = if (shouldShowOnboarding) OnboardingScreen else HomeScreen
-            )
+            Navigator(screen = if (shouldShowOnboarding) OnboardingScreen else HomeScreen)
         }
     }
 }

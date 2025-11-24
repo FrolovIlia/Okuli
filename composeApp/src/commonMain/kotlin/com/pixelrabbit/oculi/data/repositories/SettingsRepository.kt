@@ -5,6 +5,7 @@ import com.pixelrabbit.oculi.domain.repositories.SettingsRepository
 class SettingsRepositoryImpl : SettingsRepository {
     private var darkThemeEnabled: Boolean = false
     private var notificationsEnabled: Boolean = true
+    private var reminderEnabled: Boolean = true      // ← добавляем
     private var reminderInterval: Int = 60
 
     override suspend fun isDarkThemeEnabled(): Boolean = darkThemeEnabled
@@ -26,5 +27,13 @@ class SettingsRepositoryImpl : SettingsRepository {
     override suspend fun setReminderInterval(interval: Int) {
         reminderInterval = interval
         println("Интервал напоминаний: $interval минут")
+    }
+
+    // Реализация новых методов
+    override suspend fun isReminderEnabled(): Boolean = reminderEnabled
+
+    override suspend fun setReminderEnabled(enabled: Boolean) {
+        reminderEnabled = enabled
+        println("Напоминания: ${if (enabled) "включены" else "выключены"}")
     }
 }

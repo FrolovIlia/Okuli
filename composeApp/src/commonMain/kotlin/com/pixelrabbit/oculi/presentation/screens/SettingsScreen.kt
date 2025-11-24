@@ -1,29 +1,10 @@
 package com.pixelrabbit.oculi.presentation.screens
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -33,7 +14,8 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.pixelrabbit.oculi.AppInfo
 import com.pixelrabbit.oculi.di.ServiceLocator
-
+import com.pixelrabbit.oculi.presentation.theme.ThemeController
+import kotlinx.coroutines.launch
 
 object SettingsScreen : Screen {
     @Composable
@@ -42,44 +24,42 @@ object SettingsScreen : Screen {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsContent() {
     val navigator = LocalNavigator.currentOrThrow
+    val scope = rememberCoroutineScope()
 
     var notificationsEnabled by remember { mutableStateOf(true) }
-    var darkTheme by remember { mutableStateOf(false) }
+    var reminderEnabled by remember { mutableStateOf(true) } // для будущего
     var reminderInterval by remember { mutableStateOf(60) }
+
+    val darkTheme by ThemeController.themeState.collectAsState()
 
     // Загружаем настройки
     LaunchedEffect(Unit) {
         val settings = ServiceLocator.getSettingsUseCase()
         notificationsEnabled = settings.notificationsEnabled
-        darkTheme = settings.darkThemeEnabled
         reminderInterval = settings.reminderInterval
+        ThemeController.setDarkTheme(settings.darkThemeEnabled)
     }
 
-    // Сохраняем настройки при изменении
+    // Сохраняем настройки при изменениях
     LaunchedEffect(notificationsEnabled, darkTheme, reminderInterval) {
-        ServiceLocator.updateSettingsUseCase(
-            darkThemeEnabled = darkTheme,
-            notificationsEnabled = notificationsEnabled,
-            reminderInterval = reminderInterval
-        )
+        scope.launch {
+            ServiceLocator.updateSettingsUseCase(
+                darkThemeEnabled = darkTheme,
+                notificationsEnabled = notificationsEnabled,
+                reminderInterval = reminderInterval
+            )
 
-        ServiceLocator.manageNotificationsUseCase(
-            enabled = notificationsEnabled,
-            intervalMinutes = reminderInterval
-        )
+            ServiceLocator.manageNotificationsUseCase(
+                enabled = notificationsEnabled,
+                intervalMinutes = reminderInterval
+            )
+        }
     }
 
-    Scaffold(
-//        topBar = {
-//            TopAppBar(
-//                title = { Text("Настройки") }
-//            )
-//        }
-    ) { paddingValues ->
+    Scaffold { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -92,9 +72,7 @@ fun SettingsContent() {
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
+                Column(modifier = Modifier.padding(16.dp)) {
                     Text(
                         text = "Внешний вид",
                         style = MaterialTheme.typography.titleLarge,
@@ -107,7 +85,7 @@ fun SettingsContent() {
                     SettingSwitch(
                         text = "Темная тема",
                         checked = darkTheme,
-                        onCheckedChange = { darkTheme = it }
+                        onCheckedChange = { ThemeController.setDarkTheme(it) }
                     )
                 }
             }
@@ -118,9 +96,7 @@ fun SettingsContent() {
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
+                Column(modifier = Modifier.padding(16.dp)) {
                     Text(
                         text = "Уведомления",
                         style = MaterialTheme.typography.titleLarge,
@@ -138,15 +114,13 @@ fun SettingsContent() {
                 }
             }
 
-            // Напоминания
+            // Напоминания (для будущего)
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
+                Column(modifier = Modifier.padding(16.dp)) {
                     Text(
                         text = "Напоминания",
                         style = MaterialTheme.typography.titleLarge,
@@ -156,26 +130,11 @@ fun SettingsContent() {
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    Text(
-                        text = "Интервал напоминаний: $reminderInterval минут",
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(bottom = 12.dp)
+                    SettingSwitch(
+                        text = "Включить напоминания",
+                        checked = reminderEnabled,
+                        onCheckedChange = { reminderEnabled = it }
                     )
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        listOf(30, 60, 90, 120).forEach { interval ->
-                            Button(
-                                onClick = { reminderInterval = interval },
-                                modifier = Modifier.weight(1f),
-                                enabled = reminderInterval != interval
-                            ) {
-                                Text("$interval")
-                            }
-                        }
-                    }
                 }
             }
 
@@ -185,19 +144,7 @@ fun SettingsContent() {
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text(
-                        text = "О приложении",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-
+                Column(modifier = Modifier.padding(16.dp)) {
                     Text(
                         text = "Oculi v${AppInfo.versionName}",
                         style = MaterialTheme.typography.titleMedium
@@ -209,18 +156,10 @@ fun SettingsContent() {
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(top = 4.dp)
                     )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Button(
-                        onClick = { navigator.push(AboutScreen) },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text("О приложении")
-                    }
                 }
             }
 
+            // Кнопка Назад
             Button(
                 onClick = { navigator.pop() },
                 modifier = Modifier
@@ -249,11 +188,7 @@ fun SettingSwitch(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.bodyLarge
-        )
-
+        Text(text = text, style = MaterialTheme.typography.bodyLarge)
         Switch(
             checked = checked,
             onCheckedChange = onCheckedChange,
