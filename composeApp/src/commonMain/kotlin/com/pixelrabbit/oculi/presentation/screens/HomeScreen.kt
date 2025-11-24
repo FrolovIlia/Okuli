@@ -48,6 +48,7 @@ import com.pixelrabbit.oculi.di.ServiceLocator
 import com.pixelrabbit.oculi.domain.models.UserProgress
 import com.pixelrabbit.oculi.utils.getGreeting
 import com.pixelrabbit.oculi.utils.formatTotalTime
+import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
@@ -70,9 +71,19 @@ fun HomeContent() {
     var userProgress by remember { mutableStateOf(UserProgress()) }
 
     LaunchedEffect(Unit) {
+        // Комбинируем Flow из репозитория и принудительные обновления
         ServiceLocator.getStatsUseCase.getStatsFlow().collect { progress ->
             userProgress = progress
+            println("DEBUG: HomeScreen - Progress updated: $progress")
         }
+    }
+
+    // Принудительно загружаем данные при каждом появлении экрана
+    LaunchedEffect(Unit) {
+        delay(500)
+        val freshProgress = ServiceLocator.getStatsUseCase()
+        userProgress = freshProgress
+        println("DEBUG: HomeScreen - Fresh progress loaded: $freshProgress")
     }
 
     Column(

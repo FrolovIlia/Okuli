@@ -25,38 +25,13 @@ class RealStatsRepository : StatsRepository {
     private val zone: TimeZone
         get() = TimeZone.currentSystemDefault()
 
-    // ----------------------------------------------------
-    // Helpers
-    // ----------------------------------------------------
-
     private fun Long.toLocalDate() =
         Instant.fromEpochMilliseconds(this).toLocalDateTime(zone).date
 
-    private suspend fun ensureProgressExists() {
-        val existing = realm.query<RealmUserProgress>("userId == $0", userId).first().find()
-        if (existing != null) return
-
-        realm.write {
-            val now = Clock.System.now().toEpochMilliseconds()
-
-            copyToRealm(
-                RealmUserProgress().apply {
-                    this.userId = this@RealStatsRepository.userId
-                    this.totalExercises = 0
-                    this.totalTime = 0
-                    this.currentStreak = 0
-                    this.todayExercises = 0
-                    this.lastActivityDate = now
-                    this.createdAt = now
-                    this.updatedAt = now
-                }
-            )
-        }
-    }
-
-    private fun readProgressSnapshot(): UserProgress {
+    override suspend fun getUserProgress(): UserProgress {
+        // Прогресс гарантированно существует благодаря RealmManager
         val p = realm.query<RealmUserProgress>("userId == $0", userId).first().find()
-            ?: return UserProgress()
+            ?: throw IllegalStateException("User progress should always exist")
 
         return UserProgress(
             totalExercises = p.totalExercises,
@@ -66,23 +41,13 @@ class RealStatsRepository : StatsRepository {
         )
     }
 
-    // ----------------------------------------------------
-    // Public API
-    // ----------------------------------------------------
-
-    override suspend fun getUserProgress(): UserProgress {
-        checkAndResetStreakIfNeeded()
-        ensureProgressExists()
-        return readProgressSnapshot()
-    }
-
     override fun getUserProgressFlow(): Flow<UserProgress> {
         return realm
             .query<RealmUserProgress>("userId == $0", userId)
             .asFlow()
-            .map { change: ResultsChange<RealmUserProgress> ->
+            .map { change ->
                 val obj = change.list.firstOrNull()
-                    ?: return@map UserProgress()
+                    ?: throw IllegalStateException("User progress should always exist")
 
                 UserProgress(
                     totalExercises = obj.totalExercises,
@@ -100,33 +65,23 @@ class RealStatsRepository : StatsRepository {
         difficulty: String,
         successRate: Float
     ) {
+        println("DEBUG: RealStatsRepository - Saving completion for $exerciseId")
 
         realm.write {
+            // Сохраняем completion
+            copyToRealm(RealmExerciseCompletion().apply {
+                this.userId = this@RealStatsRepository.userId
+                this.exerciseId = exerciseId
+                this.exerciseName = exerciseName
+                this.duration = duration
+                this.difficulty = difficulty
+                this.successRate = successRate
+                this.completedAt = Clock.System.now().toEpochMilliseconds()
+            })
 
-            // Сохраняем запись
-            copyToRealm(
-                RealmExerciseCompletion().apply {
-                    this.userId = this@RealStatsRepository.userId
-                    this.exerciseId = exerciseId
-                    this.exerciseName = exerciseName
-                    this.duration = duration
-                    this.difficulty = difficulty
-                    this.successRate = successRate
-                    this.completedAt = Clock.System.now().toEpochMilliseconds()
-                }
-            )
-
-            // Получаем прогресс
+            // Получаем прогресс (он ГАРАНТИРОВАННО существует)
             val p = query<RealmUserProgress>("userId == $0", userId).first().find()
-                ?: copyToRealm(
-                    RealmUserProgress().apply {
-                        this.userId = this@RealStatsRepository.userId
-                        val now = Clock.System.now().toEpochMilliseconds()
-                        this.lastActivityDate = now
-                        this.createdAt = now
-                        this.updatedAt = now
-                    }
-                )
+                ?: throw IllegalStateException("Progress should always exist")
 
             val now = Clock.System.now().toEpochMilliseconds()
             val today = now.toLocalDate()
@@ -152,39 +107,20 @@ class RealStatsRepository : StatsRepository {
 
             p.lastActivityDate = now
             p.updatedAt = now
+
+            println("DEBUG: RealStatsRepository - Progress UPDATED: total=${p.totalExercises}, time=${p.totalTime}")
         }
 
-        // вызываем после транзакции
+        // Проверяем достижения
         ServiceLocator.achievementRepository().checkAndUnlockAchievements()
     }
 
     override suspend fun resetDailyStats() {
         realm.write {
             val p = query<RealmUserProgress>("userId == $0", userId).first().find()
-                ?: return@write
-
+                ?: throw IllegalStateException("Progress should always exist")
             p.todayExercises = 0
             p.updatedAt = Clock.System.now().toEpochMilliseconds()
-        }
-    }
-
-    private suspend fun checkAndResetStreakIfNeeded() {
-        realm.write {
-            val p = query<RealmUserProgress>("userId == $0", userId).first().find()
-                ?: return@write
-
-            if (p.currentStreak == 0) return@write
-
-            val now = Clock.System.now().toEpochMilliseconds()
-            val today = now.toLocalDate()
-            val lastActive = p.lastActivityDate.toLocalDate()
-            val yesterday = today.minus(1, DateTimeUnit.DAY)
-
-            if (lastActive < yesterday) {
-                p.currentStreak = 0
-                p.todayExercises = 0
-                p.updatedAt = now
-            }
         }
     }
 }

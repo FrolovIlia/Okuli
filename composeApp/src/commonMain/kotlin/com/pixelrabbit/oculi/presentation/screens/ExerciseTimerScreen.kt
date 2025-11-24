@@ -33,10 +33,9 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.pixelrabbit.oculi.data.managers.ExerciseCompletionManager
 import com.pixelrabbit.oculi.di.ServiceLocator
 import kotlinx.coroutines.delay
-import com.pixelrabbit.oculi.presentation.components.ExerciseVisualization
-
 
 data class ExerciseTimerScreen(
     val exerciseId: String
@@ -57,6 +56,7 @@ fun ExerciseTimerContent(exerciseId: String) {
     var totalTime by remember { mutableStateOf(0) }
     var isRunning by remember { mutableStateOf(false) }
     var isCompleted by remember { mutableStateOf(false) }
+    var isSaved by remember { mutableStateOf(false) }
 
     LaunchedEffect(exerciseId) {
         val allExercises = ServiceLocator.getExercisesUseCase()
@@ -73,15 +73,17 @@ fun ExerciseTimerContent(exerciseId: String) {
         } else if (timeLeft == 0 && isRunning) {
             isRunning = false
             isCompleted = true
-            // Сохраняем результат
-            exercise?.let {
-                ServiceLocator.startExerciseUseCase(
-                    exerciseId = it.id,
-                    exerciseName = it.title,
-                    actualDuration = totalTime,
-                    difficulty = it.difficulty.name,
-                    successRate = 100f
-                )
+            if (!isSaved) {
+                exercise?.let { ex ->
+                    ExerciseCompletionManager.saveExerciseCompletion(
+                        exerciseId = ex.id,
+                        exerciseName = ex.title,
+                        duration = totalTime,
+                        difficulty = ex.difficulty.name,
+                        successRate = 100f
+                    )
+                }
+                isSaved = true
             }
         }
     }
@@ -114,9 +116,9 @@ fun ExerciseTimerContent(exerciseId: String) {
                         timeLeft = totalTime
                         isRunning = false
                         isCompleted = false
+                        isSaved = false
                     },
                     onComplete = {
-                        // Переход на экран завершения
                         navigator.push(
                             ExerciseCompleteScreen(
                                 exerciseName = exercise!!.title,
@@ -160,12 +162,6 @@ fun ExerciseTimerContent(
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold
         )
-
-        // Визуализация упражнения
-//        ExerciseVisualization(
-//            exerciseId = exercise.id,
-//            isRunning = isRunning
-//        )
 
         // Круговой прогресс
         BoxWithProgress(
@@ -243,7 +239,7 @@ fun BoxWithProgress(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = formatTime(timeLeft),
+                text = formatTimeTimer(timeLeft),
                 style = MaterialTheme.typography.displayLarge,
                 fontSize = 48.sp,
                 fontWeight = FontWeight.Bold
@@ -304,7 +300,7 @@ fun ExerciseTimerControls(
     }
 }
 
-fun formatTime(seconds: Int): String {
+private fun formatTimeTimer(seconds: Int): String {
     val minutes = seconds / 60
     val remainingSeconds = seconds % 60
     return "${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}"

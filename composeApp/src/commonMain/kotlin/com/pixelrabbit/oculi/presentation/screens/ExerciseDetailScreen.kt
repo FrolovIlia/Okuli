@@ -37,7 +37,9 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.pixelrabbit.oculi.data.managers.ExerciseCompletionManager
 import com.pixelrabbit.oculi.di.ServiceLocator
+import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import okuli.composeapp.generated.resources.Res
@@ -91,6 +93,8 @@ fun ExerciseDetailContent(
     exercise: com.pixelrabbit.oculi.domain.models.Exercise,
     navigator: cafe.adriel.voyager.navigator.Navigator
 ) {
+    var isSaved by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -193,18 +197,21 @@ fun ExerciseDetailContent(
             // Таймер
             LaunchedEffect(isRunning, timeLeft) {
                 if (isRunning && timeLeft > 0) {
-                    kotlinx.coroutines.delay(1000)
+                    delay(1000)
                     timeLeft--
                 } else if (isRunning && timeLeft == 0) {
                     isRunning = false
                     isCompleted = true
-                    ServiceLocator.startExerciseUseCase(
-                        exerciseId = exercise.id,
-                        exerciseName = exercise.title,
-                        actualDuration = exercise.duration,
-                        difficulty = exercise.difficulty.name,
-                        successRate = 100f
-                    )
+                    if (!isSaved) {
+                        ExerciseCompletionManager.saveExerciseCompletion(
+                            exerciseId = exercise.id,
+                            exerciseName = exercise.title,
+                            duration = exercise.duration,
+                            difficulty = exercise.difficulty.name,
+                            successRate = 100f
+                        )
+                        isSaved = true
+                    }
                 }
             }
 
@@ -234,7 +241,7 @@ fun ExerciseDetailContent(
                         modifier = Modifier.fillMaxWidth()
                     )
                     Text(
-                        text = "Осталось: ${formatTime(timeLeft)}",
+                        text = "Осталось: ${formatTimeDetail(timeLeft)}",
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
@@ -249,6 +256,7 @@ fun ExerciseDetailContent(
                             onClick = {
                                 isCompleted = false
                                 timeLeft = exercise.duration
+                                isSaved = false
                             },
                             modifier = Modifier.weight(1f)
                         ) {
@@ -276,6 +284,7 @@ fun ExerciseDetailContent(
                                 timeLeft = exercise.duration
                                 isRunning = false
                                 isCompleted = false
+                                isSaved = false
                             },
                             modifier = Modifier.weight(1f)
                         ) {
@@ -294,4 +303,10 @@ fun ExerciseDetailContent(
             }
         }
     }
+}
+
+private fun formatTimeDetail(seconds: Int): String {
+    val minutes = seconds / 60
+    val remainingSeconds = seconds % 60
+    return "${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}"
 }
