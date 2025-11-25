@@ -15,11 +15,10 @@ kotlin {
         }
     }
 
-    ios {
-        binaries {
-            framework()
-        }
-    }
+    // Настройка iOS таргетов для поддержки Kotlin/Native платформенных библиотек
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
 
     sourceSets {
         val commonMain by getting {
@@ -50,11 +49,20 @@ kotlin {
                 implementation("androidx.activity:activity-compose:1.8.2")
                 implementation("androidx.compose.ui:ui-tooling:1.6.0")
                 implementation("androidx.compose.ui:ui:1.6.0")
-                implementation("androidx.compose.material3:material3:1.0.1") // оставьте вашу версию или обновите при желании
+                implementation("androidx.compose.material3:material3:1.0.1")
             }
         }
 
-        val iosMain by getting
+        val iosX64Main by getting
+        val iosArm64Main by getting
+        val iosSimulatorArm64Main by getting
+
+        val iosMain by creating {
+            dependsOn(commonMain)
+            iosX64Main.dependsOn(this)
+            iosArm64Main.dependsOn(this)
+            iosSimulatorArm64Main.dependsOn(this)
+        }
     }
 }
 
@@ -99,8 +107,6 @@ android {
         compose = true
     }
 
-    // ВАЖНО: kotlinCompilerExtensionVersion должен быть совместим с Kotlin 1.9.22.
-    // Для Kotlin 1.9.22 безопасный выбор — 1.5.10 (см. карту совместимости).
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.10"
     }

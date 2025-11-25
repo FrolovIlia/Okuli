@@ -44,6 +44,7 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import okuli.composeapp.generated.resources.Res
 import okuli.composeapp.generated.resources.*
+import com.pixelrabbit.oculi.utils.playBeep
 
 data class ExerciseDetailScreen(
     val exerciseId: String
@@ -117,11 +118,6 @@ fun ExerciseDetailContent(
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold
                 )
-//                Text(
-//                    text = "Тип: ${exercise.type} • Сложность: ${exercise.difficulty}",
-//                    style = MaterialTheme.typography.bodyMedium,
-//                    color = MaterialTheme.colorScheme.onSurfaceVariant
-//                )
             }
         }
 
@@ -184,8 +180,6 @@ fun ExerciseDetailContent(
             }
         }
 
-        // Кнопки действий
-        // 🔹 Таймерный блок — компактный, без кругового индикатора
         Card(
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -202,6 +196,7 @@ fun ExerciseDetailContent(
                 } else if (isRunning && timeLeft == 0) {
                     isRunning = false
                     isCompleted = true
+                    playBeep()
                     if (!isSaved) {
                         ExerciseCompletionManager.saveExerciseCompletion(
                             exerciseId = exercise.id,
