@@ -156,20 +156,6 @@ fun AchievementsContent() {
                                 .fillMaxWidth()
                                 .height(8.dp)
                         )
-
-                        // 🔥 ДОБАВЛЕНО: Кнопка принудительного обновления
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Button(
-                            onClick = {
-                                println("🎯 ACHIEVEMENTS SCREEN: Manual refresh triggered")
-                                coroutineScope.launch {
-                                    ServiceLocator.achievementRepository().checkAndUnlockAchievements()
-                                }
-                            },
-                            modifier = Modifier.fillMaxWidth(0.8f)
-                        ) {
-                            Text("Обновить достижения")
-                        }
                     }
                 }
 
@@ -193,7 +179,8 @@ fun AchievementsContent() {
                             onClick = {
                                 println("🎯 ACHIEVEMENTS SCREEN: Retrying achievements load")
                                 coroutineScope.launch {
-                                    ServiceLocator.achievementRepository().checkAndUnlockAchievements()
+                                    ServiceLocator.achievementRepository()
+                                        .checkAndUnlockAchievements()
                                 }
                             }
                         ) {

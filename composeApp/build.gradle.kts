@@ -78,8 +78,8 @@ android {
         applicationId = "com.pixelrabbit.oculi"
         minSdk = 24
         targetSdk = 35
-        versionCode = 11
-        versionName = "4.7"
+        versionCode = 12
+        versionName = "4.8"
 
         ndk {
             debugSymbolLevel = "FULL"
