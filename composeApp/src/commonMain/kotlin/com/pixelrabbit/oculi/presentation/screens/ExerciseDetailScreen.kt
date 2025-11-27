@@ -45,6 +45,7 @@ import org.jetbrains.compose.resources.painterResource
 import okuli.composeapp.generated.resources.Res
 import okuli.composeapp.generated.resources.*
 import com.pixelrabbit.oculi.utils.playBeep
+import com.pixelrabbit.oculi.presentation.components.CelebrationDialog
 
 data class ExerciseDetailScreen(
     val exerciseId: String
@@ -94,208 +95,224 @@ fun ExerciseDetailContent(
     exercise: com.pixelrabbit.oculi.domain.models.Exercise,
     navigator: cafe.adriel.voyager.navigator.Navigator
 ) {
+    var showCelebration by remember { mutableStateOf(false) }
     var isSaved by remember { mutableStateOf(false) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        // Заголовок
-        Row(
-            verticalAlignment = Alignment.CenterVertically
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Text(
-                text = exercise.icon,
-                style = MaterialTheme.typography.displayMedium
-            )
-            Spacer(modifier = Modifier.padding(8.dp))
-            Column {
-                Text(
-                    text = exercise.title,
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-        }
-
-        // Описание
-        Card {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    text = "Описание",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = exercise.description,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-        }
-
-        // Инструкции
-        Card {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    text = "Инструкция",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                exercise.instructions.forEachIndexed { index, instruction ->
-                    Text(
-                        text = "${index + 1}. $instruction",
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(vertical = 4.dp)
-                    )
-                }
-            }
-        }
-
-        // 🔥 Блок изображения — используем painterResource(Res.drawable.*)
-        exercise.imageName?.let { name ->
-            val painter = when (name) {
-                "sledovanie_za" -> painterResource(Res.drawable.sledovanie_za)
-                "focus" -> painterResource(Res.drawable.focus)
-                "palming" -> painterResource(Res.drawable.palming)
-                "vosmerka" -> painterResource(Res.drawable.vosmerka)
-                else -> null
-            }
-
-            painter?.let {
-                Card {
-                    Image(
-                        painter = it,
-                        contentDescription = exercise.title,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(16f / 9f),
-                        contentScale = ContentScale.Crop
-                    )
-                }
-            }
-        }
-
-        Card(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            // Локальные состояния
-            var timeLeft by remember { mutableStateOf(exercise.duration) }
-            var isRunning by remember { mutableStateOf(false) }
-            var isCompleted by remember { mutableStateOf(false) }
-
-            // Таймер
-            LaunchedEffect(isRunning, timeLeft) {
-                if (isRunning && timeLeft > 0) {
-                    delay(1000)
-                    timeLeft--
-                } else if (isRunning && timeLeft == 0) {
-                    isRunning = false
-                    isCompleted = true
-                    playBeep()
-                    if (!isSaved) {
-                        ExerciseCompletionManager.saveExerciseCompletion(
-                            exerciseId = exercise.id,
-                            exerciseName = exercise.title,
-                            duration = exercise.duration,
-                            difficulty = exercise.difficulty.name,
-                            successRate = 100f
-                        )
-                        isSaved = true
-                    }
-                }
-            }
-
-            val progress = if (exercise.duration > 0)
-                1f - (timeLeft.toFloat() / exercise.duration.toFloat())
-            else 0f
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+            // Заголовок
+            Row(
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "⏱ Таймер упражнения",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
+                    text = exercise.icon,
+                    style = MaterialTheme.typography.displayMedium
                 )
-
-                // Прогресс и время
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    LinearProgressIndicator(
-                        progress = { progress },
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                Spacer(modifier = Modifier.padding(8.dp))
+                Column {
                     Text(
-                        text = "Осталось: ${formatTimeDetail(timeLeft)}",
+                        text = exercise.title,
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+
+            // Описание
+            Card {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = "Описание",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = exercise.description,
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
+            }
 
-                // Кнопки управления
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    if (isCompleted) {
-                        Button(
-                            onClick = {
-                                isCompleted = false
-                                timeLeft = exercise.duration
-                                isSaved = false
-                            },
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text("Завершено ✅")
-                        }
-                    } else {
-                        if (isRunning) {
-                            Button(
-                                onClick = { isRunning = false },
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                Text("Пауза")
-                            }
-                        } else {
-                            Button(
-                                onClick = { isRunning = true },
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                Text("Старт")
-                            }
-                        }
+            // Инструкции
+            Card {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = "Инструкция",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    exercise.instructions.forEachIndexed { index, instruction ->
+                        Text(
+                            text = "${index + 1}. $instruction",
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(vertical = 4.dp)
+                        )
+                    }
+                }
+            }
 
-                        Button(
-                            onClick = {
-                                timeLeft = exercise.duration
-                                isRunning = false
-                                isCompleted = false
-                                isSaved = false
-                            },
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text("Сброс")
+            // 🔥 Блок изображения — используем painterResource(Res.drawable.*)
+            exercise.imageName?.let { name ->
+                val painter = when (name) {
+                    "sledovanie_za" -> painterResource(Res.drawable.sledovanie_za)
+                    "focus" -> painterResource(Res.drawable.focus)
+                    "palming" -> painterResource(Res.drawable.palming)
+                    "vosmerka" -> painterResource(Res.drawable.vosmerka)
+                    else -> null
+                }
+
+                painter?.let {
+                    Card {
+                        Image(
+                            painter = it,
+                            contentDescription = exercise.title,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .aspectRatio(16f / 9f),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                }
+            }
+
+            Card(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                // Локальные состояния
+                var timeLeft by remember { mutableStateOf(exercise.duration) }
+                var isRunning by remember { mutableStateOf(false) }
+                var isCompleted by remember { mutableStateOf(false) }
+
+                // Таймер
+                LaunchedEffect(isRunning, timeLeft) {
+                    if (isRunning && timeLeft > 0) {
+                        delay(1000)
+                        timeLeft--
+                    } else if (isRunning && timeLeft == 0) {
+                        isRunning = false
+                        isCompleted = true
+                        showCelebration = true
+                        playBeep()
+                        if (!isSaved) {
+                            ExerciseCompletionManager.saveExerciseCompletion(
+                                exerciseId = exercise.id,
+                                exerciseName = exercise.title,
+                                duration = exercise.duration,
+                                difficulty = exercise.difficulty.name,
+                                successRate = 100f
+                            )
+                            isSaved = true
                         }
                     }
                 }
 
-                // Кнопка назад
-                Button(
-                    onClick = { navigator.pop() },
-                    modifier = Modifier.fillMaxWidth()
+                val progress = if (exercise.duration > 0)
+                    1f - (timeLeft.toFloat() / exercise.duration.toFloat())
+                else 0f
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Text("Назад к списку")
+                    Text(
+                        text = "⏱ Таймер упражнения",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    // Прогресс и время
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        LinearProgressIndicator(
+                            progress = { progress },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        Text(
+                            text = "Осталось: ${formatTimeDetail(timeLeft)}",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+
+                    // Кнопки управления
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        if (isCompleted) {
+                            Button(
+                                onClick = {
+                                    isCompleted = false
+                                    timeLeft = exercise.duration
+                                    isSaved = false
+                                    showCelebration = false
+                                },
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text("Завершено ✅")
+                            }
+                        } else {
+                            if (isRunning) {
+                                Button(
+                                    onClick = { isRunning = false },
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Text("Пауза")
+                                }
+                            } else {
+                                Button(
+                                    onClick = { isRunning = true },
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Text("Старт")
+                                }
+                            }
+
+                            Button(
+                                onClick = {
+                                    timeLeft = exercise.duration
+                                    isRunning = false
+                                    isCompleted = false
+                                    isSaved = false
+                                    showCelebration = false
+                                },
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text("Сброс")
+                            }
+                        }
+                    }
+
+                    // Кнопка назад
+                    Button(
+                        onClick = { navigator.pop() },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Назад к списку")
+                    }
                 }
             }
+        }
+
+        // Показываем экран поздравления поверх всего
+        if (showCelebration) {
+            CelebrationDialog(
+                onDismiss = {
+                    showCelebration = false
+                    navigator.pop() // Возврат на предыдущий экран
+                }
+            )
         }
     }
 }
