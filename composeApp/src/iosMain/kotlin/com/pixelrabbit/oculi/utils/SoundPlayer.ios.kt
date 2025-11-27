@@ -3,5 +3,5 @@ package com.pixelrabbit.oculi.utils
 import platform.AudioToolbox.AudioServicesPlaySystemSound
 
 actual fun playBeep() {
-    AudioServicesPlaySystemSound(1104)
+    AudioServicesPlaySystemSound(1117)
 }
