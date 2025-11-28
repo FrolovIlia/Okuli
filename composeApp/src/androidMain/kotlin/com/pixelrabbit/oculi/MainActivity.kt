@@ -4,21 +4,42 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
+import com.pixelrabbit.oculi.ad.AdManager
 import com.pixelrabbit.oculi.utils.platform.initializeAndroidContext
 
-// android/src/androidMain/kotlin/MainActivity.kt
 class MainActivity : ComponentActivity() {
+    private val adManager = AdManager()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Инициализируем контекст для всего приложения
         initializeAndroidContext(this)
+        adManager.setContext(this)
 
         setContent {
-            OculiApp()
+            OculiAppWithAds(adManager)
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        // Показываем рекламу при каждом открытии приложения
+        adManager.showInterstitialAd()
+    }
+}
+
+@Composable
+fun OculiAppWithAds(adManager: AdManager) {
+    LaunchedEffect(Unit) {
+        adManager.initializeSdk()
+        // Пока тестируем только баннер
+        println("Ads initialized - ready for banner")
+    }
+
+    OculiApp()
 }
 
 @Preview

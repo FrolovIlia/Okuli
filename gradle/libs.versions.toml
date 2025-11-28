@@ -14,10 +14,12 @@ androidActivityCompose = "1.8.2"
 voyager = "1.0.0"
 foundationLayout = "1.9.4"
 workRuntimeKtx = "2.11.0"
+yandex-mobile-ads = "7.0.0"
 
 [libraries]
 # Realm
 realm-library-base = { module = "io.realm.kotlin:library-base", version.ref = "realm" }
+yandex-mobile-ads-android = { module = "com.yandex.android:mobileads", version.ref = "yandex-mobile-ads" }
 
 # Ktor Client
 kotlinx-datetime-v071 = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetimeVersion" }

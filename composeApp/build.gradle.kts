@@ -1,7 +1,7 @@
 plugins {
     kotlin("multiplatform")
     id("com.android.application")
-    id("org.jetbrains.compose") // JetBrains Compose Multiplatform plugin
+    id("org.jetbrains.compose")
     id("org.jetbrains.kotlin.plugin.serialization")
     id("io.realm.kotlin") version "1.15.0"
 }
@@ -15,7 +15,7 @@ kotlin {
         }
     }
 
-    // Настройка iOS таргетов для поддержки Kotlin/Native платформенных библиотек
+    // УБИРАЕМ cocoapods блок и используем ручную настройку iOS
     iosX64()
     iosArm64()
     iosSimulatorArm64()
@@ -50,6 +50,8 @@ kotlin {
                 implementation("androidx.compose.ui:ui-tooling:1.6.0")
                 implementation("androidx.compose.ui:ui:1.6.0")
                 implementation("androidx.compose.material3:material3:1.0.1")
+                // Яндекс реклама для Android
+                implementation(libs.yandex.mobile.ads.android)
             }
         }
 
@@ -62,6 +64,11 @@ kotlin {
             iosX64Main.dependsOn(this)
             iosArm64Main.dependsOn(this)
             iosSimulatorArm64Main.dependsOn(this)
+
+            // ДОБАВЛЯЕМ зависимости для iOS вручную
+            dependencies {
+                implementation("io.ktor:ktor-client-darwin:2.3.8")
+            }
         }
     }
 }
