@@ -1,3 +1,4 @@
+// android/src/androidMain/kotlin/com/pixelrabbit/oculi/utils/PlatformPreferences.kt
 package com.pixelrabbit.oculi.utils
 
 import android.content.Context
@@ -14,5 +15,13 @@ actual object PlatformPreferences {
 
     actual fun setBoolean(key: String, value: Boolean) {
         sharedPreferences.edit().putBoolean(key, value).apply()
+    }
+
+    actual fun getInt(key: String, defaultValue: Int): Int {
+        return sharedPreferences.getInt(key, defaultValue)
+    }
+
+    actual fun setInt(key: String, value: Int) {
+        sharedPreferences.edit().putInt(key, value).apply()
     }
 }

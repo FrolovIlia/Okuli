@@ -29,31 +29,42 @@ fun SettingsContent() {
     val navigator = LocalNavigator.currentOrThrow
     val scope = rememberCoroutineScope()
 
-    var notificationsEnabled by remember { mutableStateOf(true) }
-    var reminderEnabled by remember { mutableStateOf(true) } // для будущего
-    var reminderInterval by remember { mutableStateOf(60) }
-
+    // Используем тему из ThemeController
     val darkTheme by ThemeController.themeState.collectAsState()
 
-    // Загружаем настройки
+    // Локальные состояния для остальных настроек
+    var notificationsEnabled by remember { mutableStateOf(true) }
+    var reminderEnabled by remember { mutableStateOf(true) }
+    var reminderInterval by remember { mutableStateOf(60) }
+
+    // Загружаем сохраненные настройки при запуске
     LaunchedEffect(Unit) {
         val settings = ServiceLocator.getSettingsUseCase()
         notificationsEnabled = settings.notificationsEnabled
+        reminderEnabled = settings.reminderEnabled
         reminderInterval = settings.reminderInterval
-        ThemeController.setDarkTheme(settings.darkThemeEnabled)
+
+        println("Настройки загружены из хранилища:")
+        println("- Тема: ${if (settings.darkThemeEnabled) "темная" else "светлая"}")
+        println("- Уведомления: ${if (settings.notificationsEnabled) "вкл" else "выкл"}")
+        println("- Напоминания: ${if (settings.reminderEnabled) "вкл" else "выкл"}")
+        println("- Интервал: ${settings.reminderInterval} мин")
     }
 
-    // Сохраняем настройки при изменениях
-    LaunchedEffect(notificationsEnabled, darkTheme, reminderInterval) {
+    // Сохраняем настройки при изменении
+    LaunchedEffect(notificationsEnabled, reminderEnabled, reminderInterval) {
         scope.launch {
             ServiceLocator.updateSettingsUseCase(
                 darkThemeEnabled = darkTheme,
                 notificationsEnabled = notificationsEnabled,
+                reminderEnabled = reminderEnabled,
                 reminderInterval = reminderInterval
             )
 
+            // Обновляем уведомления
+            val shouldShowNotifications = notificationsEnabled && reminderEnabled
             ServiceLocator.manageNotificationsUseCase(
-                enabled = notificationsEnabled,
+                enabled = shouldShowNotifications,
                 intervalMinutes = reminderInterval
             )
         }
@@ -114,7 +125,7 @@ fun SettingsContent() {
                 }
             }
 
-            // Напоминания (для будущего)
+            // Напоминания
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -134,6 +145,14 @@ fun SettingsContent() {
                         text = "Включить напоминания",
                         checked = reminderEnabled,
                         onCheckedChange = { reminderEnabled = it }
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Интервал напоминаний (можно добавить позже)
+                    Text(
+                        text = "Интервал: $reminderInterval минут",
+                        style = MaterialTheme.typography.bodyMedium
                     )
                 }
             }

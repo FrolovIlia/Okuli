@@ -16,6 +16,7 @@ fun AppStateManager() {
             com.pixelrabbit.oculi.domain.use_cases.SettingsResult(
                 darkThemeEnabled = false,
                 notificationsEnabled = true,
+                reminderEnabled = true, // ДОБАВЬТЕ ЭТОТ ПАРАМЕТР
                 reminderInterval = 60
             )
         )
@@ -26,14 +27,14 @@ fun AppStateManager() {
         settings = ServiceLocator.getSettingsUseCase()
 
         // Настраиваем напоминания
-        if (settings.notificationsEnabled) {
+        if (settings.notificationsEnabled && settings.reminderEnabled) { // Учитываем оба флага
             ReminderManager.scheduleEyeCareReminder(settings.reminderInterval)
         }
     }
 
     // Следим за изменениями настроек
     LaunchedEffect(settings) {
-        if (settings.notificationsEnabled) {
+        if (settings.notificationsEnabled && settings.reminderEnabled) { // Учитываем оба флага
             ReminderManager.scheduleEyeCareReminder(settings.reminderInterval)
         } else {
             ReminderManager.cancelReminders()

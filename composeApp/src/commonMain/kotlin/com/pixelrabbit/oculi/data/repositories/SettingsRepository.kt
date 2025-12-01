@@ -1,39 +1,75 @@
 package com.pixelrabbit.oculi.data.repositories
 
 import com.pixelrabbit.oculi.domain.repositories.SettingsRepository
+import com.pixelrabbit.oculi.utils.AppSettings
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class SettingsRepositoryImpl : SettingsRepository {
-    private var darkThemeEnabled: Boolean = false
-    private var notificationsEnabled: Boolean = true
-    private var reminderEnabled: Boolean = true      // ← добавляем
-    private var reminderInterval: Int = 60
+    private val appSettings = AppSettings()
 
-    override suspend fun isDarkThemeEnabled(): Boolean = darkThemeEnabled
+    override suspend fun isDarkThemeEnabled(): Boolean {
+        return withContext(Dispatchers.Default) {
+            appSettings.darkThemeEnabled
+        }
+    }
 
     override suspend fun setDarkThemeEnabled(enabled: Boolean) {
-        darkThemeEnabled = enabled
-        println("Темная тема: ${if (enabled) "включена" else "выключена"}")
+        withContext(Dispatchers.Default) {
+            appSettings.darkThemeEnabled = enabled
+            println("Темная тема сохранена: ${if (enabled) "включена" else "выключена"}")
+        }
     }
 
-    override suspend fun areNotificationsEnabled(): Boolean = notificationsEnabled
+    override suspend fun areNotificationsEnabled(): Boolean {
+        return withContext(Dispatchers.Default) {
+            appSettings.notificationsEnabled
+        }
+    }
 
     override suspend fun setNotificationsEnabled(enabled: Boolean) {
-        notificationsEnabled = enabled
-        println("Уведомления: ${if (enabled) "включены" else "выключены"}")
+        withContext(Dispatchers.Default) {
+            appSettings.notificationsEnabled = enabled
+            println("Уведомления сохранены: ${if (enabled) "включены" else "выключены"}")
+        }
     }
 
-    override suspend fun getReminderInterval(): Int = reminderInterval
-
-    override suspend fun setReminderInterval(interval: Int) {
-        reminderInterval = interval
-        println("Интервал напоминаний: $interval минут")
+    override suspend fun isReminderEnabled(): Boolean {
+        return withContext(Dispatchers.Default) {
+            appSettings.reminderEnabled
+        }
     }
-
-    // Реализация новых методов
-    override suspend fun isReminderEnabled(): Boolean = reminderEnabled
 
     override suspend fun setReminderEnabled(enabled: Boolean) {
-        reminderEnabled = enabled
-        println("Напоминания: ${if (enabled) "включены" else "выключены"}")
+        withContext(Dispatchers.Default) {
+            appSettings.reminderEnabled = enabled
+            println("Напоминания сохранены: ${if (enabled) "включены" else "выключены"}")
+        }
+    }
+
+    override suspend fun getReminderInterval(): Int {
+        return withContext(Dispatchers.Default) {
+            appSettings.reminderInterval
+        }
+    }
+
+    override suspend fun setReminderInterval(interval: Int) {
+        withContext(Dispatchers.Default) {
+            appSettings.reminderInterval = interval
+            println("Интервал напоминаний сохранен: $interval минут")
+        }
+    }
+
+    // Опционально: метод для получения всех настроек сразу
+    suspend fun getAllSettings(): Map<String, Any> {
+        return withContext(Dispatchers.Default) {
+            mapOf(
+                "darkThemeEnabled" to appSettings.darkThemeEnabled,
+                "notificationsEnabled" to appSettings.notificationsEnabled,
+                "reminderEnabled" to appSettings.reminderEnabled,
+                "reminderInterval" to appSettings.reminderInterval,
+                "isOnboardingCompleted" to appSettings.isOnboardingCompleted
+            )
+        }
     }
 }

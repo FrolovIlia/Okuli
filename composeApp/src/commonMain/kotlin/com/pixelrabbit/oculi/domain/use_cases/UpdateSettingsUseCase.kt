@@ -6,12 +6,17 @@ class UpdateSettingsUseCase(
     private val repository: SettingsRepository
 ) {
     suspend operator fun invoke(
-        darkThemeEnabled: Boolean? = null,
-        notificationsEnabled: Boolean? = null,
-        reminderInterval: Int? = null
+        darkThemeEnabled: Boolean,
+        notificationsEnabled: Boolean,
+        reminderEnabled: Boolean,
+        reminderInterval: Int
     ) {
-        darkThemeEnabled?.let { repository.setDarkThemeEnabled(it) }
-        notificationsEnabled?.let { repository.setNotificationsEnabled(it) }
-        reminderInterval?.let { repository.setReminderInterval(it) }
+        // Сохраняем каждую настройку отдельно
+        repository.setDarkThemeEnabled(darkThemeEnabled)
+        repository.setNotificationsEnabled(notificationsEnabled)
+        repository.setReminderEnabled(reminderEnabled)
+        repository.setReminderInterval(reminderInterval)
+
+        println("Все настройки сохранены")
     }
 }

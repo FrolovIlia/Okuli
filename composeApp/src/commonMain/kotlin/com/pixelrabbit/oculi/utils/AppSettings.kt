@@ -2,11 +2,34 @@
 package com.pixelrabbit.oculi.utils
 
 class AppSettings {
+    // Существующие настройки
     var isOnboardingCompleted: Boolean
         get() = PlatformPreferences.getBoolean(ONBOARDING_COMPLETED_KEY, false)
         set(value) = PlatformPreferences.setBoolean(ONBOARDING_COMPLETED_KEY, value)
 
+    // Новые настройки
+    var darkThemeEnabled: Boolean
+        get() = PlatformPreferences.getBoolean(DARK_THEME_KEY, false)
+        set(value) = PlatformPreferences.setBoolean(DARK_THEME_KEY, value)
+
+    var notificationsEnabled: Boolean
+        get() = PlatformPreferences.getBoolean(NOTIFICATIONS_KEY, true)
+        set(value) = PlatformPreferences.setBoolean(NOTIFICATIONS_KEY, value)
+
+    var reminderEnabled: Boolean
+        get() = PlatformPreferences.getBoolean(REMINDER_ENABLED_KEY, true)
+        set(value) = PlatformPreferences.setBoolean(REMINDER_ENABLED_KEY, value)
+
+    var reminderInterval: Int
+        get() = PlatformPreferences.getInt(REMINDER_INTERVAL_KEY, 60)
+        set(value) = PlatformPreferences.setInt(REMINDER_INTERVAL_KEY, value)
+
     companion object {
+        // Ключи для хранения
         private const val ONBOARDING_COMPLETED_KEY = "onboarding_completed"
+        private const val DARK_THEME_KEY = "dark_theme_enabled"
+        private const val NOTIFICATIONS_KEY = "notifications_enabled"
+        private const val REMINDER_ENABLED_KEY = "reminder_enabled"
+        private const val REMINDER_INTERVAL_KEY = "reminder_interval"
     }
 }

@@ -9,6 +9,7 @@ class GetSettingsUseCase(
         return SettingsResult(
             darkThemeEnabled = repository.isDarkThemeEnabled(),
             notificationsEnabled = repository.areNotificationsEnabled(),
+            reminderEnabled = repository.isReminderEnabled(),
             reminderInterval = repository.getReminderInterval()
         )
     }
@@ -17,5 +18,6 @@ class GetSettingsUseCase(
 data class SettingsResult(
     val darkThemeEnabled: Boolean,
     val notificationsEnabled: Boolean,
+    val reminderEnabled: Boolean,
     val reminderInterval: Int
 )

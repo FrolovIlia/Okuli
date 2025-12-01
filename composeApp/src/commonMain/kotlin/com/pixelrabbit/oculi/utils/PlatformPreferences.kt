@@ -4,4 +4,8 @@ package com.pixelrabbit.oculi.utils
 expect object PlatformPreferences {
     fun getBoolean(key: String, defaultValue: Boolean): Boolean
     fun setBoolean(key: String, value: Boolean)
+
+    // Добавляем методы для Int
+    fun getInt(key: String, defaultValue: Int): Int
+    fun setInt(key: String, value: Int)
 }
