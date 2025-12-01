@@ -42,3 +42,10 @@
 #############################################
 -keep class com.yandex.mobile.ads.** { *; }
 -dontwarn com.yandex.mobile.ads.**
+
+# Яндекс Ads и AppMetrica
+-keep class com.yandex.metrica.** { *; }
+-keep class com.yandex.varioqub.** { *; }
+-dontwarn com.yandex.metrica.**
+-dontwarn com.yandex.mobile.ads.**
+-dontwarn com.yandex.varioqub.**

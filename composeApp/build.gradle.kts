@@ -15,7 +15,6 @@ kotlin {
         }
     }
 
-    // УБИРАЕМ cocoapods блок и используем ручную настройку iOS
     iosX64()
     iosArm64()
     iosSimulatorArm64()
@@ -50,7 +49,6 @@ kotlin {
                 implementation("androidx.compose.ui:ui-tooling:1.6.0")
                 implementation("androidx.compose.ui:ui:1.6.0")
                 implementation("androidx.compose.material3:material3:1.0.1")
-                // Яндекс реклама для Android
                 implementation(libs.yandex.mobile.ads.android)
             }
         }
@@ -65,7 +63,6 @@ kotlin {
             iosArm64Main.dependsOn(this)
             iosSimulatorArm64Main.dependsOn(this)
 
-            // ДОБАВЛЯЕМ зависимости для iOS вручную
             dependencies {
                 implementation("io.ktor:ktor-client-darwin:2.3.8")
             }
@@ -85,8 +82,8 @@ android {
         applicationId = "com.pixelrabbit.oculi"
         minSdk = 24
         targetSdk = 35
-        versionCode = 12
-        versionName = "4.8"
+        versionCode = 13
+        versionName = "4.9"
 
         ndk {
             debugSymbolLevel = "FULL"
