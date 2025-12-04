@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.pixelrabbit.oculi">
+
+    <!-- Разрешения для интернета и рекламы -->
     <uses-permission android:name="android.permission.INTERNET"/>
-    <!-- Добавляем разрешение для Яндекс рекламы -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
 
     <application
         android:allowBackup="true"
@@ -13,19 +15,20 @@
         android:supportsRtl="true"
         android:theme="@android:style/Theme.Material.Light.NoActionBar">
 
-        <!-- Яндекс Реклама - ваш ID приложения -->
+        <!-- Яндекс реклама: Application ID -->
         <meta-data
             android:name="com.yandex.mobile.ads.APPLICATION_ID"
-            android:value="17896552" />
+            android:value="17896552"/>
 
         <activity
-            android:exported="true"
             android:name=".MainActivity"
+            android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
     </application>
+
 </manifest>
