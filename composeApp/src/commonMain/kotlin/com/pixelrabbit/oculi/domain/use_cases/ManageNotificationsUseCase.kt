@@ -5,11 +5,14 @@ import com.pixelrabbit.oculi.domain.repositories.NotificationRepository
 class ManageNotificationsUseCase(
     private val repository: NotificationRepository
 ) {
-    suspend operator fun invoke(enabled: Boolean, intervalMinutes: Int = 60) {
+    suspend operator fun invoke(
+        enabled: Boolean,
+        intervalHours: Int = 24
+    ) {
         repository.setNotificationEnabled(enabled)
 
         if (enabled) {
-            repository.scheduleReminder(intervalMinutes)
+            repository.scheduleReminder(intervalHours)
         } else {
             repository.cancelReminders()
         }

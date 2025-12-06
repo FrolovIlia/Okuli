@@ -19,7 +19,6 @@ class MainActivity : ComponentActivity() {
         // Инициализация рекламы
         ads = AppOpenAdManager(this)
         ads.initialize {
-            // UI запускается безопасно после показа рекламы
             setContent {
                 OculiApp()
             }

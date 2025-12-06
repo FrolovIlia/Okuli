@@ -14,13 +14,11 @@ import com.yandex.mobile.ads.common.MobileAds
 class AppOpenAdManager(private val activity: Activity) {
 
     private var appOpenAd: AppOpenAd? = null
-    private val adUnitId = "R-M-17896552-1"
+    private val adUnitId = "R-M-17896552-1" // Android блок
 
     fun initialize(onComplete: (() -> Unit)? = null) {
-        // Инициализация SDK
         MobileAds.initialize(activity) {}
 
-        // Создаем загрузчик рекламы
         val loader = AppOpenAdLoader(activity)
         loader.setAdLoadListener(object : AppOpenAdLoadListener {
             override fun onAdLoaded(appOpenAd: AppOpenAd) {
@@ -30,25 +28,18 @@ class AppOpenAdManager(private val activity: Activity) {
 
             override fun onAdFailedToLoad(error: AdRequestError) {
                 this@AppOpenAdManager.appOpenAd = null
-                activity.runOnUiThread {
-                    onComplete?.invoke()
-                }
+                activity.runOnUiThread { onComplete?.invoke() }
             }
         })
 
-        // Формируем запрос
         val request = AdRequestConfiguration.Builder(adUnitId).build()
         loader.loadAd(request)
     }
 
     fun showIfAvailable(onComplete: (() -> Unit)? = null) {
         val ad = appOpenAd
-
-        // Проверяем, что Activity валидна
         if (ad == null || activity.isFinishing || activity.isDestroyed) {
-            activity.runOnUiThread {
-                onComplete?.invoke()
-            }
+            activity.runOnUiThread { onComplete?.invoke() }
             return
         }
 
@@ -56,16 +47,12 @@ class AppOpenAdManager(private val activity: Activity) {
             override fun onAdShown() {}
             override fun onAdDismissed() {
                 appOpenAd = null
-                activity.runOnUiThread {
-                    onComplete?.invoke()
-                }
+                activity.runOnUiThread { onComplete?.invoke() }
             }
 
             override fun onAdFailedToShow(error: AdError) {
                 appOpenAd = null
-                activity.runOnUiThread {
-                    onComplete?.invoke()
-                }
+                activity.runOnUiThread { onComplete?.invoke() }
             }
 
             override fun onAdClicked() {}

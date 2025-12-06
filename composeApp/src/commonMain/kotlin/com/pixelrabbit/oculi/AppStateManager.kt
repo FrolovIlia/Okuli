@@ -16,8 +16,8 @@ fun AppStateManager() {
             com.pixelrabbit.oculi.domain.use_cases.SettingsResult(
                 darkThemeEnabled = false,
                 notificationsEnabled = true,
-                reminderEnabled = true, // ДОБАВЬТЕ ЭТОТ ПАРАМЕТР
-                reminderInterval = 60
+                reminderEnabled = true,
+                reminderInterval = 24
             )
         )
     }

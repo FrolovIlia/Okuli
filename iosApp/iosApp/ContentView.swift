@@ -1,5 +1,5 @@
-import UIKit
 import SwiftUI
+import UIKit
 import ComposeApp
 
 struct ComposeView: UIViewControllerRepresentable {
@@ -16,6 +16,3 @@ struct ContentView: View {
             .ignoresSafeArea()
     }
 }
-
-
-

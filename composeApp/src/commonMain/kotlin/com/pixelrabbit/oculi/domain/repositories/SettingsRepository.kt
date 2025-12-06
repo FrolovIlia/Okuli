@@ -7,7 +7,7 @@ interface SettingsRepository {
     suspend fun setNotificationsEnabled(enabled: Boolean)
     suspend fun getReminderInterval(): Int
     suspend fun setReminderInterval(interval: Int)
-    suspend fun isReminderEnabled(): Boolean       // ← вот этот метод
+    suspend fun isReminderEnabled(): Boolean
     suspend fun setReminderEnabled(enabled: Boolean)
 }
 

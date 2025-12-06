@@ -35,7 +35,7 @@ fun SettingsContent() {
     // Локальные состояния для остальных настроек
     var notificationsEnabled by remember { mutableStateOf(true) }
     var reminderEnabled by remember { mutableStateOf(true) }
-    var reminderInterval by remember { mutableStateOf(60) }
+    var reminderInterval by remember { mutableStateOf(24) }
 
     // Загружаем сохраненные настройки при запуске
     LaunchedEffect(Unit) {
@@ -48,7 +48,7 @@ fun SettingsContent() {
         println("- Тема: ${if (settings.darkThemeEnabled) "темная" else "светлая"}")
         println("- Уведомления: ${if (settings.notificationsEnabled) "вкл" else "выкл"}")
         println("- Напоминания: ${if (settings.reminderEnabled) "вкл" else "выкл"}")
-        println("- Интервал: ${settings.reminderInterval} мин")
+        println("- Интервал: каждые ${settings.reminderInterval} часа")
     }
 
     // Сохраняем настройки при изменении
@@ -65,7 +65,7 @@ fun SettingsContent() {
             val shouldShowNotifications = notificationsEnabled && reminderEnabled
             ServiceLocator.manageNotificationsUseCase(
                 enabled = shouldShowNotifications,
-                intervalMinutes = reminderInterval
+                intervalHours = reminderInterval
             )
         }
     }
@@ -151,7 +151,7 @@ fun SettingsContent() {
 
                     // Интервал напоминаний (можно добавить позже)
                     Text(
-                        text = "Интервал: $reminderInterval минут",
+                        text = "Интервал: каждые $reminderInterval часа",
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }

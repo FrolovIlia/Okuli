@@ -21,11 +21,10 @@ class AppSettings {
         set(value) = PlatformPreferences.setBoolean(REMINDER_ENABLED_KEY, value)
 
     var reminderInterval: Int
-        get() = PlatformPreferences.getInt(REMINDER_INTERVAL_KEY, 60)
+        get() = PlatformPreferences.getInt(REMINDER_INTERVAL_KEY, 24)
         set(value) = PlatformPreferences.setInt(REMINDER_INTERVAL_KEY, value)
 
     companion object {
-        // Ключи для хранения
         private const val ONBOARDING_COMPLETED_KEY = "onboarding_completed"
         private const val DARK_THEME_KEY = "dark_theme_enabled"
         private const val NOTIFICATIONS_KEY = "notifications_enabled"
