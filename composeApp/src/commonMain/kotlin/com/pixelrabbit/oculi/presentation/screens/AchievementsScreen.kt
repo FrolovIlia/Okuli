@@ -93,9 +93,9 @@ fun AchievementsContent() {
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Достижения") }
-            )
+//            TopAppBar(
+//                title = { Text("Достижения") }
+//            )
         }
     ) { paddingValues ->
         Column(

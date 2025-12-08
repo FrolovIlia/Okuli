@@ -102,60 +102,60 @@ fun SettingsContent() {
             }
 
             // Уведомления
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(
-                        text = "Уведомления",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    SettingSwitch(
-                        text = "Включить уведомления",
-                        checked = notificationsEnabled,
-                        onCheckedChange = { notificationsEnabled = it }
-                    )
-                }
-            }
+//            Card(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(16.dp)
+//            ) {
+//                Column(modifier = Modifier.padding(16.dp)) {
+//                    Text(
+//                        text = "Уведомления",
+//                        style = MaterialTheme.typography.titleLarge,
+//                        fontWeight = FontWeight.Bold,
+//                        color = MaterialTheme.colorScheme.primary
+//                    )
+//
+//                    Spacer(modifier = Modifier.height(16.dp))
+//
+//                    SettingSwitch(
+//                        text = "Включить уведомления",
+//                        checked = notificationsEnabled,
+//                        onCheckedChange = { notificationsEnabled = it }
+//                    )
+//                }
+//            }
 
             // Напоминания
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(
-                        text = "Напоминания",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    SettingSwitch(
-                        text = "Включить напоминания",
-                        checked = reminderEnabled,
-                        onCheckedChange = { reminderEnabled = it }
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // Интервал напоминаний (можно добавить позже)
-                    Text(
-                        text = "Интервал: каждые $reminderInterval часа",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-            }
+//            Card(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(16.dp)
+//            ) {
+//                Column(modifier = Modifier.padding(16.dp)) {
+//                    Text(
+//                        text = "Напоминания",
+//                        style = MaterialTheme.typography.titleLarge,
+//                        fontWeight = FontWeight.Bold,
+//                        color = MaterialTheme.colorScheme.primary
+//                    )
+//
+//                    Spacer(modifier = Modifier.height(16.dp))
+//
+//                    SettingSwitch(
+//                        text = "Включить напоминания",
+//                        checked = reminderEnabled,
+//                        onCheckedChange = { reminderEnabled = it }
+//                    )
+//
+//                    Spacer(modifier = Modifier.height(16.dp))
+//
+//                    // Интервал напоминаний (можно добавить позже)
+//                    Text(
+//                        text = "Интервал: каждые $reminderInterval часа",
+//                        style = MaterialTheme.typography.bodyMedium
+//                    )
+//                }
+//            }
 
             // О приложении
             Card(
