@@ -8,6 +8,34 @@ import kotlinx.coroutines.withContext
 class SettingsRepositoryImpl : SettingsRepository {
     private val appSettings = AppSettings()
 
+    // === Методы для рекламы ===
+    override suspend fun incrementLaunchCount(): Boolean {
+        return withContext(Dispatchers.Default) {
+            val currentCount = appSettings.launchCount + 1
+            appSettings.launchCount = currentCount
+
+            val shouldShowAds = currentCount >= 3
+            if (shouldShowAds && !appSettings.shouldShowAds) {
+                appSettings.shouldShowAds = true
+            }
+
+            shouldShowAds
+        }
+    }
+
+    override suspend fun shouldShowAds(): Boolean {
+        return withContext(Dispatchers.Default) {
+            appSettings.shouldShowAds
+        }
+    }
+
+    override suspend fun getLaunchCount(): Int {
+        return withContext(Dispatchers.Default) {
+            appSettings.launchCount
+        }
+    }
+
+    // === Существующие методы ===
     override suspend fun isDarkThemeEnabled(): Boolean {
         return withContext(Dispatchers.Default) {
             appSettings.darkThemeEnabled
@@ -17,7 +45,6 @@ class SettingsRepositoryImpl : SettingsRepository {
     override suspend fun setDarkThemeEnabled(enabled: Boolean) {
         withContext(Dispatchers.Default) {
             appSettings.darkThemeEnabled = enabled
-            println("Темная тема сохранена: ${if (enabled) "включена" else "выключена"}")
         }
     }
 
@@ -30,7 +57,6 @@ class SettingsRepositoryImpl : SettingsRepository {
     override suspend fun setNotificationsEnabled(enabled: Boolean) {
         withContext(Dispatchers.Default) {
             appSettings.notificationsEnabled = enabled
-            println("Уведомления сохранены: ${if (enabled) "включены" else "выключены"}")
         }
     }
 
@@ -43,7 +69,6 @@ class SettingsRepositoryImpl : SettingsRepository {
     override suspend fun setReminderEnabled(enabled: Boolean) {
         withContext(Dispatchers.Default) {
             appSettings.reminderEnabled = enabled
-            println("Напоминания сохранены: ${if (enabled) "включены" else "выключены"}")
         }
     }
 
@@ -56,19 +81,19 @@ class SettingsRepositoryImpl : SettingsRepository {
     override suspend fun setReminderInterval(interval: Int) {
         withContext(Dispatchers.Default) {
             appSettings.reminderInterval = interval
-            println("Интервал напоминаний сохранен: $interval минут")
         }
     }
 
-    // Опционально: метод для получения всех настроек сразу
-    suspend fun getAllSettings(): Map<String, Any> {
+    override suspend fun getAllSettings(): Map<String, Any> {
         return withContext(Dispatchers.Default) {
             mapOf(
                 "darkThemeEnabled" to appSettings.darkThemeEnabled,
                 "notificationsEnabled" to appSettings.notificationsEnabled,
                 "reminderEnabled" to appSettings.reminderEnabled,
                 "reminderInterval" to appSettings.reminderInterval,
-                "isOnboardingCompleted" to appSettings.isOnboardingCompleted
+                "isOnboardingCompleted" to appSettings.isOnboardingCompleted,
+                "launchCount" to appSettings.launchCount,
+                "shouldShowAds" to appSettings.shouldShowAds
             )
         }
     }

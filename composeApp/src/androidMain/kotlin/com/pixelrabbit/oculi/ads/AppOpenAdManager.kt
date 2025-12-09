@@ -15,44 +15,48 @@ class AppOpenAdManager(private val activity: Activity) {
 
     private var appOpenAd: AppOpenAd? = null
     private val adUnitId = "R-M-17896552-1" // Android блок
+    private var onAdDismissed: (() -> Unit)? = null
 
-    fun initialize(onComplete: (() -> Unit)? = null) {
-        MobileAds.initialize(activity) {}
+    fun initialize(onComplete: () -> Unit) {
+        MobileAds.initialize(activity) {
+            val loader = AppOpenAdLoader(activity)
+            loader.setAdLoadListener(object : AppOpenAdLoadListener {
+                override fun onAdLoaded(appOpenAd: AppOpenAd) {
+                    this@AppOpenAdManager.appOpenAd = appOpenAd
+                    onComplete()
+                }
 
-        val loader = AppOpenAdLoader(activity)
-        loader.setAdLoadListener(object : AppOpenAdLoadListener {
-            override fun onAdLoaded(appOpenAd: AppOpenAd) {
-                this@AppOpenAdManager.appOpenAd = appOpenAd
-                showIfAvailable(onComplete)
-            }
+                override fun onAdFailedToLoad(error: AdRequestError) {
+                    this@AppOpenAdManager.appOpenAd = null
+                    onComplete()
+                }
+            })
 
-            override fun onAdFailedToLoad(error: AdRequestError) {
-                this@AppOpenAdManager.appOpenAd = null
-                activity.runOnUiThread { onComplete?.invoke() }
-            }
-        })
-
-        val request = AdRequestConfiguration.Builder(adUnitId).build()
-        loader.loadAd(request)
+            val request = AdRequestConfiguration.Builder(adUnitId).build()
+            loader.loadAd(request)
+        }
     }
 
-    fun showIfAvailable(onComplete: (() -> Unit)? = null) {
+    fun showIfAvailable(onAdDismissed: () -> Unit) {
+        this.onAdDismissed = onAdDismissed
         val ad = appOpenAd
+
         if (ad == null || activity.isFinishing || activity.isDestroyed) {
-            activity.runOnUiThread { onComplete?.invoke() }
+            onAdDismissed()
             return
         }
 
         ad.setAdEventListener(object : AppOpenAdEventListener {
             override fun onAdShown() {}
+
             override fun onAdDismissed() {
                 appOpenAd = null
-                activity.runOnUiThread { onComplete?.invoke() }
+                onAdDismissed()
             }
 
             override fun onAdFailedToShow(error: AdError) {
                 appOpenAd = null
-                activity.runOnUiThread { onComplete?.invoke() }
+                onAdDismissed()
             }
 
             override fun onAdClicked() {}

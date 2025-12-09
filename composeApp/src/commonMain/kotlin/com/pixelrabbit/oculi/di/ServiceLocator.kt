@@ -10,6 +10,7 @@ import com.pixelrabbit.oculi.domain.repositories.ExerciseRepository
 import com.pixelrabbit.oculi.domain.repositories.NotificationRepository
 import com.pixelrabbit.oculi.domain.repositories.SettingsRepository
 import com.pixelrabbit.oculi.domain.repositories.StatsRepository
+import com.pixelrabbit.oculi.domain.use_cases.AdUseCase
 import com.pixelrabbit.oculi.domain.use_cases.GetAchievementsUseCase
 import com.pixelrabbit.oculi.domain.use_cases.GetExercisesUseCase
 import com.pixelrabbit.oculi.domain.use_cases.GetSettingsUseCase
@@ -29,7 +30,7 @@ object ServiceLocator {
     // Публичные Use Cases
     val getExercisesUseCase: GetExercisesUseCase by lazy { GetExercisesUseCase(_exerciseRepository) }
     val startExerciseUseCase: StartExerciseUseCase by lazy {
-        StartExerciseUseCase(_exerciseRepository, _statsRepository) // ✅ Два параметра
+        StartExerciseUseCase(_exerciseRepository, _statsRepository)
     }
     val getStatsUseCase: GetStatsUseCase by lazy { GetStatsUseCase(_statsRepository) }
     val manageNotificationsUseCase: ManageNotificationsUseCase by lazy {
@@ -40,6 +41,9 @@ object ServiceLocator {
     }
     val getSettingsUseCase: GetSettingsUseCase by lazy { GetSettingsUseCase(_settingsRepository) }
     val updateSettingsUseCase: UpdateSettingsUseCase by lazy { UpdateSettingsUseCase(_settingsRepository) }
+
+    // Новый Use Case для рекламы
+    val adUseCase: AdUseCase by lazy { AdUseCase(_settingsRepository) }
 
     // Прямой доступ к репозиториям
     fun statsRepository(): StatsRepository = _statsRepository
