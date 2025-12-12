@@ -1,12 +1,10 @@
 package com.pixelrabbit.oculi.utils.platform
 
-import android.content.Context
+import platform.Foundation.NSObject
 
-actual class AndroidContext private actual constructor() {
-    private lateinit var _appContext: Context
-
+actual class AndroidContext actual constructor() {
     actual val androidContext: Any
-        get() = _appContext
+        get() = NSObject()
 
     actual companion object {
         private var instance: AndroidContext? = null
@@ -14,12 +12,11 @@ actual class AndroidContext private actual constructor() {
         actual fun initialize(context: Any) {
             if (instance == null) {
                 instance = AndroidContext()
-                instance!!._appContext = context as Context
             }
         }
 
         actual fun getInstance(): AndroidContext {
-            return instance ?: throw IllegalStateException("AndroidContext not initialized")
+            return instance ?: AndroidContext()
         }
     }
 }

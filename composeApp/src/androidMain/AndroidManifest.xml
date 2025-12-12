@@ -4,8 +4,6 @@
     <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-
-    <!-- Для уведомлений (для API 33+) -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
@@ -17,7 +15,6 @@
         android:theme="@android:style/Theme.Material.Light.NoActionBar"
         android:extractNativeLibs="true">
 
-        <!-- Yandex App ID для Android -->
         <meta-data
             android:name="com.yandex.mobile.ads.APPLICATION_ID"
             android:value="17896552" />

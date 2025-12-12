@@ -1,12 +1,13 @@
 import UIKit
 import SwiftUI
-import shared // ваш KMP модуль
+import shared
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     private let adController = AppOpenAdController.shared
+    private let notificationManager = NotificationManager.shared
     private var shouldShowAd = false
 
     func application(
@@ -14,27 +15,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
 
-        // Создаем окно сразу
         window = UIWindow(frame: UIScreen.main.bounds)
 
-        // Показываем экран загрузки
         let loadingView = LoadingScreen(shouldShowAd: $shouldShowAd)
         window?.rootViewController = UIHostingController(rootView: loadingView)
         window?.makeKeyAndVisible()
 
-        // В фоне проверяем нужно ли показывать рекламу
+        notificationManager.requestPermission()
+
         DispatchQueue.global(qos: .userInitiated).async {
             let adUseCase = ServiceLocator().adUseCase
 
             Task {
-                // 1. Сначала отслеживаем запуск
                 self.shouldShowAd = await adUseCase.trackAppLaunch()
                 let launchCount = await adUseCase.getLaunchCount()
 
                 print("📱 iOS AppLaunch: Launch #\(launchCount), should show ads: \(self.shouldShowAd)")
 
                 DispatchQueue.main.async {
-                    // 2. Решаем показывать рекламу или нет
                     if self.shouldShowAd {
                         print("📱 iOS AppLaunch: Showing ad (after 3+ launches)")
                         self.showAd()
@@ -49,12 +47,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        notificationManager.updateLastVisitDate()
+    }
+
     private func showAd() {
-        // Загружаем рекламу и показываем
         adController.loadAd()
 
         let adLoadingView = AdLoadingView {
-            // Когда реклама загружена, показываем её
             if let rootVC = self.window?.rootViewController {
                 self.adController.showIfAvailable(from: rootVC) {
                     self.showMainApp()
@@ -73,7 +73,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 }
 
-// SwiftUI View для экрана загрузки
 struct LoadingScreen: View {
     @Binding var shouldShowAd: Bool
     @State private var isLoading = true
@@ -94,7 +93,6 @@ struct LoadingScreen: View {
             }
         }
         .onAppear {
-            // Показываем загрузку 1 секунду для плавности
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 isLoading = false
             }
@@ -102,7 +100,6 @@ struct LoadingScreen: View {
     }
 }
 
-// SwiftUI View для загрузки рекламы
 struct AdLoadingView: View {
     let onAdLoaded: () -> Void
     @State private var timer = Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()
@@ -139,7 +136,6 @@ struct AdLoadingView: View {
             }
         }
         .onAppear {
-            // Даем рекламе время на загрузку
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
                 timer.upstream.connect().cancel()
                 onAdLoaded()
