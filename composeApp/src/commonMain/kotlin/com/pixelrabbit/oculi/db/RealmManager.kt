@@ -1,4 +1,4 @@
-package com.pixelrabbit.oculi.data.db
+package com.pixelrabbit.oculi.db
 
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
@@ -7,6 +7,7 @@ import com.pixelrabbit.oculi.data.models.RealmAchievement
 import com.pixelrabbit.oculi.data.models.RealmExerciseCompletion
 import io.realm.kotlin.ext.query
 import kotlinx.coroutines.runBlocking
+import kotlinx.datetime.Clock
 
 object RealmManager {
     private var realm: Realm? = null
@@ -27,7 +28,6 @@ object RealmManager {
 
             realm = Realm.open(config)
 
-            // ГАРАНТИРОВАННО создаем прогресс при первом открытии Realm
             runBlocking {
                 initializeDefaultData()
             }
@@ -40,21 +40,19 @@ object RealmManager {
 
         val realm = realm ?: return
 
-        // Ждем пока Realm полностью инициализируется
         realm.write {
             // Проверяем существует ли прогресс
             val existingProgress = query<RealmUserProgress>("userId == $0", USER_ID).first().find()
             if (existingProgress == null) {
-                // СОЗДАЕМ ПРОГРЕСС ГАРАНТИРОВАННО
                 copyToRealm(RealmUserProgress().apply {
                     userId = USER_ID
                     totalExercises = 0
                     totalTime = 0
                     currentStreak = 0
                     todayExercises = 0
-                    lastActivityDate = kotlinx.datetime.Clock.System.now().toEpochMilliseconds()
-                    createdAt = kotlinx.datetime.Clock.System.now().toEpochMilliseconds()
-                    updatedAt = kotlinx.datetime.Clock.System.now().toEpochMilliseconds()
+                    lastActivityDate = Clock.System.now().toEpochMilliseconds()
+                    createdAt = Clock.System.now().toEpochMilliseconds()
+                    updatedAt = Clock.System.now().toEpochMilliseconds()
                 })
                 println("DEBUG: RealmManager - DEFAULT USER PROGRESS CREATED")
             } else {

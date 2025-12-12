@@ -84,7 +84,6 @@ fun ExerciseCompleteContent(exerciseName: String, duration: Int) {
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    // Статистика выполнения
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
@@ -103,7 +102,6 @@ fun ExerciseCompleteContent(exerciseName: String, duration: Int) {
                 }
             }
 
-            // Советы после упражнения
             Card(
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -140,7 +138,6 @@ fun ExerciseCompleteContent(exerciseName: String, duration: Int) {
 
                 Button(
                     onClick = {
-                        // Возврат на главный экран
                         navigator.popUntil { it is HomeScreen }
                     },
                     modifier = Modifier.fillMaxWidth()

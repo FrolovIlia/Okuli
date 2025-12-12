@@ -17,22 +17,17 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // ⚡ Инициализация глобального androidContext для KMP
         initializeAndroidContext(this)
 
         lifecycleScope.launch {
-            // 1. Сначала отслеживаем запуск и проверяем нужно ли показывать рекламу
             shouldShowAd = ServiceLocator.adUseCase.trackAppLaunch()
             val launchCount = ServiceLocator.adUseCase.getLaunchCount()
 
             println("📱 AppLaunch: Launch #$launchCount, should show ads: $shouldShowAd")
-
-            // 2. Только потом инициализируем рекламу
             ads = AppOpenAdManager(this@MainActivity)
 
             if (shouldShowAd) {
                 println("📱 AppLaunch: Loading ad (after 3+ launches)")
-                // Показываем рекламу и только потом UI
                 ads.initialize {
                     ads.showIfAvailable {
                         showMainContent()
@@ -40,7 +35,6 @@ class MainActivity : ComponentActivity() {
                 }
             } else {
                 println("📱 AppLaunch: Skipping ad (first 2 launches)")
-                // Пропускаем рекламу, сразу показываем UI
                 showMainContent()
             }
         }

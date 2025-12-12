@@ -22,7 +22,6 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -60,19 +59,16 @@ fun AchievementsContent() {
 
     var isLoading by remember { mutableStateOf(true) }
 
-    // Используем Flow для реального времени обновления достижений
     val achievementsFlow = ServiceLocator.getAchievementsUseCase.getAchievementsFlow()
 
     LaunchedEffect(Unit) {
         println("🎯 ACHIEVEMENTS SCREEN: Initializing...")
 
-        // Инициализируем начальные данные
         achievements = ServiceLocator.getAchievementsUseCase()
         isLoading = false
 
         println("🎯 ACHIEVEMENTS SCREEN: Initial data loaded - ${achievements.size} achievements")
 
-        // Подписываемся на обновления через Flow
         achievementsFlow.collect { newAchievements ->
             val unlockedCount = newAchievements.count { it.unlockedAt != null }
             println("🎯 ACHIEVEMENTS SCREEN: Flow update - ${newAchievements.size} achievements, $unlockedCount unlocked")
@@ -80,9 +76,7 @@ fun AchievementsContent() {
         }
     }
 
-    // 🔥 ДОБАВЛЕНО: При открытии экрана проверяем актуальность ачивок
     LaunchedEffect(Unit) {
-        // Даем время на загрузку初始数据，然后检查成就
         kotlinx.coroutines.delay(500)
         println("🎯 ACHIEVEMENTS SCREEN: Checking for new achievements...")
         ServiceLocator.achievementRepository().checkAndUnlockAchievements()
@@ -104,7 +98,6 @@ fun AchievementsContent() {
                 .padding(paddingValues)
         ) {
             if (isLoading) {
-                // Показываем индикатор загрузки
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -115,7 +108,6 @@ fun AchievementsContent() {
                     Text("Загрузка достижений...")
                 }
             } else {
-                // Статистика достижений
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -159,9 +151,7 @@ fun AchievementsContent() {
                     }
                 }
 
-                // Список достижений
                 if (achievements.isEmpty()) {
-                    // Показываем сообщение если ачивок нет
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -266,7 +256,6 @@ fun AchievementItem(achievement: Achievement) {
                     )
                 }
 
-                // Информация о достижении
                 Column(
                     modifier = Modifier.weight(1f)
                 ) {
@@ -286,7 +275,6 @@ fun AchievementItem(achievement: Achievement) {
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    // Прогресс
                     if (!isUnlocked) {
                         LinearProgressIndicator(
                             progress = { achievement.progress },
@@ -312,7 +300,6 @@ fun AchievementItem(achievement: Achievement) {
                 }
             }
 
-            // Статус достижения
             Text(
                 text = if (isUnlocked) {
                     "🎉 Получено: только что"

@@ -156,21 +156,18 @@ fun ExerciseTimerContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
-        // Заголовок упражнения
         Text(
             text = "${exercise.icon} ${exercise.title}",
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold
         )
 
-        // Круговой прогресс
         BoxWithProgress(
             progress = progress,
             timeLeft = timeLeft,
             modifier = Modifier.padding(16.dp)
         )
 
-        // Линейный прогресс
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -187,7 +184,6 @@ fun ExerciseTimerContent(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Кнопки управления
         ExerciseTimerControls(
             isRunning = isRunning,
             isCompleted = isCompleted,
@@ -197,7 +193,6 @@ fun ExerciseTimerContent(
             onComplete = onComplete
         )
 
-        // Инструкция
         if (isRunning) {
             Card(
                 modifier = Modifier.fillMaxWidth()

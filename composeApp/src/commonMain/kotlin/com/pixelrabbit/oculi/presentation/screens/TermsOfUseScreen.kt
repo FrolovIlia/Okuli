@@ -88,7 +88,6 @@ fun TermsOfUseContent() {
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
 
-                    // Раздел 1
                     Column {
                         Text(
                             text = "1. Принятие условий",
@@ -110,7 +109,6 @@ fun TermsOfUseContent() {
                         )
                     }
 
-                    // Раздел 2
                     Column {
                         Text(
                             text = "2. Медицинское предупреждение",
@@ -136,7 +134,6 @@ fun TermsOfUseContent() {
                         )
                     }
 
-                    // Раздел 3
                     Column {
                         Text(
                             text = "3. Права и ограничения",
@@ -165,7 +162,6 @@ fun TermsOfUseContent() {
                         )
                     }
 
-                    // Раздел 4
                     Column {
                         Text(
                             text = "4. Интеллектуальная собственность",
@@ -190,7 +186,6 @@ fun TermsOfUseContent() {
                         )
                     }
 
-                    // Раздел 5
                     Column {
                         Text(
                             text = "5. Ответственность",
@@ -215,7 +210,6 @@ fun TermsOfUseContent() {
                         )
                     }
 
-                    // Раздел 6
                     Column {
                         Text(
                             text = "6. Изменения условий",
@@ -240,7 +234,6 @@ fun TermsOfUseContent() {
                         )
                     }
 
-                    // Раздел 7
                     Column {
                         Text(
                             text = "7. Прекращение использования",
@@ -265,7 +258,6 @@ fun TermsOfUseContent() {
                         )
                     }
 
-                    // Раздел 8
                     Column {
                         Text(
                             text = "8. Контакты",

@@ -70,7 +70,6 @@ fun AstigmatismTestContent() {
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Верхний отступ
             Spacer(modifier = Modifier.height(8.dp))
 
             if (!testStarted) {
@@ -131,7 +130,6 @@ fun AstigmatismTestContent() {
                     }
                 }
 
-                // Кнопка начала теста
                 Button(
                     onClick = { testStarted = true },
                     modifier = Modifier
@@ -143,9 +141,7 @@ fun AstigmatismTestContent() {
                 }
 
             } else if (!testCompleted) {
-                // ПРОЦЕСС ТЕСТИРОВАНИЯ
 
-                // Прогресс теста
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -181,7 +177,6 @@ fun AstigmatismTestContent() {
                     }
                 }
 
-                // Изображение для теста
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -225,7 +220,6 @@ fun AstigmatismTestContent() {
                     }
                 }
 
-                // Кнопки управления тестом
                 Column(
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                     modifier = Modifier
@@ -260,7 +254,6 @@ fun AstigmatismTestContent() {
                 }
 
             } else {
-                // РЕЗУЛЬТАТЫ ТЕСТА
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -324,7 +317,6 @@ fun AstigmatismTestContent() {
                 }
             }
 
-            // Кнопка назад
             Button(
                 onClick = {
                     if (testStarted && !testCompleted) {
@@ -342,7 +334,6 @@ fun AstigmatismTestContent() {
                 Text("Назад")
             }
 
-            // Нижний отступ
             Spacer(modifier = Modifier.height(24.dp))
         }
     }
@@ -354,7 +345,6 @@ fun SiemensStar(modifier: Modifier = Modifier) {
         val center = Offset(size.width / 2, size.height / 2)
         val radius = size.minDimension / 2
 
-        // Рисуем звезду Сименса (36 лучей)
         for (i in 0 until 36) {
             val angle = i * 10f
             rotate(angle, center) {
@@ -367,7 +357,6 @@ fun SiemensStar(modifier: Modifier = Modifier) {
             }
         }
 
-        // Центральный круг
         drawCircle(
             color = Color.Black,
             center = center,
@@ -382,7 +371,6 @@ fun RadialLines(modifier: Modifier = Modifier) {
         val center = Offset(size.width / 2, size.height / 2)
         val radius = size.minDimension / 2
 
-        // Радиальные линии (24 линии)
         for (i in 0 until 24) {
             val angle = i * 15f
             rotate(angle, center) {
@@ -400,7 +388,6 @@ fun RadialLines(modifier: Modifier = Modifier) {
 @Composable
 fun ParallelLines(modifier: Modifier = Modifier) {
     Canvas(modifier = modifier) {
-        // Вертикальные параллельные линии
         for (i in 0 until 8) {
             val x = size.width * (i + 1) / 9
             drawLine(
@@ -411,7 +398,6 @@ fun ParallelLines(modifier: Modifier = Modifier) {
             )
         }
 
-        // Горизонтальные параллельные линии
         for (i in 0 until 8) {
             val y = size.height * (i + 1) / 9
             drawLine(
@@ -430,7 +416,6 @@ fun ConcentricCircles(modifier: Modifier = Modifier) {
         val center = Offset(size.width / 2, size.height / 2)
         val maxRadius = size.minDimension / 2
 
-        // Концентрические круги (5 кругов)
         for (i in 1..5) {
             val radius = maxRadius * i / 6
             drawCircle(
@@ -441,7 +426,6 @@ fun ConcentricCircles(modifier: Modifier = Modifier) {
             )
         }
 
-        // Радиальные линии через центр (8 линий)
         for (i in 0 until 8) {
             val angle = i * 45f
             rotate(angle, center) {

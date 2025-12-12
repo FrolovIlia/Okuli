@@ -76,7 +76,6 @@ fun HomeContent(darkTheme: Boolean) {
                 .padding(top = statusBarTop + 24.dp, start = 24.dp, end = 24.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            // Логотип и приветствие
             Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
                     Image(

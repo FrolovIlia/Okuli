@@ -85,7 +85,6 @@ fun AboutContent() {
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
         ) {
-            // Заголовок
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -161,7 +160,6 @@ fun AboutContent() {
                 }
             }
 
-            // Контакты
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -192,7 +190,6 @@ fun AboutContent() {
                 }
             }
 
-            // Кнопки
             Column(
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)

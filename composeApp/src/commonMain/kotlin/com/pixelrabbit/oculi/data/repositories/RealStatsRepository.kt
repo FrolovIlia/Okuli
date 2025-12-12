@@ -1,6 +1,6 @@
 package com.pixelrabbit.oculi.data.repositories
 
-import com.pixelrabbit.oculi.data.db.RealmManager
+import com.pixelrabbit.oculi.db.RealmManager
 import com.pixelrabbit.oculi.data.models.RealmExerciseCompletion
 import com.pixelrabbit.oculi.data.models.RealmUserProgress
 import com.pixelrabbit.oculi.di.ServiceLocator

@@ -79,9 +79,7 @@ fun AcuityTestContent() {
 
     val fixedLetterContainerHeight = 180.dp
 
-    // Функция для перехода к следующему глазу
     fun switchToNextEye() {
-        // Определяем следующий непроверенный глаз
         val nextEye = when {
             leftEyeResult == null -> Eye.LEFT
             rightEyeResult == null -> Eye.RIGHT
@@ -93,7 +91,6 @@ fun AcuityTestContent() {
             currentLine = 0
             currentLetter = 0
         } else {
-            // Оба глаза проверены - завершаем тест
             testCompleted = true
         }
     }
@@ -106,31 +103,26 @@ fun AcuityTestContent() {
             if (currentLine < testLines.size - 1) {
                 currentLine++
             } else {
-                // УСПЕШНО прошли ВСЕ строки - сохраняем результат как 12
                 when (currentEye) {
                     Eye.LEFT -> leftEyeResult = testLines.size
                     Eye.RIGHT -> rightEyeResult = testLines.size
                 }
-                // СРАЗУ переходим к следующему глазу
                 switchToNextEye()
             }
         }
     }
 
     fun handleIncorrectAnswer() {
-        // Сохраняем количество пройденных строк
         val passedLines = currentLine
 
         when (currentEye) {
             Eye.LEFT -> leftEyeResult = passedLines
             Eye.RIGHT -> rightEyeResult = passedLines
         }
-        // СРАЗУ переходим к следующему глазу
         switchToNextEye()
     }
 
     fun manuallySwitchEye() {
-        // ПРОСТО переключаемся на другой глаз, НЕ сохраняя прогресс как завершенный
         currentEye = when (currentEye) {
             Eye.LEFT -> Eye.RIGHT
             Eye.RIGHT -> Eye.LEFT
@@ -140,9 +132,7 @@ fun AcuityTestContent() {
         showEyeSwitchDialog = false
     }
 
-    // Функция для принудительного завершения теста
     fun forceCompleteTest() {
-        // Сохраняем текущий прогресс для активного глаза
         val currentProgress = currentLine
         when (currentEye) {
             Eye.LEFT -> if (leftEyeResult == null) leftEyeResult = currentProgress
@@ -156,16 +146,13 @@ fun AcuityTestContent() {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .systemBarsPadding() // ЗАЩИЩАЕМ от системных баров
+                .systemBarsPadding()
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // ВЕРХНИЙ отступ (уже с учетом systemBarsPadding)
             Spacer(modifier = Modifier.height(8.dp))
 
             if (!testCompleted) {
-                // ОСНОВНОЙ ТЕСТ
-                // Информация о тестировании - ПЕРВЫМ БЛОКОМ
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -205,7 +192,6 @@ fun AcuityTestContent() {
                     }
                 }
 
-                // Индикатор текущего глаза
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -228,7 +214,6 @@ fun AcuityTestContent() {
                             color = MaterialTheme.colorScheme.primary
                         )
 
-                        // Показываем прогресс для каждого глаза
                         val leftProgress =
                             leftEyeResult ?: if (currentEye == Eye.LEFT) currentLine else 0
                         val rightProgress =
@@ -248,7 +233,6 @@ fun AcuityTestContent() {
                     }
                 }
 
-                // Линейный прогресс бар для текущего глаза
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -292,7 +276,6 @@ fun AcuityTestContent() {
                     }
                 }
 
-                // Отображение букв с ФИКСИРОВАННОЙ высотой
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -311,7 +294,6 @@ fun AcuityTestContent() {
                             textAlign = TextAlign.Center
                         )
 
-                        // Контейнер с фиксированной высотой
                         Box(
                             modifier = Modifier
                                 .height(fixedLetterContainerHeight)
@@ -330,7 +312,6 @@ fun AcuityTestContent() {
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        // Кнопки ответа
                         Column(
                             verticalArrangement = Arrangement.spacedBy(12.dp),
                             modifier = Modifier.fillMaxWidth()
@@ -371,7 +352,6 @@ fun AcuityTestContent() {
                     }
                 }
 
-                // Кнопка принудительного завершения теста
                 Button(
                     onClick = { forceCompleteTest() },
                     modifier = Modifier
@@ -383,7 +363,6 @@ fun AcuityTestContent() {
                 }
 
             } else {
-                // РЕЗУЛЬТАТЫ ТЕСТА (после проверки обоих глаз)
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -423,7 +402,6 @@ fun AcuityTestContent() {
                 }
             }
 
-            // Кнопка "Назад" с защитой от перекрытия
             Button(
                 onClick = { navigator.pop() },
                 modifier = Modifier
@@ -434,12 +412,10 @@ fun AcuityTestContent() {
                 Text("Назад")
             }
 
-            // НИЖНИЙ отступ для защиты от системной навигации
             Spacer(modifier = Modifier.height(24.dp)) // Увеличил для надежности
         }
     }
 
-    // Диалог смены глаза (для ручного переключения)
     if (showEyeSwitchDialog) {
         androidx.compose.material3.AlertDialog(
             onDismissRequest = { showEyeSwitchDialog = false },
@@ -539,7 +515,3 @@ fun formatAcuityValue(acuity: Double): String {
         "$formatted.0"
     }
 }
-
-//enum class Eye {
-//    LEFT, RIGHT
-//}

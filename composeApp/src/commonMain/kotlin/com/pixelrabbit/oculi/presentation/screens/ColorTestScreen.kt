@@ -53,11 +53,9 @@ fun ColorTestContent() {
     var selectedAnswer by remember { mutableStateOf<String?>(null) }
     var answerChecked by remember { mutableStateOf(false) }
 
-    // Результаты для каждого глаза - теперь храним количество правильных ответов
     var leftEyeCorrectAnswers by remember { mutableStateOf(0) }
     var rightEyeCorrectAnswers by remember { mutableStateOf(0) }
 
-    // Тестовые пластины
     val testPlates = listOf(
         ColorPlate(
             number = 1,
@@ -91,7 +89,6 @@ fun ColorTestContent() {
         )
     )
 
-    // Функция для перехода к следующему глазу
     fun switchToNextEye() {
         val nextEye = when {
             currentEye == Eye.LEFT && rightEyeCorrectAnswers == 0 -> Eye.RIGHT
@@ -108,13 +105,11 @@ fun ColorTestContent() {
         }
     }
 
-    // Функция для обработки выбора ответа
     fun handleAnswerSelect(answer: String) {
         if (!answerChecked) {
             selectedAnswer = answer
             answerChecked = true
 
-            // Сразу считаем результат
             if (answer == testPlates[currentPlate].correctAnswer) {
                 when (currentEye) {
                     Eye.LEFT -> leftEyeCorrectAnswers++
@@ -124,14 +119,12 @@ fun ColorTestContent() {
         }
     }
 
-    // Функция для перехода к следующей пластине
     fun moveToNextPlate() {
         if (currentPlate < testPlates.size - 1) {
             currentPlate++
             selectedAnswer = null
             answerChecked = false
         } else {
-            // Завершаем тест для текущего глаза
             switchToNextEye()
             selectedAnswer = null
             answerChecked = false
@@ -149,7 +142,6 @@ fun ColorTestContent() {
         showEyeSwitchDialog = false
     }
 
-    // Функция для принудительного завершения теста
     fun forceCompleteTest() {
         testCompleted = true
     }
@@ -166,7 +158,6 @@ fun ColorTestContent() {
             Spacer(modifier = Modifier.height(8.dp))
 
             if (!testCompleted) {
-                // ОСНОВНОЙ ТЕСТ
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -208,7 +199,6 @@ fun ColorTestContent() {
                     }
                 }
 
-                // Индикатор текущего глаза
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -244,7 +234,6 @@ fun ColorTestContent() {
                     }
                 }
 
-                // Прогресс бар
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -284,7 +273,6 @@ fun ColorTestContent() {
                     }
                 }
 
-                // Отображение пластины с вариантами ответов
                 ColorPlateDisplay(
                     plate = testPlates[currentPlate],
                     selectedAnswer = selectedAnswer,
@@ -296,7 +284,6 @@ fun ColorTestContent() {
                         .padding(horizontal = 16.dp)
                 )
 
-                // Кнопка принудительного завершения
                 Button(
                     onClick = { forceCompleteTest() },
                     modifier = Modifier
@@ -308,7 +295,6 @@ fun ColorTestContent() {
                 }
 
             } else {
-                // РЕЗУЛЬТАТЫ
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()

@@ -99,7 +99,6 @@ fun ExerciseDetailContent(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Заголовок
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -117,7 +116,6 @@ fun ExerciseDetailContent(
                 }
             }
 
-            // Описание
             Card {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
@@ -133,7 +131,6 @@ fun ExerciseDetailContent(
                 }
             }
 
-            // Инструкции
             Card {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
@@ -152,7 +149,6 @@ fun ExerciseDetailContent(
                 }
             }
 
-            // 🔥 Блок изображения — используем painterResource(Res.drawable.*)
             exercise.imageName?.let { name ->
                 val painter = when (name) {
                     "sledovanie_za" -> painterResource(Res.drawable.sledovanie_za)
@@ -179,12 +175,10 @@ fun ExerciseDetailContent(
             Card(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                // Локальные состояния
                 var timeLeft by remember { mutableStateOf(exercise.duration) }
                 var isRunning by remember { mutableStateOf(false) }
                 var isCompleted by remember { mutableStateOf(false) }
 
-                // Таймер
                 LaunchedEffect(isRunning, timeLeft) {
                     if (isRunning && timeLeft > 0) {
                         delay(1000)
@@ -223,7 +217,6 @@ fun ExerciseDetailContent(
                         fontWeight = FontWeight.Bold
                     )
 
-                    // Прогресс и время
                     Column(
                         modifier = Modifier.fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -238,7 +231,6 @@ fun ExerciseDetailContent(
                         )
                     }
 
-                    // Кнопки управления
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         modifier = Modifier.fillMaxWidth()
@@ -287,7 +279,6 @@ fun ExerciseDetailContent(
                         }
                     }
 
-                    // Кнопка назад
                     Button(
                         onClick = { navigator.pop() },
                         modifier = Modifier.fillMaxWidth()
@@ -298,12 +289,11 @@ fun ExerciseDetailContent(
             }
         }
 
-        // Показываем экран поздравления поверх всего
         if (showCelebration) {
             CelebrationDialog(
                 onDismiss = {
                     showCelebration = false
-                    navigator.pop() // Возврат на предыдущий экран
+                    navigator.pop()
                 }
             )
         }

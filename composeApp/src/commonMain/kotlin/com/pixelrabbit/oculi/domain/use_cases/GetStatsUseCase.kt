@@ -26,7 +26,6 @@ class GetStatsUseCase(private val repository: StatsRepository) {
         val currentDay = now / (24 * 60 * 60 * 1000)
 
         if (lastDay != currentDay) {
-            // Если разница 1 день - продолжаем серию, иначе сбрасываем
             val newStreak = if (currentDay - lastDay == 1L) progress.currentStreak + 1 else 1
 
             return progress.copy(

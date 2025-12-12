@@ -49,20 +49,13 @@ fun ExercisesListContent() {
         exercises = ServiceLocator.getExercisesUseCase()
     }
 
-    Scaffold(
-//        topBar = {
-//            TopAppBar(
-//                title = { Text("Упражнения для глаз") }
-//            )
-//        }
-    ) { paddingValues ->
+    Scaffold() { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
         ) {
-            // Заголовок
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -91,7 +84,6 @@ fun ExercisesListContent() {
                 }
             }
 
-            // Список упражнений
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -151,14 +143,6 @@ fun ExerciseCard(
                 modifier = Modifier.padding(top = 8.dp)
             )
 
-//            if (exercise.isPremium) {
-//                Text(
-//                    text = "💎 ПРЕМИУМ",
-//                    style = MaterialTheme.typography.labelSmall,
-//                    color = MaterialTheme.colorScheme.primary,
-//                    modifier = Modifier.padding(top = 4.dp)
-//                )
-//            }
         }
     }
 }

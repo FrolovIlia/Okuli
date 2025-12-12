@@ -1,13 +1,11 @@
 package com.pixelrabbit.oculi.domain.repositories
 
-import androidx.compose.ui.input.key.Key.Companion.R
 import com.pixelrabbit.oculi.domain.models.Difficulty
 import com.pixelrabbit.oculi.domain.models.Exercise
 import com.pixelrabbit.oculi.domain.models.ExerciseType
 
 class ExerciseRepositoryImpl : ExerciseRepository {
 
-    // Временные данные - позже заменим на реальные из базы
     private val exercises = listOf(
         Exercise(
             id = "follow_target",

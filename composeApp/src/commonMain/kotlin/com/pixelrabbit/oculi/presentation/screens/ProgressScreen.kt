@@ -50,33 +50,23 @@ fun ProgressContent() {
         mutableStateOf(UserProgress())
     }
 
-    // Используем Flow для реального времени обновления статистики
     val statsFlow = ServiceLocator.getStatsUseCase.getStatsFlow()
 
     LaunchedEffect(Unit) {
-        // Инициализируем начальные данные
         userProgress = ServiceLocator.getStatsUseCase()
 
-        // Подписываемся на обновления
         statsFlow.collect { progress ->
             userProgress = progress
         }
     }
 
-    Scaffold(
-        topBar = {
-//            TopAppBar(
-//                title = { Text("Мой прогресс") }
-//            )
-        }
-    ) { paddingValues ->
+    Scaffold() { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
         ) {
-            // Основная статистика
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -119,7 +109,6 @@ fun ProgressContent() {
                 }
             }
 
-            // Достижения
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -153,7 +142,6 @@ fun ProgressContent() {
                 }
             }
 
-            // Советы
             Card(
                 modifier = Modifier
                     .fillMaxWidth()

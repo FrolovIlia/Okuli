@@ -9,9 +9,9 @@ data class VisionTest(
 )
 
 enum class TestType {
-    ACUITY,       // Острота зрения
-    ASTIGMATISM,  // Астигматизм
-    COLOR_BLIND   // Цветовосприятие
+    ACUITY,
+    ASTIGMATISM,
+    COLOR_BLIND
 }
 
 data class TestResult(

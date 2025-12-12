@@ -42,7 +42,6 @@ fun OnboardingContent() {
     val appSettings = remember { AppSettings() }
 
     fun completeOnboarding() {
-        // Сохраняем флаг и переходим на главный экран
         appSettings.isOnboardingCompleted = true
         navigator.push(HomeScreen)
     }

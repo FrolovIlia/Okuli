@@ -11,7 +11,6 @@ class UpdateSettingsUseCase(
         reminderEnabled: Boolean,
         reminderInterval: Int
     ) {
-        // Сохраняем каждую настройку отдельно
         repository.setDarkThemeEnabled(darkThemeEnabled)
         repository.setNotificationsEnabled(notificationsEnabled)
         repository.setReminderEnabled(reminderEnabled)

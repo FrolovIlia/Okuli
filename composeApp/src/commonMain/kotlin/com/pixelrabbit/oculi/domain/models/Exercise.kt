@@ -14,10 +14,9 @@ data class Exercise(
 )
 
 enum class ExerciseType {
-    ACCOMMODATION,    // Тренировка аккомодации
-    RELAXATION,       // Расслабление
-    MOBILITY,         // Подвижность глаз
-    DIGITAL_RELIEF    // Снятие цифрового напряжения
+    ACCOMMODATION,
+    RELAXATION,
+    MOBILITY
 }
 
 enum class Difficulty {

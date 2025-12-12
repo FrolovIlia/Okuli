@@ -29,15 +29,12 @@ fun SettingsContent() {
     val navigator = LocalNavigator.currentOrThrow
     val scope = rememberCoroutineScope()
 
-    // Используем тему из ThemeController
     val darkTheme by ThemeController.themeState.collectAsState()
 
-    // Локальные состояния для остальных настроек
     var notificationsEnabled by remember { mutableStateOf(true) }
     var reminderEnabled by remember { mutableStateOf(true) }
     var reminderInterval by remember { mutableStateOf(24) }
 
-    // Загружаем сохраненные настройки при запуске
     LaunchedEffect(Unit) {
         val settings = ServiceLocator.getSettingsUseCase()
         notificationsEnabled = settings.notificationsEnabled
@@ -51,7 +48,6 @@ fun SettingsContent() {
         println("- Интервал: каждые ${settings.reminderInterval} часа")
     }
 
-    // Сохраняем настройки при изменении
     LaunchedEffect(notificationsEnabled, reminderEnabled, reminderInterval) {
         scope.launch {
             ServiceLocator.updateSettingsUseCase(
@@ -61,7 +57,6 @@ fun SettingsContent() {
                 reminderInterval = reminderInterval
             )
 
-            // Обновляем уведомления
             val shouldShowNotifications = notificationsEnabled && reminderEnabled
             ServiceLocator.manageNotificationsUseCase(
                 enabled = shouldShowNotifications,
@@ -77,7 +72,6 @@ fun SettingsContent() {
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
         ) {
-            // Внешний вид
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -157,7 +151,6 @@ fun SettingsContent() {
 //                }
 //            }
 
-            // О приложении
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -178,7 +171,6 @@ fun SettingsContent() {
                 }
             }
 
-            // Кнопка Назад
             Button(
                 onClick = { navigator.pop() },
                 modifier = Modifier

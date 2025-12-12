@@ -32,7 +32,6 @@ object VisionTestScreen : Screen {
     }
 }
 
-// Модель для теста зрения
 data class VisionTest(
     val title: String,
     val description: String,
@@ -58,7 +57,6 @@ fun VisionTestContent() {
             verticalArrangement = Arrangement.spacedBy(12.dp),
             contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 16.dp, vertical = 8.dp)
         ) {
-            // Заголовок
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth()
@@ -87,7 +85,6 @@ fun VisionTestContent() {
                 }
             }
 
-            // Список тестов
             items(testTypes) { test ->
                 TestTypeCard(
                     title = test.title,
@@ -103,42 +100,6 @@ fun VisionTestContent() {
                 )
             }
 
-//            // История проверок
-//            item {
-//                Card(
-//                    modifier = Modifier.fillMaxWidth()
-//                ) {
-//                    Column(
-//                        modifier = Modifier.padding(16.dp)
-//                    ) {
-//                        Text(
-//                            text = "📊 История проверок",
-//                            style = MaterialTheme.typography.titleMedium,
-//                            fontWeight = FontWeight.Bold
-//                        )
-//
-//                        Spacer(modifier = Modifier.height(12.dp))
-//
-//                        Text(
-//                            text = "Здесь будет отображаться история ваших проверок зрения",
-//                            style = MaterialTheme.typography.bodyMedium,
-//                            color = MaterialTheme.colorScheme.onSurfaceVariant
-//                        )
-//
-//                        Spacer(modifier = Modifier.height(8.dp))
-//
-//                        Button(
-//                            onClick = { /* TODO: Показать историю */ },
-//                            modifier = Modifier.fillMaxWidth(),
-//                            enabled = false
-//                        ) {
-//                            Text("Показать историю")
-//                        }
-//                    }
-//                }
-//            }
-
-            // Кнопка Назад
             item {
                 Button(
                     onClick = { navigator.pop() },

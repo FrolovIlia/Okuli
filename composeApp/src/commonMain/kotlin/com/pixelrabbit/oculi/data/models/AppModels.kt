@@ -14,9 +14,9 @@ class RealmUserProgress : RealmObject {
     var totalTime: Long = 0
     var currentStreak: Int = 0
     var todayExercises: Int = 0
-    var lastActivityDate: Long = Clock.System.now().toEpochMilliseconds() // Инициализируем
-    var createdAt: Long = Clock.System.now().toEpochMilliseconds() // Инициализируем
-    var updatedAt: Long = Clock.System.now().toEpochMilliseconds() // Инициализируем
+    var lastActivityDate: Long = Clock.System.now().toEpochMilliseconds()
+    var createdAt: Long = Clock.System.now().toEpochMilliseconds()
+    var updatedAt: Long = Clock.System.now().toEpochMilliseconds()
 }
 
 class RealmAchievement : RealmObject {
@@ -27,7 +27,7 @@ class RealmAchievement : RealmObject {
     var title: String = ""
     var description: String = ""
     var icon: String = ""
-    var unlockedAt: Long? = null // Заменяем Instant на Long
+    var unlockedAt: Long? = null
     var progress: Float = 0f
     var targetValue: Int = 0
     var currentValue: Int = 0
@@ -41,7 +41,7 @@ class RealmExerciseCompletion : RealmObject {
     var exerciseId: String = ""
     var exerciseName: String = ""
     var duration: Int = 0
-    var completedAt: Long = Clock.System.now().toEpochMilliseconds() // Инициализируем
+    var completedAt: Long = Clock.System.now().toEpochMilliseconds()
     var difficulty: String = ""
     var successRate: Float = 0f
 }

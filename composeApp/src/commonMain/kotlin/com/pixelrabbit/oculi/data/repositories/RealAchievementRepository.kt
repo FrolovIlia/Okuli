@@ -1,6 +1,6 @@
 package com.pixelrabbit.oculi.data.repositories
 
-import com.pixelrabbit.oculi.data.db.RealmManager
+import com.pixelrabbit.oculi.db.RealmManager
 import com.pixelrabbit.oculi.data.models.RealmAchievement
 import com.pixelrabbit.oculi.data.models.RealmUserProgress
 import com.pixelrabbit.oculi.domain.models.Achievement
@@ -24,7 +24,6 @@ class RealAchievementRepository : AchievementRepository {
         if (realmAchievements.isEmpty()) {
             println("DEBUG: No achievements found, creating initial ones")
             val achievements = createInitialAchievements()
-            // После создания сразу проверяем прогресс
             checkAndUnlockAchievements()
             return achievements
         }

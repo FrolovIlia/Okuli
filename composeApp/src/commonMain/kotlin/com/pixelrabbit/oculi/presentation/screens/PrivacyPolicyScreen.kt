@@ -88,7 +88,6 @@ fun PrivacyPolicyContent() {
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
 
-                    // Раздел 1
                     Column {
                         Text(
                             text = "1. Собираемая информация",
@@ -113,7 +112,6 @@ fun PrivacyPolicyContent() {
                         )
                     }
 
-                    // Раздел 2
                     Column {
                         Text(
                             text = "2. Использование информации",
@@ -139,7 +137,6 @@ fun PrivacyPolicyContent() {
                         )
                     }
 
-                    // Раздел 3
                     Column {
                         Text(
                             text = "3. Хранение и защита данных",
@@ -164,7 +161,6 @@ fun PrivacyPolicyContent() {
                         )
                     }
 
-                    // Раздел 4
                     Column {
                         Text(
                             text = "4. Ваши права",
@@ -191,7 +187,6 @@ fun PrivacyPolicyContent() {
                         )
                     }
 
-                    // Раздел 5
                     Column {
                         Text(
                             text = "5. Контакты",

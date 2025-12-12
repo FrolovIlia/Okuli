@@ -37,21 +37,16 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import okuli.composeapp.generated.resources.Res
 import okuli.composeapp.generated.resources.joy_okuli
 
-/**
- * Основной компонент диалога с анимацией празднования.
- */
+
 @Composable
 fun CelebrationDialog(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // Случайная мотивирующая надпись
     val motivationalText by remember { mutableStateOf(getRandomMotivationalText()) }
 
-    // Случайные позиции для салютов
     val fireworkPositions by remember { mutableStateOf(generateRandomFireworkPositions(6)) }
 
-    // Анимация появления
     val backgroundAlpha by animateFloatAsState(
         targetValue = 0.8f,
         animationSpec = tween(500),
@@ -66,22 +61,20 @@ fun CelebrationDialog(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .clickable { onDismiss() } // Закрытие по клику вне окна
+            .clickable { onDismiss() }
     ) {
-        // Затемненный фон
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color.Black.copy(alpha = backgroundAlpha))
         )
 
-        // Основное модальное окно
         Card(
             modifier = Modifier
                 .size(340.dp)
                 .align(Alignment.Center)
                 .alpha(dialogAlpha)
-                .clickable(enabled = false) {}, // Предотвращаем закрытие по клику на окно
+                .clickable(enabled = false) {},
             shape = RoundedCornerShape(28.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 24.dp)
         ) {
@@ -90,7 +83,6 @@ fun CelebrationDialog(
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.surface)
             ) {
-                // Фон с легким градиентом
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -104,10 +96,7 @@ fun CelebrationDialog(
                         )
                 )
 
-                // Салюты на заднем плане
                 BackgroundFireworks(fireworkPositions)
-
-                // Основной контент
                 CelebrationContent(motivationalText)
             }
         }
@@ -123,16 +112,13 @@ private fun CelebrationContent(motivationalText: String) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        // Конфетти сверху
         ConfettiRow(
             modifier = Modifier.fillMaxWidth(),
             startDelay = 0
         )
 
-        // Центральный блок с лого и текстом
         CenterContent(motivationalText)
 
-        // Конфетти снизу
         ConfettiRow(
             modifier = Modifier.fillMaxWidth(),
             startDelay = 1000
@@ -146,10 +132,8 @@ private fun CenterContent(motivationalText: String) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
-        // Логотип с анимацией
         AppLogo()
 
-        // Мотивирующая надпись
         Text(
             text = motivationalText,
             style = MaterialTheme.typography.headlineSmall.copy(
@@ -170,7 +154,6 @@ fun AppLogo() {
         modifier = Modifier.size(140.dp),
         contentAlignment = Alignment.Center
     ) {
-        // Падающие частицы вокруг логотипа
         FallingParticlesAnimation(
             modifier = Modifier.matchParentSize()
         )
@@ -221,10 +204,7 @@ private fun ConfettiRow(modifier: Modifier = Modifier, startDelay: Int = 0) {
     }
 }
 
-/**
- * ✨ УЛУЧШЕННАЯ АНИМАЦИЯ КОНФЕТТИ
- * Падение с вращением и раскачиванием, выглядит "шире".
- */
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ConfettiAnimation(
@@ -234,7 +214,6 @@ fun ConfettiAnimation(
     val particles = remember { generateConfettiPieces(20) }
     val infiniteTransition = rememberInfiniteTransition()
 
-    // Общий прогресс цикла (0f до 1f)
     val cycleProgress by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = 1f,
@@ -248,32 +227,20 @@ fun ConfettiAnimation(
     Canvas(modifier = modifier) {
         val cycleDuration = 4000
         particles.forEach { confetti ->
-            // 1. Расчет прогресса падения
             val fallProgressRaw = (cycleProgress * cycleDuration + confetti.startDelay) % confetti.fallDuration / confetti.fallDuration.toFloat()
             val fallProgressClamped = fallProgressRaw.coerceIn(0f, 1f)
-
-            // 2. Вращение
-            // val currentRotation = (cycleProgress * confetti.rotationSpeed) % 360f // <-- УДАЛЕНО
-
-            // 3. Падение (Y)
             val y = size.height * (confetti.y + fallProgressClamped * (1.1f - confetti.y))
 
-            // 4. Раскачивание (X): Используем синус для имитации ветра/колебания
             val swingOffset = sin(cycleProgress * PI.toFloat() * 4f) * confetti.swingAmplitude * size.width
             val x = confetti.x * size.width + swingOffset
 
-            // 5. Прозрачность
             val alpha = (1f - (fallProgressClamped - 0.8f).coerceIn(0f, 0.2f) / 0.2f).coerceIn(0f, 1f)
 
-            // Используем withTransform только для перемещения
             withTransform({
-                // Перемещаем систему координат в центр конфетти (x, y)
                 translate(left = x, top = y)
-                // rotate(degrees = currentRotation) // <-- УДАЛЕНА КОМАНДА ВРАЩЕНИЯ!
             }) {
                 drawRect(
                     color = confetti.color.copy(alpha = alpha),
-                    // topLeft теперь относительно центра трансформации (-size/2)
                     topLeft = Offset(-confetti.size / 2, -confetti.size / 2),
                     size = androidx.compose.ui.geometry.Size(confetti.size, confetti.size)
                 )
@@ -282,10 +249,7 @@ fun ConfettiAnimation(
     }
 }
 
-/**
- * 💥 УЛУЧШЕННАЯ АНИМАЦИЯ САЛЮТА
- * Имитация взрыва - частицы вылетают из центра и затухают.
- */
+
 @Composable
 fun FireworkAnimation(
     modifier: Modifier = Modifier,
@@ -313,22 +277,18 @@ fun FireworkAnimation(
     Canvas(modifier = modifier) {
         val animationTime = 1800
         particles.forEach { particle ->
-            // Применяем задержку для каждой частицы
             val progressRaw = ((explosionProgress * animationTime).toLong() - particle.initialDelay)
                 .coerceIn(0L, animationTime.toLong()) / animationTime.toFloat()
 
-            // Прогресс, который мы используем для расчета движения (например, 0.8 - фаза активного взрыва)
             val travelProgress = FastOutSlowInEasing.transform((progressRaw / 0.8f).coerceIn(0f, 1f))
 
             if (progressRaw < 0.8f) {
-                // Рассчитываем расстояние и прозрачность
                 val currentDistance = particle.maxDistance * travelProgress * 1.5f
                 val alpha = (1f - progressRaw * 1.25f).coerceIn(0f, 1f)
                 val currentSize = particle.size * (1f - travelProgress * 0.5f)
 
                 val angleRad = (particle.angle * PI.toFloat() / 180f)
 
-                // Вылет из центра
                 val x = center.x + currentDistance * cos(angleRad)
                 val y = center.y + currentDistance * sin(angleRad)
 
@@ -338,7 +298,6 @@ fun FireworkAnimation(
                     center = Offset(x, y)
                 )
 
-                // Вспышка в центре
                 if (progressRaw < 0.1f) {
                     val flashAlpha = (0.1f - progressRaw) / 0.1f
                     drawCircle(
@@ -383,13 +342,12 @@ fun FallingParticlesAnimation(modifier: Modifier = Modifier) {
     }
 }
 
-// Data classes
 private data class FireworkParticle(
     val angle: Float,
     val maxDistance: Float,
     val size: Float,
     val color: Color,
-    val initialDelay: Int // Задержка для асинхронности
+    val initialDelay: Int
 )
 
 private data class FallingParticle(
@@ -406,10 +364,10 @@ private data class ConfettiPiece(
     val y: Float,
     val size: Float,
     val color: Color,
-    val rotationSpeed: Float, // Скорость вращения
-    val swingAmplitude: Float, // Амплитуда раскачивания
-    val fallDuration: Int, // Длительность падения
-    val startDelay: Int // Задержка для асинхронности
+    val rotationSpeed: Float,
+    val swingAmplitude: Float,
+    val fallDuration: Int,
+    val startDelay: Int
 )
 
 private data class FireworkPosition(
@@ -418,7 +376,6 @@ private data class FireworkPosition(
     val offsetY: Int
 )
 
-// Генераторы
 private fun generateRandomFireworkPositions(count: Int): List<FireworkPosition> {
     val positions = mutableListOf<FireworkPosition>()
     val usedAlignments = mutableSetOf<Alignment>()
@@ -490,7 +447,7 @@ private fun generateConfettiPieces(count: Int): List<ConfettiPiece> {
         ConfettiPiece(
             x = Random.nextFloat(),
             y = Random.nextFloat() * 0.5f,
-            size = Random.nextFloat() * 10f + 5f, // Широкий диапазон
+            size = Random.nextFloat() * 10f + 5f,
             color = colors.random(),
             rotationSpeed = Random.nextFloat() * 360f + 180f,
             swingAmplitude = Random.nextFloat() * 0.05f + 0.03f,

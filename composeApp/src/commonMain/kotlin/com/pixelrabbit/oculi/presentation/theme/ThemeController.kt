@@ -13,7 +13,6 @@ object ThemeController {
     val themeState: StateFlow<Boolean> = _themeState.asStateFlow()
 
     init {
-        // Загружаем сохраненную тему при создании контроллера
         CoroutineScope(Dispatchers.Main).launch {
             val savedTheme = ServiceLocator.getSettingsUseCase().darkThemeEnabled
             _themeState.value = savedTheme
@@ -24,7 +23,6 @@ object ThemeController {
     fun setDarkTheme(enabled: Boolean) {
         _themeState.value = enabled
 
-        // Сохраняем в настройки
         CoroutineScope(Dispatchers.Main).launch {
             ServiceLocator.settingsRepository().setDarkThemeEnabled(enabled)
         }
