@@ -40,6 +40,8 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 
                 implementation("io.insert-koin:koin-core:3.5.3")
+
+                // Для работы с уведомлениями (common часть)
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
             }
         }
@@ -51,6 +53,13 @@ kotlin {
                 implementation("androidx.compose.ui:ui:1.6.0")
                 implementation("androidx.compose.material3:material3:1.0.1")
                 implementation(libs.yandex.mobile.ads.android)
+
+                // Для уведомлений
+                implementation("androidx.work:work-runtime-ktx:2.9.0")
+                implementation("androidx.core:core-ktx:1.12.0")
+
+                // Для канала уведомлений
+                implementation("androidx.core:core:1.12.0")
             }
         }
 
