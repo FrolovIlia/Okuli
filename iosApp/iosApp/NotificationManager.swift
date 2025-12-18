@@ -13,12 +13,21 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
 
     func requestPermission() {
         let center = UNUserNotificationCenter.current()
-        center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-            if granted {
-                print("Notification permission granted")
+
+        center.getNotificationSettings { settings in
+            switch settings.authorizationStatus {
+            case .authorized:
                 self.scheduleDailyReminder()
-            } else if let error = error {
-                print("Notification permission error: \(error.localizedDescription)")
+
+            case .notDetermined:
+                center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, _ in
+                    if granted {
+                        self.scheduleDailyReminder()
+                    }
+                }
+
+            default:
+                break
             }
         }
     }
@@ -30,7 +39,7 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
         let content = UNMutableNotificationContent()
         content.title = "Time for eye training!"
         content.body = "Don't forget your daily exercises"
-        content.sound = UNNotificationSound.default
+        content.sound = .default
 
         var dateComponents = DateComponents()
         dateComponents.hour = 20
@@ -47,24 +56,7 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
             trigger: trigger
         )
 
-        center.add(request) { error in
-            if let error = error {
-                print("Error scheduling notification: \(error.localizedDescription)")
-            } else {
-                print("Daily reminder scheduled successfully")
-            }
-        }
-    }
-
-    func updateLastVisitDate() {
-        Task {
-            do {
-                try await ServiceLocator().lastVisitRepository.updateLastVisit()
-                print("📱 iOS: Last visit date updated")
-            } catch {
-                print("📱 iOS: Failed to update last visit date: \(error)")
-            }
-        }
+        center.add(request)
     }
 
     func userNotificationCenter(
@@ -73,13 +65,5 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     ) {
         completionHandler([.banner, .sound])
-    }
-
-    func userNotificationCenter(
-        _ center: UNUserNotificationCenter,
-        didReceive response: UNNotificationResponse,
-        withCompletionHandler completionHandler: @escaping () -> Void
-    ) {
-        completionHandler()
     }
 }

@@ -1,9 +1,11 @@
 package com.pixelrabbit.oculi
 
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -23,23 +25,33 @@ class MainActivity : ComponentActivity() {
     private val adManager by lazy { AppOpenAdManager(this) }
     private val TAG = "OculiDebug"
 
+    private val requestNotificationPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                Log.d(TAG, "Notification permission granted")
+                notificationScheduler.scheduleDailyCheck()
+            } else {
+                Log.d(TAG, "Notification permission denied")
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "1. onCreate started")
 
-        AndroidContext.Companion.initialize(applicationContext)
+        AndroidContext.initialize(applicationContext)
         Log.d(TAG, "AndroidContext initialized")
 
         try {
-            // 1. Обновление даты посещения
+            // 1. Обновление даты последнего визита
             Log.d(TAG, "2. Updating last visit date")
             CoroutineScope(Dispatchers.IO).launch {
                 ServiceLocator.lastVisitRepository().updateLastVisit()
             }
 
-            // 2. Планирование уведомлений
-            Log.d(TAG, "3. Scheduling notifications")
-            notificationScheduler.scheduleDailyCheck()
+            // 2. Запрос разрешений и планирование уведомлений
+            Log.d(TAG, "3. Requesting notification permission")
+            requestNotificationPermissionIfNeeded()
 
             // 3. Реклама при запуске
             Log.d(TAG, "4. Initializing ad")
@@ -48,20 +60,22 @@ class MainActivity : ComponentActivity() {
                 Log.d(TAG, "Should show ad: $shouldShowAd")
 
                 if (shouldShowAd) {
-                    // Показываем рекламу
-                    runOnUiThread {
-                        showAdAndThenMainUI()
-                    }
+                    runOnUiThread { showAdAndThenMainUI() }
                 } else {
-                    // Пропускаем рекламу
-                    runOnUiThread {
-                        showMainUI()
-                    }
+                    runOnUiThread { showMainUI() }
                 }
             }
         } catch (e: Exception) {
             Log.e(TAG, "CRASH in onCreate: ${e.message}", e)
             showMainUI() // Если ошибка, показываем основной UI
+        }
+    }
+
+    private fun requestNotificationPermissionIfNeeded() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13+
+            requestNotificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+        } else {
+            notificationScheduler.scheduleDailyCheck()
         }
     }
 

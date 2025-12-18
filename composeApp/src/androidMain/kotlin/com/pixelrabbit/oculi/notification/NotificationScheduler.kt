@@ -9,12 +9,9 @@ import java.util.concurrent.TimeUnit
 class NotificationScheduler(private val context: Context) {
 
     fun scheduleDailyCheck() {
-        WorkManager.getInstance(context)
-            .cancelUniqueWork("daily_reminder")
+        val workManager = WorkManager.getInstance(context)
 
-        val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
+        workManager.cancelUniqueWork("daily_reminder")
 
         val calendar = Calendar.getInstance().apply {
             timeInMillis = System.currentTimeMillis()
@@ -30,19 +27,16 @@ class NotificationScheduler(private val context: Context) {
             initialDelay = calendar.timeInMillis - System.currentTimeMillis()
         }
 
-        val request = PeriodicWorkRequestBuilder<DailyReminderWorker>(
-            24, TimeUnit.HOURS
-        )
-            .setConstraints(constraints)
+        val request = PeriodicWorkRequestBuilder<DailyReminderWorker>(24, TimeUnit.HOURS)
             .setInitialDelay(initialDelay, TimeUnit.MILLISECONDS)
+            .setConstraints(Constraints.NONE)
             .addTag("daily_reminder")
             .build()
 
-        WorkManager.getInstance(context)
-            .enqueueUniquePeriodicWork(
-                "daily_reminder",
-                ExistingPeriodicWorkPolicy.REPLACE,
-                request
-            )
+        workManager.enqueueUniquePeriodicWork(
+            "daily_reminder",
+            ExistingPeriodicWorkPolicy.REPLACE,
+            request
+        )
     }
 }
