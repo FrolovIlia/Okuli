@@ -20,8 +20,8 @@ class NotificationHelper(private val context: Context) {
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = "Daily Reminders"
-            val description = "Reminders to complete eye exercises"
+            val name = "Ежедневные напоминания"
+            val description = "Напоминания о необходимости выполнения упражнений для глаз.\n"
             val importance = NotificationManager.IMPORTANCE_DEFAULT
             val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
                 this.description = description
@@ -38,8 +38,8 @@ class NotificationHelper(private val context: Context) {
     fun showReminderNotification() {
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(android.R.drawable.ic_dialog_info)
-            .setContentTitle("Time for eye training!")
-            .setContentText("Don't forget your daily exercises")
+            .setContentTitle("Пора тренировать зрение!")
+            .setContentText("Не забывайте о ежедневных упражнениях")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setAutoCancel(true)
             .build()
