@@ -17,12 +17,12 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
         center.getNotificationSettings { settings in
             switch settings.authorizationStatus {
             case .authorized:
-                self.scheduleDailyReminder()
+                self.scheduleDailyReminderIfNeeded()
 
             case .notDetermined:
                 center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, _ in
                     if granted {
-                        self.scheduleDailyReminder()
+                        self.scheduleDailyReminderIfNeeded()
                     }
                 }
 
@@ -32,7 +32,22 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
         }
     }
 
-    func scheduleDailyReminder() {
+    private func scheduleDailyReminderIfNeeded() {
+        // Получаем дату последнего визита из KMP
+        let lastVisitDate = ServiceLocator().lastVisitRepository().getLastVisit()
+        let calendar = Calendar.current
+
+        if let lastVisit = lastVisitDate {
+            if calendar.isDateInToday(lastVisit) {
+                // Пользователь сегодня заходил — уведомление не ставим
+                return
+            }
+        }
+
+        scheduleDailyReminder()
+    }
+
+    private func scheduleDailyReminder() {
         let center = UNUserNotificationCenter.current()
         center.removePendingNotificationRequests(withIdentifiers: ["daily_reminder"])
 
@@ -41,6 +56,7 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
         content.body = "Не забывайте о ежедневных упражнениях"
         content.sound = .default
 
+        // Уведомление каждый день в 20:00
         var dateComponents = DateComponents()
         dateComponents.hour = 20
         dateComponents.minute = 0
@@ -56,14 +72,31 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
             trigger: trigger
         )
 
-        center.add(request)
+        center.add(request) { error in
+            if let error = error {
+                print("Ошибка добавления уведомления: \(error)")
+            }
+        }
     }
 
+    // Баннер/звук при переднем плане
     func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         willPresent notification: UNNotification,
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     ) {
         completionHandler([.banner, .sound])
+    }
+
+    // Обработка нажатия на уведомление — открываем главный экран
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse,
+        withCompletionHandler completionHandler: @escaping () -> Void
+    ) {
+        DispatchQueue.main.async {
+            (UIApplication.shared.delegate as? AppDelegate)?.showMainApp()
+        }
+        completionHandler()
     }
 }
