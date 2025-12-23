@@ -32,19 +32,40 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
         }
     }
 
-    private func scheduleDailyReminderIfNeeded() {
-        // Получаем дату последнего визита из KMP
-        let lastVisitDate = ServiceLocator().lastVisitRepository().getLastVisit()
-        let calendar = Calendar.current
-
-        if let lastVisit = lastVisitDate {
-            if calendar.isDateInToday(lastVisit) {
-                // Пользователь сегодня заходил — уведомление не ставим
-                return
+    // MARK: - Обновление даты последнего визита
+    func updateLastVisitDate() {
+        DispatchQueue.global(qos: .userInitiated).async {
+            // Используем ServiceLocator как object (синглтон)
+            let serviceLocator = ServiceLocator()
+            Task {
+                await serviceLocator.lastVisitRepository().updateLastVisit()
             }
         }
+    }
 
-        scheduleDailyReminder()
+    // MARK: - Планирование напоминаний
+    private func scheduleDailyReminderIfNeeded() {
+        DispatchQueue.global(qos: .userInitiated).async {
+            let serviceLocator = ServiceLocator()
+
+            Task {
+                // Получаем дату последнего визита из KMP (правильный метод)
+                guard let lastVisitLocalDate = await serviceLocator.lastVisitRepository().getLastVisitDate() else {
+                    // Если даты нет (первый запуск), ставим напоминание
+                    self.scheduleDailyReminder()
+                    return
+                }
+
+                // Проверяем, был ли пользователь сегодня
+                let wasUserToday = self.isLocalDateToday(lastVisitLocalDate)
+
+                if !wasUserToday {
+                    self.scheduleDailyReminder()
+                } else {
+                    print("Пользователь сегодня уже заходил, напоминание не ставится")
+                }
+            }
+        }
     }
 
     private func scheduleDailyReminder() {
@@ -75,11 +96,33 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
         center.add(request) { error in
             if let error = error {
                 print("Ошибка добавления уведомления: \(error)")
+            } else {
+                print("Ежедневное напоминание запланировано на 20:00")
             }
         }
     }
 
-    // Баннер/звук при переднем плане
+    // MARK: - Вспомогательные методы
+    private func isLocalDateToday(_ localDate: Kotlinx_datetimeLocalDate) -> Bool {
+        // Конвертируем kotlinx.datetime.LocalDate в Foundation.Date
+        let calendar = Calendar.current
+
+        // Создаем DateComponents из LocalDate
+        var dateComponents = DateComponents()
+        dateComponents.year = Int(localDate.year)
+        dateComponents.month = Int(localDate.monthNumber)
+        dateComponents.day = Int(localDate.dayOfMonth)
+
+        // Создаем Date из компонентов
+        guard let date = calendar.date(from: dateComponents) else {
+            return false
+        }
+
+        // Проверяем, сегодня ли эта дата
+        return calendar.isDateInToday(date)
+    }
+
+    // MARK: - UNUserNotificationCenterDelegate
     func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         willPresent notification: UNNotification,
@@ -88,7 +131,6 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
         completionHandler([.banner, .sound])
     }
 
-    // Обработка нажатия на уведомление — открываем главный экран
     func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         didReceive response: UNNotificationResponse,

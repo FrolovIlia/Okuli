@@ -1,6 +1,7 @@
 import UIKit
 import SwiftUI
 import shared
+import Foundation
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -15,20 +16,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
 
+        // 1. Инициализация AndroidContext для iOS (важно для Realm)
+        self.initializeKMPContext()
+
         window = UIWindow(frame: UIScreen.main.bounds)
 
         let loadingView = LoadingScreen(shouldShowAd: $shouldShowAd)
         window?.rootViewController = UIHostingController(rootView: loadingView)
         window?.makeKeyAndVisible()
 
+        // 2. Обновляем дату последнего визита при запуске
+        notificationManager.updateLastVisitDate()
+
+        // 3. Запрашиваем разрешение на уведомления
         notificationManager.requestPermission()
 
         DispatchQueue.global(qos: .userInitiated).async {
-            let adUseCase = ServiceLocator().adUseCase
+            // Используем ServiceLocator как объект
+            let serviceLocator = ServiceLocator()
 
             Task {
-                self.shouldShowAd = await adUseCase.trackAppLaunch()
-                let launchCount = await adUseCase.getLaunchCount()
+                self.shouldShowAd = await serviceLocator.adUseCase.trackAppLaunch()
+                let launchCount = await serviceLocator.adUseCase.getLaunchCount()
 
                 print("📱 iOS AppLaunch: Launch #\(launchCount), should show ads: \(self.shouldShowAd)")
 
@@ -48,7 +57,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
+        // Обновляем дату последнего визита каждый раз при переходе в активное состояние
         notificationManager.updateLastVisitDate()
+    }
+
+    // MARK: - Вспомогательные методы
+
+    private func initializeKMPContext() {
+        // Инициализируем AndroidContext для iOS
+        let dummyContext = NSObject()
+        AndroidContext().initialize(context: dummyContext)
+        print("✅ AndroidContext initialized for iOS")
     }
 
     private func showAd() {
