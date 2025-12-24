@@ -20,7 +20,7 @@ class ExerciseRepositoryImpl : ExerciseRepository {
                 "Сядьте удобно",
                 "Расслабьтесь и закройте глаза",
                 "Двигайте ими, изображая разные фигуры",
-                "Повторяйте 10-12 раз"
+                "Повторяйте медленно, по 10-12 раз в каждую сторону"
             ),
             imageName = "sledovanie_za"
         ),
@@ -28,7 +28,7 @@ class ExerciseRepositoryImpl : ExerciseRepository {
             id = "focus_shift",
             title = "Фокус-сдвиг",
             description = "Чередование ближнего и дальнего зрения для снятия цифрового напряжения",
-            duration = 180,
+            duration = 120,
             type = ExerciseType.ACCOMMODATION,
             difficulty = Difficulty.BEGINNER,
             isPremium = false,
@@ -37,7 +37,7 @@ class ExerciseRepositoryImpl : ExerciseRepository {
                 "Держите палец на расстоянии \nвытянутой руки от глаз",
                 "Не двигайте головой",
                 "Следите за кончиком пальца \nприближая и удаляя его от кончика носа",
-                "Повторяйте 10-15 раз"
+                "Повторяйте медленно 10-15 раз"
             ),
             imageName = "focus"
         ),
@@ -94,7 +94,6 @@ class ExerciseRepositoryImpl : ExerciseRepository {
     }
 
     override suspend fun markExerciseCompleted(exerciseId: String, duration: Int) {
-        // Пока просто логируем - позже добавим в базу
         println("Упражнение $exerciseId завершено за $duration секунд")
     }
 }
