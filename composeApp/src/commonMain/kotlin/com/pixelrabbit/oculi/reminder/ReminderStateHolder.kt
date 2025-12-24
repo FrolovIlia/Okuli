@@ -8,6 +8,10 @@ object ReminderStateHolder {
     private val _enabled = MutableStateFlow(false)
     val enabled: StateFlow<Boolean> = _enabled
 
+    fun init(value: Boolean) {
+        _enabled.value = value
+    }
+
     fun setEnabled(value: Boolean) {
         _enabled.value = value
     }

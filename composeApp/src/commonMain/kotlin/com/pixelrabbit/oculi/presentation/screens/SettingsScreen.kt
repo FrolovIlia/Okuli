@@ -13,8 +13,10 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.pixelrabbit.oculi.AppInfo
+import com.pixelrabbit.oculi.di.ServiceLocator
 import com.pixelrabbit.oculi.presentation.theme.ThemeController
 import com.pixelrabbit.oculi.reminder.ReminderStateHolder
+import kotlinx.coroutines.launch
 
 object SettingsScreen : Screen {
     @Composable
@@ -26,19 +28,10 @@ object SettingsScreen : Screen {
 @Composable
 fun SettingsContent() {
     val navigator = LocalNavigator.currentOrThrow
+    val scope = rememberCoroutineScope()
+
     val darkTheme by ThemeController.themeState.collectAsState()
-
-    var reminderEnabled by remember { mutableStateOf(false) }
-
-    // Инициализация из глобального состояния
-    LaunchedEffect(Unit) {
-        reminderEnabled = ReminderStateHolder.enabled.value
-    }
-
-    // Реакция на переключение
-    LaunchedEffect(reminderEnabled) {
-        ReminderStateHolder.setEnabled(reminderEnabled)
-    }
+    val reminderEnabled by ReminderStateHolder.enabled.collectAsState()
 
     Scaffold { paddingValues ->
         Column(
@@ -48,6 +41,7 @@ fun SettingsContent() {
                 .verticalScroll(rememberScrollState())
         ) {
 
+            // --- Внешний вид ---
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -70,6 +64,7 @@ fun SettingsContent() {
                 }
             }
 
+            // --- Напоминания ---
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -87,11 +82,25 @@ fun SettingsContent() {
                     SettingSwitch(
                         text = "Ежедневные напоминания",
                         checked = reminderEnabled,
-                        onCheckedChange = { reminderEnabled = it }
+                        onCheckedChange = { enabled ->
+                            // обновляем in-memory состояние
+                            ReminderStateHolder.setEnabled(enabled)
+
+                            // сохраняем в персистентные настройки
+                            scope.launch {
+                                ServiceLocator.updateSettingsUseCase(
+                                    darkThemeEnabled = darkTheme,
+                                    notificationsEnabled = false,
+                                    reminderEnabled = enabled,
+                                    reminderInterval = 24
+                                )
+                            }
+                        }
                     )
                 }
             }
 
+            // --- О приложении ---
             Card(
                 modifier = Modifier
                     .fillMaxWidth()

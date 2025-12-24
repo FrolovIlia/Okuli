@@ -12,6 +12,7 @@ import com.pixelrabbit.oculi.presentation.screens.OnboardingScreen
 import com.pixelrabbit.oculi.presentation.theme.OculiTheme
 import com.pixelrabbit.oculi.presentation.theme.ThemeController
 import com.pixelrabbit.oculi.di.ServiceLocator
+import com.pixelrabbit.oculi.reminder.ReminderStateHolder
 import com.pixelrabbit.oculi.utils.AppSettings
 
 @Composable
@@ -24,6 +25,7 @@ fun OculiApp() {
 
     LaunchedEffect(Unit) {
         val settings = ServiceLocator.getSettingsUseCase()
+        ReminderStateHolder.init(settings.reminderEnabled)
         ThemeController.setDarkTheme(settings.darkThemeEnabled)
         shouldShowOnboarding = !appSettings.isOnboardingCompleted
         isLoading = false
