@@ -13,9 +13,8 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.pixelrabbit.oculi.AppInfo
-import com.pixelrabbit.oculi.di.ServiceLocator
 import com.pixelrabbit.oculi.presentation.theme.ThemeController
-import kotlinx.coroutines.launch
+import com.pixelrabbit.oculi.reminder.ReminderStateHolder
 
 object SettingsScreen : Screen {
     @Composable
@@ -27,42 +26,18 @@ object SettingsScreen : Screen {
 @Composable
 fun SettingsContent() {
     val navigator = LocalNavigator.currentOrThrow
-    val scope = rememberCoroutineScope()
-
     val darkTheme by ThemeController.themeState.collectAsState()
 
-    var notificationsEnabled by remember { mutableStateOf(true) }
-    var reminderEnabled by remember { mutableStateOf(true) }
-    var reminderInterval by remember { mutableStateOf(24) }
+    var reminderEnabled by remember { mutableStateOf(false) }
 
+    // Инициализация из глобального состояния
     LaunchedEffect(Unit) {
-        val settings = ServiceLocator.getSettingsUseCase()
-        notificationsEnabled = settings.notificationsEnabled
-        reminderEnabled = settings.reminderEnabled
-        reminderInterval = settings.reminderInterval
-
-        println("Настройки загружены из хранилища:")
-        println("- Тема: ${if (settings.darkThemeEnabled) "темная" else "светлая"}")
-        println("- Уведомления: ${if (settings.notificationsEnabled) "вкл" else "выкл"}")
-        println("- Напоминания: ${if (settings.reminderEnabled) "вкл" else "выкл"}")
-        println("- Интервал: каждые ${settings.reminderInterval} часа")
+        reminderEnabled = ReminderStateHolder.enabled.value
     }
 
-    LaunchedEffect(notificationsEnabled, reminderEnabled, reminderInterval) {
-        scope.launch {
-            ServiceLocator.updateSettingsUseCase(
-                darkThemeEnabled = darkTheme,
-                notificationsEnabled = notificationsEnabled,
-                reminderEnabled = reminderEnabled,
-                reminderInterval = reminderInterval
-            )
-
-            val shouldShowNotifications = notificationsEnabled && reminderEnabled
-            ServiceLocator.manageNotificationsUseCase(
-                enabled = shouldShowNotifications,
-                intervalHours = reminderInterval
-            )
-        }
+    // Реакция на переключение
+    LaunchedEffect(reminderEnabled) {
+        ReminderStateHolder.setEnabled(reminderEnabled)
     }
 
     Scaffold { paddingValues ->
@@ -72,6 +47,7 @@ fun SettingsContent() {
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
         ) {
+
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -81,8 +57,7 @@ fun SettingsContent() {
                     Text(
                         text = "Внешний вид",
                         style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
+                        fontWeight = FontWeight.Bold
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -95,61 +70,27 @@ fun SettingsContent() {
                 }
             }
 
-            // Уведомления
-//            Card(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(16.dp)
-//            ) {
-//                Column(modifier = Modifier.padding(16.dp)) {
-//                    Text(
-//                        text = "Уведомления",
-//                        style = MaterialTheme.typography.titleLarge,
-//                        fontWeight = FontWeight.Bold,
-//                        color = MaterialTheme.colorScheme.primary
-//                    )
-//
-//                    Spacer(modifier = Modifier.height(16.dp))
-//
-//                    SettingSwitch(
-//                        text = "Включить уведомления",
-//                        checked = notificationsEnabled,
-//                        onCheckedChange = { notificationsEnabled = it }
-//                    )
-//                }
-//            }
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = "Напоминания",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
 
-            // Напоминания
-//            Card(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(16.dp)
-//            ) {
-//                Column(modifier = Modifier.padding(16.dp)) {
-//                    Text(
-//                        text = "Напоминания",
-//                        style = MaterialTheme.typography.titleLarge,
-//                        fontWeight = FontWeight.Bold,
-//                        color = MaterialTheme.colorScheme.primary
-//                    )
-//
-//                    Spacer(modifier = Modifier.height(16.dp))
-//
-//                    SettingSwitch(
-//                        text = "Включить напоминания",
-//                        checked = reminderEnabled,
-//                        onCheckedChange = { reminderEnabled = it }
-//                    )
-//
-//                    Spacer(modifier = Modifier.height(16.dp))
-//
-//                    // Интервал напоминаний (можно добавить позже)
-//                    Text(
-//                        text = "Интервал: каждые $reminderInterval часа",
-//                        style = MaterialTheme.typography.bodyMedium
-//                    )
-//                }
-//            }
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    SettingSwitch(
+                        text = "Ежедневные напоминания",
+                        checked = reminderEnabled,
+                        onCheckedChange = { reminderEnabled = it }
+                    )
+                }
+            }
 
             Card(
                 modifier = Modifier
@@ -160,13 +101,6 @@ fun SettingsContent() {
                     Text(
                         text = "Oculi v${AppInfo.versionName}",
                         style = MaterialTheme.typography.titleMedium
-                    )
-
-                    Text(
-                        text = "Тренировка зрения и снятие цифрового напряжения",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(top = 4.dp)
                     )
                 }
             }
@@ -179,8 +113,6 @@ fun SettingsContent() {
             ) {
                 Text("Назад")
             }
-
-            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
@@ -189,8 +121,7 @@ fun SettingsContent() {
 fun SettingSwitch(
     text: String,
     checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
-    enabled: Boolean = true
+    onCheckedChange: (Boolean) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -199,11 +130,10 @@ fun SettingSwitch(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = text, style = MaterialTheme.typography.bodyLarge)
+        Text(text = text)
         Switch(
             checked = checked,
-            onCheckedChange = onCheckedChange,
-            enabled = enabled
+            onCheckedChange = onCheckedChange
         )
     }
 }
