@@ -3,7 +3,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.compose")
     id("org.jetbrains.kotlin.plugin.serialization")
-    id("io.realm.kotlin") version "1.15.0"
+    id("io.realm.kotlin") version "1.16.0"
 }
 
 kotlin {
@@ -29,7 +29,8 @@ kotlin {
                 implementation(compose.components.resources)
                 implementation(compose.components.uiToolingPreview)
 
-                implementation("io.realm.kotlin:library-base:1.15.0")
+                // Realm 1.16.0 поддерживает 16 KB страницы
+                implementation("io.realm.kotlin:library-base:1.16.0")
 
                 implementation("cafe.adriel.voyager:voyager-navigator:1.0.0")
                 implementation("cafe.adriel.voyager:voyager-koin:1.0.0")
@@ -40,9 +41,6 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 
                 implementation("io.insert-koin:koin-core:3.5.3")
-
-                // Для работы с уведомлениями (common часть)
-                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
             }
         }
 
@@ -54,11 +52,8 @@ kotlin {
                 implementation("androidx.compose.material3:material3:1.0.1")
                 implementation(libs.yandex.mobile.ads.android)
 
-                // Для уведомлений
                 implementation("androidx.work:work-runtime-ktx:2.9.0")
                 implementation("androidx.core:core-ktx:1.12.0")
-
-                // Для канала уведомлений
                 implementation("androidx.core:core:1.12.0")
             }
         }
@@ -82,7 +77,8 @@ kotlin {
 
 android {
     namespace = "com.pixelrabbit.oculi"
-    compileSdk = 36
+    compileSdk = 35
+    ndkVersion = "27.0.12077973"
 
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     sourceSets["main"].res.srcDirs("src/androidMain/res")
@@ -92,7 +88,7 @@ android {
         applicationId = "com.pixelrabbit.oculi"
         minSdk = 24
         targetSdk = 35
-        versionCode = 17
+        versionCode = 18
         versionName = "1.1.0"
 
         ndk {
@@ -128,6 +124,9 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+        jniLibs {
+            useLegacyPackaging = false
         }
     }
 }
