@@ -34,8 +34,8 @@ import org.jetbrains.compose.resources.painterResource
 import androidx.compose.foundation.ExperimentalFoundationApi
 
 import androidx.compose.ui.graphics.drawscope.withTransform
-import okuli.composeapp.generated.resources.Res
-import okuli.composeapp.generated.resources.joy_okuli
+import oculi.composeapp.generated.resources.Res
+import oculi.composeapp.generated.resources.joy_okuli
 
 
 @Composable

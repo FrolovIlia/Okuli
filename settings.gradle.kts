@@ -1,4 +1,4 @@
-rootProject.name = "Okuli"
+rootProject.name = "Oculi"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {

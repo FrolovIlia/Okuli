@@ -39,8 +39,8 @@ import com.pixelrabbit.oculi.di.ServiceLocator
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
-import okuli.composeapp.generated.resources.Res
-import okuli.composeapp.generated.resources.*
+import oculi.composeapp.generated.resources.Res
+import oculi.composeapp.generated.resources.*
 import com.pixelrabbit.oculi.utils.playBeep
 import com.pixelrabbit.oculi.presentation.components.CelebrationDialog
 
