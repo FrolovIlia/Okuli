@@ -1,29 +1,12 @@
 package com.pixelrabbit.oculi.presentation.screens
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -37,7 +20,8 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.pixelrabbit.oculi.AppInfo
 import com.pixelrabbit.oculi.utils.ShareManager
-import org.jetbrains.compose.resources.ExperimentalResourceApi
+import oculi.composeapp.generated.resources.Res
+import oculi.composeapp.generated.resources.ic_logo_standart
 import org.jetbrains.compose.resources.painterResource
 
 object AboutScreen : Screen {
@@ -47,7 +31,7 @@ object AboutScreen : Screen {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalResourceApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutContent() {
     val navigator = LocalNavigator.currentOrThrow
@@ -99,7 +83,7 @@ fun AboutContent() {
                         horizontalArrangement = Arrangement.Center
                     ) {
                         Image(
-                            painter = painterResource(org.jetbrains.compose.resources.DrawableResource("drawable/ic_logo_standart.png")),
+                            painter = painterResource(Res.drawable.ic_logo_standart),
                             contentDescription = "Oculi Logo",
                             modifier = Modifier.size(50.dp),
                             contentScale = ContentScale.Fit
@@ -129,7 +113,6 @@ fun AboutContent() {
                 }
             }
 
-            // Описание
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -143,16 +126,12 @@ fun AboutContent() {
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold
                     )
-
                     Spacer(modifier = Modifier.height(12.dp))
-
                     Text(
                         text = "Oculi - ваш персональный тренер для здоровья глаз. Приложение помогает бороться с цифровым напряжением глаз и улучшать зрение с помощью регулярных упражнений.",
                         style = MaterialTheme.typography.bodyMedium
                     )
-
                     Spacer(modifier = Modifier.height(8.dp))
-
                     Text(
                         text = "• Упражнения для тренировки аккомодации\n• Тесты для проверки остроты зрения\n• Напоминания о перерывах\n• Отслеживание прогресса",
                         style = MaterialTheme.typography.bodyMedium
@@ -173,14 +152,11 @@ fun AboutContent() {
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold
                     )
-
                     Spacer(modifier = Modifier.height(12.dp))
-
                     Text(
                         text = "По вопросам и предложениям:",
                         style = MaterialTheme.typography.bodyMedium
                     )
-
                     Text(
                         text = "pixel.rabbit.soft@gmail.com",
                         style = MaterialTheme.typography.bodyMedium,
@@ -195,9 +171,7 @@ fun AboutContent() {
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Button(
-                    onClick = {
-                        navigator.push(PrivacyPolicyScreen)
-                    },
+                    onClick = { navigator.push(PrivacyPolicyScreen) },
                     modifier = Modifier.fillMaxWidth(),
                     shape = MaterialTheme.shapes.medium
                 ) {
@@ -205,9 +179,7 @@ fun AboutContent() {
                 }
 
                 Button(
-                    onClick = {
-                        navigator.push(TermsOfUseScreen)
-                    },
+                    onClick = { navigator.push(TermsOfUseScreen) },
                     modifier = Modifier.fillMaxWidth(),
                     shape = MaterialTheme.shapes.medium
                 ) {
@@ -215,16 +187,13 @@ fun AboutContent() {
                 }
 
                 Button(
-                    onClick = {
-                        shareManager.shareText(shareText)
-                    },
+                    onClick = { shareManager.shareText(shareText) },
                     modifier = Modifier.fillMaxWidth(),
                     shape = MaterialTheme.shapes.medium
                 ) {
                     Text("Поделиться приложением")
                 }
             }
-
             Spacer(modifier = Modifier.height(16.dp))
         }
     }

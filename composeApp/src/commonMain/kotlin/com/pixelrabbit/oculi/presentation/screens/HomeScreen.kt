@@ -5,16 +5,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -36,7 +26,8 @@ import com.pixelrabbit.oculi.presentation.theme.ThemeController
 import com.pixelrabbit.oculi.utils.formatTotalTime
 import com.pixelrabbit.oculi.utils.getGreeting
 import kotlinx.coroutines.delay
-import org.jetbrains.compose.resources.ExperimentalResourceApi
+import oculi.composeapp.generated.resources.Res
+import oculi.composeapp.generated.resources.ic_logo_standart
 import org.jetbrains.compose.resources.painterResource
 
 object HomeScreen : Screen {
@@ -47,7 +38,6 @@ object HomeScreen : Screen {
     }
 }
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun HomeContent(darkTheme: Boolean) {
     val navigator = LocalNavigator.currentOrThrow
@@ -79,7 +69,7 @@ fun HomeContent(darkTheme: Boolean) {
             Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
                     Image(
-                        painter = painterResource(org.jetbrains.compose.resources.DrawableResource("drawable/ic_logo_standart.png")),
+                        painter = painterResource(Res.drawable.ic_logo_standart),
                         contentDescription = "Oculi Logo",
                         modifier = Modifier.size(50.dp),
                         contentScale = ContentScale.Fit
@@ -117,9 +107,7 @@ fun HomeContent(darkTheme: Boolean) {
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
-
                     Spacer(modifier = Modifier.height(16.dp))
-
                     Button(
                         onClick = { navigator.push(ExercisesListScreen) },
                         modifier = Modifier.fillMaxWidth(),
@@ -145,17 +133,13 @@ fun StatsSection(userProgress: UserProgress) {
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
             )
-
             Spacer(modifier = Modifier.height(16.dp))
-
             Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()) {
                 StatItem(value = userProgress.totalExercises.toString(), label = "Упражнений")
                 StatItem(value = formatTotalTime(userProgress.totalTime), label = "Время")
                 StatItem(value = "${userProgress.currentStreak} дн", label = "Серия")
             }
-
             Spacer(modifier = Modifier.height(12.dp))
-
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 Text(
                     text = "Сегодня: ${userProgress.todayExercises} упражнений",
@@ -201,8 +185,8 @@ fun FeatureButtonsGrid(navigator: Navigator, navigationBarBottom: androidx.compo
         modifier = Modifier.fillMaxWidth(),
         contentPadding = PaddingValues(bottom = navigationBarBottom + 24.dp)
     ) {
-        items(features) { (text, onClick) ->
-            CompactFeatureButton(text = text, onClick = onClick)
+        items(features) { feature ->
+            CompactFeatureButton(text = feature.first, onClick = feature.second)
         }
     }
 }

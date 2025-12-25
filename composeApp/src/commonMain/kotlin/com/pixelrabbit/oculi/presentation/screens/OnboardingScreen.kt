@@ -1,15 +1,7 @@
 package com.pixelrabbit.oculi.presentation.screens
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -25,7 +17,8 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.pixelrabbit.oculi.utils.AppSettings
-import org.jetbrains.compose.resources.ExperimentalResourceApi
+import oculi.composeapp.generated.resources.Res
+import oculi.composeapp.generated.resources.ic_logo_joy
 import org.jetbrains.compose.resources.painterResource
 
 object OnboardingScreen : Screen {
@@ -35,7 +28,6 @@ object OnboardingScreen : Screen {
     }
 }
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun OnboardingContent() {
     val navigator = LocalNavigator.currentOrThrow
@@ -58,7 +50,7 @@ fun OnboardingContent() {
             horizontalArrangement = Arrangement.Center
         ) {
             Image(
-                painter = painterResource(org.jetbrains.compose.resources.DrawableResource("drawable/ic_logo_joy.png")),
+                painter = painterResource(Res.drawable.ic_logo_joy),
                 contentDescription = "Oculi Logo",
                 modifier = Modifier.size(50.dp),
                 contentScale = ContentScale.Fit

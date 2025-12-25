@@ -1,23 +1,28 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
-    kotlin("multiplatform")
-    id("com.android.application")
-    id("org.jetbrains.compose")
-    id("org.jetbrains.kotlin.plugin.serialization")
-    id("io.realm.kotlin") version "1.16.0"
+    alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.jetbrainsCompose)
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.realm.kotlin)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 kotlin {
     androidTarget {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "1.8"
-            }
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_1_8)
         }
     }
 
-    iosX64()
-    iosArm64()
-    iosSimulatorArm64()
+    // Игнорируем iOS таргеты на Windows, чтобы не было ворнингов
+    listOf(iosX64(), iosArm64(), iosSimulatorArm64()).forEach {
+        it.binaries.framework {
+            baseName = "composeApp"
+            isStatic = true
+        }
+    }
 
     sourceSets {
         val commonMain by getting {
@@ -29,47 +34,23 @@ kotlin {
                 implementation(compose.components.resources)
                 implementation(compose.components.uiToolingPreview)
 
-                // Realm 1.16.0 поддерживает 16 KB страницы
-                implementation("io.realm.kotlin:library-base:1.16.0")
+                // Realm и Дата/Время для Common
+                implementation(libs.realm.library.base)
+                implementation(libs.kotlinx.datetime)
 
-                implementation("cafe.adriel.voyager:voyager-navigator:1.0.0")
-                implementation("cafe.adriel.voyager:voyager-koin:1.0.0")
-                implementation("cafe.adriel.voyager:voyager-transitions:1.0.0")
-
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
-
-                implementation("io.insert-koin:koin-core:3.5.3")
+                // Навигация Voyager
+                implementation(libs.voyager.navigator)
             }
         }
 
         val androidMain by getting {
             dependencies {
-                implementation("androidx.activity:activity-compose:1.8.2")
-                implementation("androidx.compose.ui:ui-tooling:1.6.0")
-                implementation("androidx.compose.ui:ui:1.6.0")
-                implementation("androidx.compose.material3:material3:1.0.1")
-                implementation(libs.yandex.mobile.ads.android)
+                implementation(libs.androidx.activity.compose)
+                implementation(libs.androidx.core.ktx)
 
-                implementation("androidx.work:work-runtime-ktx:2.9.0")
-                implementation("androidx.core:core-ktx:1.12.0")
-                implementation("androidx.core:core:1.12.0")
-            }
-        }
-
-        val iosX64Main by getting
-        val iosArm64Main by getting
-        val iosSimulatorArm64Main by getting
-
-        val iosMain by creating {
-            dependsOn(commonMain)
-            iosX64Main.dependsOn(this)
-            iosArm64Main.dependsOn(this)
-            iosSimulatorArm64Main.dependsOn(this)
-
-            dependencies {
-                implementation("io.ktor:ktor-client-darwin:2.3.8")
+                // Реклама и WorkManager (только для Android)
+                implementation(libs.yandex.mobileads)
+                implementation(libs.androidx.work.runtime.ktx)
             }
         }
     }
@@ -78,7 +59,6 @@ kotlin {
 android {
     namespace = "com.pixelrabbit.oculi"
     compileSdk = 35
-    ndkVersion = "27.0.12077973"
 
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     sourceSets["main"].res.srcDirs("src/androidMain/res")
@@ -88,23 +68,21 @@ android {
         applicationId = "com.pixelrabbit.oculi"
         minSdk = 24
         targetSdk = 35
-        versionCode = 18
-        versionName = "1.1.0"
+        versionCode = 27
+        versionName = "1.27.0"
 
-        ndk {
-            debugSymbolLevel = "FULL"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
 
     buildTypes {
         getByName("release") {
-            isMinifyEnabled = true
-            isShrinkResources = true
-
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+            isMinifyEnabled = false
         }
     }
 
@@ -112,21 +90,8 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+}
 
-    buildFeatures {
-        compose = true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.10"
-    }
-
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-        jniLibs {
-            useLegacyPackaging = false
-        }
-    }
+dependencies {
+    debugImplementation(compose.uiTooling)
 }

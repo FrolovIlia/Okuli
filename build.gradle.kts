@@ -1,17 +1,9 @@
 plugins {
-    alias(libs.plugins.kotlinMultiplatform) apply false
+    // Эти алиасы теперь строго соответствуют секции [plugins] в TOML
     alias(libs.plugins.androidApplication) apply false
+    alias(libs.plugins.kotlinMultiplatform) apply false
     alias(libs.plugins.jetbrainsCompose) apply false
-    alias(libs.plugins.kotlinSerialization) apply false
-    id("io.realm.kotlin") version "1.16.0" apply false
-    id("com.codingfeline.buildkonfig") version "0.15.1" apply false // Добавьте эту строку
-}
-
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
-        maven("https://us-central1-maven.pkg.dev/varabyte-repos/public")
-    }
+    alias(libs.plugins.compose.compiler) apply false
+    alias(libs.plugins.realm.kotlin) apply false
+    alias(libs.plugins.kotlin.serialization) apply false
 }
