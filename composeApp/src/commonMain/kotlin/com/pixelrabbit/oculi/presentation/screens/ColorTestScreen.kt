@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.LinearProgressIndicator
@@ -24,13 +25,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+
 
 object ColorTestScreen : Screen {
     private fun readResolve(): Any = ColorTestScreen
@@ -148,30 +149,31 @@ fun ColorTestContent() {
 
     Scaffold { innerPadding ->
         Column(
-            modifier = Modifier
+            modifier = androidx.compose.ui.Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
                 .systemBarsPadding()
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = androidx.compose.ui.Modifier.height(8.dp))
 
             if (!testCompleted) {
                 Card(
-                    modifier = Modifier
+                    modifier = androidx.compose.ui.Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
+                        .padding(horizontal = 16.dp),
+                    colors = androidx.compose.material3.CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    )
                 ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp)
-                    ) {
+                    Column(modifier = androidx.compose.ui.Modifier.padding(16.dp)) {
                         Text(
                             text = "💡 Как проводить тест:",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = androidx.compose.ui.Modifier.height(8.dp))
                         Text(
                             text = "• Держите телефон на расстоянии 50-70 см",
                             style = MaterialTheme.typography.bodyMedium
@@ -200,13 +202,16 @@ fun ColorTestContent() {
                 }
 
                 Card(
-                    modifier = Modifier
+                    modifier = androidx.compose.ui.Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp),
+                    colors = androidx.compose.material3.CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    ),
                     onClick = { showEyeSwitchDialog = true }
                 ) {
                     Column(
-                        modifier = Modifier.padding(16.dp),
+                        modifier = androidx.compose.ui.Modifier.padding(16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
@@ -220,7 +225,6 @@ fun ColorTestContent() {
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.primary
                         )
-
                         Text(
                             text = "Левый: $leftEyeCorrectAnswers/${testPlates.size} | Правый: $rightEyeCorrectAnswers/${testPlates.size}",
                             style = MaterialTheme.typography.bodyMedium,
@@ -235,15 +239,16 @@ fun ColorTestContent() {
                 }
 
                 Card(
-                    modifier = Modifier
+                    modifier = androidx.compose.ui.Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
+                        .padding(horizontal = 16.dp),
+                    colors = androidx.compose.material3.CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    )
                 ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp)
-                    ) {
+                    Column(modifier = androidx.compose.ui.Modifier.padding(16.dp)) {
                         Row(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = androidx.compose.ui.Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
@@ -256,15 +261,15 @@ fun ColorTestContent() {
                                 fontWeight = FontWeight.Bold
                             )
                         }
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = androidx.compose.ui.Modifier.height(8.dp))
                         LinearProgressIndicator(
                             progress = { (currentPlate + 1).toFloat() / testPlates.size },
-                            modifier = Modifier
+                            modifier = androidx.compose.ui.Modifier
                                 .fillMaxWidth()
                                 .height(12.dp),
-                            trackColor = MaterialTheme.colorScheme.surfaceVariant
+                            trackColor = MaterialTheme.colorScheme.surface
                         )
-                        Spacer(modifier = Modifier.height(4.dp))
+                        Spacer(modifier = androidx.compose.ui.Modifier.height(4.dp))
                         Text(
                             text = "Пластина ${currentPlate + 1} из ${testPlates.size}",
                             style = MaterialTheme.typography.bodySmall,
@@ -279,14 +284,14 @@ fun ColorTestContent() {
                     answerChecked = answerChecked,
                     onAnswerSelect = { answer: String -> handleAnswerSelect(answer) },
                     onNextPlate = { moveToNextPlate() },
-                    modifier = Modifier
+                    modifier = androidx.compose.ui.Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
                 )
 
                 Button(
                     onClick = { forceCompleteTest() },
-                    modifier = Modifier
+                    modifier = androidx.compose.ui.Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp),
                     shape = MaterialTheme.shapes.large
@@ -296,12 +301,15 @@ fun ColorTestContent() {
 
             } else {
                 Card(
-                    modifier = Modifier
+                    modifier = androidx.compose.ui.Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
+                        .padding(horizontal = 16.dp),
+                    colors = androidx.compose.material3.CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    )
                 ) {
                     Column(
-                        modifier = Modifier.padding(32.dp),
+                        modifier = androidx.compose.ui.Modifier.padding(32.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
@@ -310,9 +318,9 @@ fun ColorTestContent() {
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.primary
                         )
-                        Spacer(modifier = Modifier.height(24.dp))
+                        Spacer(modifier = androidx.compose.ui.Modifier.height(24.dp))
                         Column(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = androidx.compose.ui.Modifier.fillMaxWidth(),
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
@@ -327,15 +335,20 @@ fun ColorTestContent() {
                                 totalPlates = testPlates.size
                             )
                         }
-                        Spacer(modifier = Modifier.height(24.dp))
-                        Card(modifier = Modifier.fillMaxWidth()) {
-                            Column(modifier = Modifier.padding(16.dp)) {
+                        Spacer(modifier = androidx.compose.ui.Modifier.height(24.dp))
+                        Card(
+                            modifier = androidx.compose.ui.Modifier.fillMaxWidth(),
+                            colors = androidx.compose.material3.CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceVariant
+                            )
+                        ) {
+                            Column(modifier = androidx.compose.ui.Modifier.padding(16.dp)) {
                                 Text(
                                     text = "📊 Оценка цветовосприятия:",
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold
                                 )
-                                Spacer(modifier = Modifier.height(8.dp))
+                                Spacer(modifier = androidx.compose.ui.Modifier.height(8.dp))
                                 Text(
                                     text = when {
                                         leftEyeCorrectAnswers >= 4 && rightEyeCorrectAnswers >= 4 ->
@@ -356,7 +369,7 @@ fun ColorTestContent() {
 
             Button(
                 onClick = { navigator.pop() },
-                modifier = Modifier
+                modifier = androidx.compose.ui.Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
                 shape = MaterialTheme.shapes.large
@@ -364,19 +377,19 @@ fun ColorTestContent() {
                 Text("Назад")
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = androidx.compose.ui.Modifier.height(24.dp))
         }
     }
 
     if (showEyeSwitchDialog) {
-        androidx.compose.material3.AlertDialog(
+        AlertDialog(
             onDismissRequest = { showEyeSwitchDialog = false },
             title = { Text("Смена глаза") },
             text = { Text("Вы хотите переключиться на проверку другого глаза? Текущий прогресс будет сохранен.") },
             confirmButton = {
                 Button(
                     onClick = { manuallySwitchEye() },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = androidx.compose.ui.Modifier.fillMaxWidth(),
                     shape = MaterialTheme.shapes.large
                 ) {
                     Text("Переключить на ${if (currentEye == Eye.LEFT) "правый" else "левый"} глаз")
@@ -385,7 +398,7 @@ fun ColorTestContent() {
             dismissButton = {
                 Button(
                     onClick = { showEyeSwitchDialog = false },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = androidx.compose.ui.Modifier.fillMaxWidth(),
                     shape = MaterialTheme.shapes.large
                 ) {
                     Text("Продолжить текущий глаз")
@@ -397,9 +410,14 @@ fun ColorTestContent() {
 
 @Composable
 fun ColorResultItem(eye: String, correctAnswers: Int, totalPlates: Int) {
-    Card(modifier = Modifier.fillMaxWidth()) {
+    Card(
+        modifier = androidx.compose.ui.Modifier.fillMaxWidth(),
+        colors = androidx.compose.material3.CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        )
+    ) {
         Column(
-            modifier = Modifier.padding(16.dp),
+            modifier = androidx.compose.ui.Modifier.padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
@@ -407,7 +425,7 @@ fun ColorResultItem(eye: String, correctAnswers: Int, totalPlates: Int) {
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = androidx.compose.ui.Modifier.height(8.dp))
             Text(
                 text = "Правильных ответов: $correctAnswers из $totalPlates",
                 style = MaterialTheme.typography.bodyMedium
@@ -431,9 +449,3 @@ fun calculateColorVisionScore(correctAnswers: Int, totalPlates: Int): String {
         else -> "Требуется консультация специалиста"
     }
 }
-
-
-
-//enum class Eye {
-//    LEFT, RIGHT
-//}

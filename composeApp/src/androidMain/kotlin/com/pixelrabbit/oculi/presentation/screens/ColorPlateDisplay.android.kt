@@ -23,7 +23,12 @@ actual fun ColorPlateDisplay(
     onNextPlate: () -> Unit,
     modifier: Modifier
 ) {
-    Card(modifier = modifier) {
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        )
+    ) {
         Column(
             modifier = Modifier
                 .padding(16.dp)
@@ -33,8 +38,9 @@ actual fun ColorPlateDisplay(
             Text(
                 text = "Какую цифру вы видите?",
                 style = MaterialTheme.typography.titleMedium,
+                textAlign = TextAlign.Center,
                 modifier = Modifier.padding(bottom = 12.dp),
-                textAlign = TextAlign.Center
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
             Box(
@@ -53,12 +59,11 @@ actual fun ColorPlateDisplay(
                 }
 
                 Image(
-                    painter = painterResource(id = imageRes),
-                    contentDescription = "Цветовая тестовая пластина ${plate.number}",
+                    painter = painterResource(imageRes),
+                    contentDescription = null,
                     modifier = Modifier
                         .fillMaxWidth(0.95f)
-                        .height(340.dp),
-                    alignment = Alignment.Center
+                        .height(340.dp)
                 )
             }
 
@@ -85,13 +90,17 @@ actual fun ColorPlateDisplay(
             Button(
                 onClick = onNextPlate,
                 modifier = Modifier.fillMaxWidth(),
-                shape = MaterialTheme.shapes.large,
                 enabled = selectedAnswer != null,
+                shape = MaterialTheme.shapes.large,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (selectedAnswer != null) MaterialTheme.colorScheme.primary
-                    else MaterialTheme.colorScheme.surfaceVariant,
-                    contentColor = if (selectedAnswer != null) MaterialTheme.colorScheme.onPrimary
-                    else MaterialTheme.colorScheme.onSurfaceVariant
+                    containerColor = if (selectedAnswer != null)
+                        MaterialTheme.colorScheme.primary
+                    else
+                        MaterialTheme.colorScheme.surfaceVariant,
+                    contentColor = if (selectedAnswer != null)
+                        MaterialTheme.colorScheme.onPrimary
+                    else
+                        MaterialTheme.colorScheme.onSurfaceVariant
                 )
             ) {
                 Text(
@@ -112,56 +121,50 @@ fun AnswerButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val (backgroundColor, textColor, borderColor) = when {
-        !answerChecked -> when {
-            isSelected -> Triple(
+    val (bg, fg, border) = when {
+        !answerChecked && isSelected ->
+            Triple(
                 MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
                 MaterialTheme.colorScheme.primary,
                 MaterialTheme.colorScheme.primary
             )
-            else -> Triple(
-                MaterialTheme.colorScheme.surface,
-                MaterialTheme.colorScheme.onSurface,
-                Color.Transparent
-            )
-        }
-        else -> when {
-            isCorrect -> Triple(
+
+        answerChecked && isCorrect ->
+            Triple(
                 MaterialTheme.colorScheme.primaryContainer,
                 MaterialTheme.colorScheme.onPrimaryContainer,
                 MaterialTheme.colorScheme.primary
             )
-            isSelected && !isCorrect -> Triple(
+
+        answerChecked && isSelected ->
+            Triple(
                 MaterialTheme.colorScheme.errorContainer,
                 MaterialTheme.colorScheme.onErrorContainer,
                 MaterialTheme.colorScheme.error
             )
-            else -> Triple(
-                MaterialTheme.colorScheme.surfaceVariant,
-                MaterialTheme.colorScheme.onSurfaceVariant,
+
+        else ->
+            Triple(
+                MaterialTheme.colorScheme.surface,
+                MaterialTheme.colorScheme.onSurface,
                 Color.Transparent
             )
-        }
     }
 
     Button(
         onClick = onClick,
         modifier = modifier.height(52.dp),
+        enabled = !answerChecked,
         shape = MaterialTheme.shapes.medium,
         colors = ButtonDefaults.buttonColors(
-            containerColor = backgroundColor,
-            contentColor = textColor
+            containerColor = bg,
+            contentColor = fg
         ),
         border = BorderStroke(
-            width = if (borderColor != Color.Transparent) 2.dp else 1.dp,
-            color = borderColor
-        ),
-        enabled = !answerChecked
-    ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Medium
+            if (border != Color.Transparent) 2.dp else 1.dp,
+            border
         )
+    ) {
+        Text(text, fontWeight = FontWeight.Medium)
     }
 }
