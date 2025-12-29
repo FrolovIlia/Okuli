@@ -64,68 +64,46 @@ fun HomeContent(darkTheme: Boolean) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = statusBarTop + 24.dp, start = 24.dp, end = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
+            verticalArrangement = Arrangement.spacedBy(24.dp) // единый интервал между секциями
         ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
-                    Image(
-                        painter = painterResource(Res.drawable.ic_logo_standart),
-                        contentDescription = "Oculi Logo",
-                        modifier = Modifier.size(50.dp),
-                        contentScale = ContentScale.Fit
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "Oculi",
-                        style = MaterialTheme.typography.displayMedium,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-
-                Text(
-                    text = "${getGreeting()}!",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-
-                Text(
-                    text = "Тренировка зрения",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-
+            HeaderSection()
             StatsSection(userProgress = userProgress)
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            ElevatedCard(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.elevatedCardColors(
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer
-                ),
-                elevation = CardDefaults.elevatedCardElevation(0.dp)
-            ) {
-                Column(modifier = Modifier.padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        text = "Быстрый старт",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Button(
-                        onClick = { navigator.push(ExercisesListScreen) },
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Text("Начать тренировку")
-                    }
-                }
-            }
-
+            QuickStartCard(navigator)
             FeatureButtonsGrid(navigator, navigationBarBottom)
         }
+    }
+}
+
+@Composable
+fun HeaderSection() {
+    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
+            Image(
+                painter = painterResource(Res.drawable.ic_logo_standart),
+                contentDescription = "Oculi Logo",
+                modifier = Modifier.size(50.dp),
+                contentScale = ContentScale.Fit
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = "Oculi",
+                style = MaterialTheme.typography.displayMedium,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.Bold
+            )
+        }
+
+        Text(
+            text = "${getGreeting()}!",
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+
+        Text(
+            text = "Тренировка зрения",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
 
@@ -178,6 +156,33 @@ fun StatItem(value: String, label: String) {
 }
 
 @Composable
+fun QuickStartCard(navigator: Navigator) {
+    ElevatedCard(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer
+        ),
+        elevation = CardDefaults.elevatedCardElevation(0.dp)
+    ) {
+        Column(modifier = Modifier.padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = "Быстрый старт",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(
+                onClick = { navigator.push(ExercisesListScreen) },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text("Начать тренировку")
+            }
+        }
+    }
+}
+
+@Composable
 fun FeatureButtonsGrid(navigator: Navigator, navigationBarBottom: androidx.compose.ui.unit.Dp) {
     val features = listOf(
         "Проверка зрения" to { navigator.push(VisionTestScreen) },
@@ -204,7 +209,9 @@ fun FeatureButtonsGrid(navigator: Navigator, navigationBarBottom: androidx.compo
 fun CompactFeatureButton(text: String, onClick: () -> Unit) {
     Button(
         onClick = onClick,
-        modifier = Modifier.fillMaxWidth().height(80.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(80.dp),
         shape = RoundedCornerShape(16.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant,
@@ -212,7 +219,12 @@ fun CompactFeatureButton(text: String, onClick: () -> Unit) {
         ),
         contentPadding = PaddingValues(0.dp)
     ) {
-        Box(modifier = Modifier.fillMaxSize().padding(horizontal = 8.dp), contentAlignment = Alignment.Center) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 8.dp),
+            contentAlignment = Alignment.Center
+        ) {
             Text(
                 text = text,
                 style = MaterialTheme.typography.bodyLarge,

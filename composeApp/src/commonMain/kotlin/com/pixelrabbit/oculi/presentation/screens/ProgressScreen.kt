@@ -38,23 +38,29 @@ fun ProgressContent() {
         }
     }
 
+    // Константы для отступов
+    val BlockVerticalSpacing = 24.dp
+    val InnerBlockPadding = 16.dp
+
     Scaffold { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(BlockVerticalSpacing)
         ) {
 
+            // Общая статистика
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(horizontal = InnerBlockPadding),
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.surfaceVariant
                 )
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
+                Column(modifier = Modifier.padding(InnerBlockPadding)) {
                     Text(
                         text = "Общая статистика",
                         style = MaterialTheme.typography.headlineSmall,
@@ -63,41 +69,23 @@ fun ProgressContent() {
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    StatRow(
-                        label = "Всего упражнений",
-                        value = userProgress.totalExercises.toString(),
-                        emoji = "💪"
-                    )
-
-                    StatRow(
-                        label = "Общее время",
-                        value = formatTotalTime(userProgress.totalTime),
-                        emoji = "⏱️"
-                    )
-
-                    StatRow(
-                        label = "Текущая серия",
-                        value = "${userProgress.currentStreak} дней",
-                        emoji = "🔥"
-                    )
-
-                    StatRow(
-                        label = "Сегодня",
-                        value = "${userProgress.todayExercises} упражнений",
-                        emoji = "📅"
-                    )
+                    StatRow("Всего упражнений", userProgress.totalExercises.toString(), "💪")
+                    StatRow("Общее время", formatTotalTime(userProgress.totalTime), "⏱️")
+                    StatRow("Текущая серия", "${userProgress.currentStreak} дней", "🔥")
+                    StatRow("Сегодня", "${userProgress.todayExercises} упражнений", "📅")
                 }
             }
 
+            // Достижения
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(horizontal = InnerBlockPadding),
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.surfaceVariant
                 )
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
+                Column(modifier = Modifier.padding(InnerBlockPadding)) {
                     Text(
                         text = "Достижения",
                         style = MaterialTheme.typography.headlineSmall,
@@ -123,15 +111,16 @@ fun ProgressContent() {
                 }
             }
 
+            // Советы
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(horizontal = InnerBlockPadding),
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.surfaceVariant
                 )
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
+                Column(modifier = Modifier.padding(InnerBlockPadding)) {
                     Text(
                         text = "Советы",
                         style = MaterialTheme.typography.headlineSmall,
@@ -140,25 +129,18 @@ fun ProgressContent() {
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    TipItem(
-                        text = "Тренируйтесь ежедневно для лучших результатов"
-                    )
-
-                    TipItem(
-                        text = "Делайте перерывы каждые 20 минут работы за компьютером"
-                    )
-
-                    TipItem(
-                        text = "Следите за правильным освещением во время тренировок"
-                    )
+                    TipItem("Тренируйтесь ежедневно для лучших результатов")
+                    TipItem("Делайте перерывы каждые 20 минут работы за компьютером")
+                    TipItem("Следите за правильным освещением во время тренировок")
                 }
             }
 
+            // Кнопка назад
             Button(
                 onClick = { navigator.pop() },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding(horizontal = InnerBlockPadding)
             ) {
                 Text("Назад")
             }
