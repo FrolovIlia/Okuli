@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LinearProgressIndicator
@@ -174,7 +175,9 @@ fun ExerciseTimerContent(
         ) {
             LinearProgressIndicator(
                 progress = { progress },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                color = MaterialTheme.colorScheme.primary,
+                trackColor = MaterialTheme.colorScheme.surfaceVariant
             )
             Text(
                 text = "Прогресс: ${(progress * 100).toInt()}%",
@@ -195,7 +198,10 @@ fun ExerciseTimerContent(
 
         if (isRunning) {
             Card(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                )
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
@@ -225,9 +231,10 @@ fun BoxWithProgress(
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator(
-            progress = { progress },
+            progress = progress,
             modifier = Modifier.size(200.dp),
-            strokeWidth = 8.dp
+            strokeWidth = 8.dp,
+            color = MaterialTheme.colorScheme.primary
         )
 
         Column(

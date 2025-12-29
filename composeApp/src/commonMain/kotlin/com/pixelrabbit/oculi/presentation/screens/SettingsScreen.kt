@@ -45,7 +45,10 @@ fun SettingsContent() {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding(16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                )
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
@@ -68,7 +71,10 @@ fun SettingsContent() {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding(16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                )
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
@@ -83,10 +89,7 @@ fun SettingsContent() {
                         text = "Ежедневные напоминания",
                         checked = reminderEnabled,
                         onCheckedChange = { enabled ->
-                            // обновляем in-memory состояние
                             ReminderStateHolder.setEnabled(enabled)
-
-                            // сохраняем в персистентные настройки
                             scope.launch {
                                 ServiceLocator.updateSettingsUseCase(
                                     darkThemeEnabled = darkTheme,
@@ -104,7 +107,10 @@ fun SettingsContent() {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding(16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                )
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(

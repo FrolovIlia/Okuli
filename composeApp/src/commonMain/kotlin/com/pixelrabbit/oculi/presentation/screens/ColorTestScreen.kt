@@ -434,6 +434,6 @@ fun calculateColorVisionScore(correctAnswers: Int, totalPlates: Int): String {
 
 
 
-enum class Eye {
-    LEFT, RIGHT
-}
+//enum class Eye {
+//    LEFT, RIGHT
+//}

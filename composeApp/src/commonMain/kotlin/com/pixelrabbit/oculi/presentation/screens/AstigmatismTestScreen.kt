@@ -16,6 +16,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -76,7 +77,8 @@ fun AstigmatismTestContent() {
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
+                        .padding(horizontal = 16.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
                 ) {
                     Column(
                         modifier = Modifier.padding(24.dp)
@@ -124,7 +126,7 @@ fun AstigmatismTestContent() {
                         Text(
                             text = "При астигматизме некоторые линии могут казаться размытыми, изогнутыми или более темными, чем другие.",
                             style = MaterialTheme.typography.bodyMedium,
-                            textAlign = TextAlign.Start, // ИЗМЕНИЛ на Start вместо Center
+                            textAlign = TextAlign.Start,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
@@ -145,7 +147,8 @@ fun AstigmatismTestContent() {
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
+                        .padding(horizontal = 16.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
                 ) {
                     Column(
                         modifier = Modifier.padding(16.dp)
@@ -168,7 +171,7 @@ fun AstigmatismTestContent() {
                         Spacer(modifier = Modifier.height(8.dp))
 
                         LinearProgressIndicator(
-                            progress = { (currentTest + 1).toFloat() / 4 },
+                            progress = (currentTest + 1).toFloat() / 4,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(12.dp),
@@ -180,7 +183,8 @@ fun AstigmatismTestContent() {
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
+                        .padding(horizontal = 16.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
                 ) {
                     Column(
                         modifier = Modifier.padding(24.dp),
@@ -257,7 +261,8 @@ fun AstigmatismTestContent() {
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
+                        .padding(horizontal = 16.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
                 ) {
                     Column(
                         modifier = Modifier.padding(32.dp),
@@ -281,7 +286,8 @@ fun AstigmatismTestContent() {
                         Spacer(modifier = Modifier.height(16.dp))
 
                         Card(
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
                         ) {
                             Column(
                                 modifier = Modifier.padding(16.dp)

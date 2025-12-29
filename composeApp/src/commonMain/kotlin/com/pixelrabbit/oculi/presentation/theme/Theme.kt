@@ -14,7 +14,7 @@ private val LightColorScheme = lightColorScheme(
     onPrimaryContainer = Color(0xFF002021),
     secondary = Color(0xFF4A6363),
     onSecondary = Color(0xFFFFFFFF),
-    secondaryContainer = Color(0xFFCCE8E8),
+    secondaryContainer = Color(0xFFECF7F3), // Блок «Быстрый старт»
     onSecondaryContainer = Color(0xFF051F1F),
     tertiary = Color(0xFF4D5F7C),
     onTertiary = Color(0xFFFFFFFF),
@@ -24,7 +24,7 @@ private val LightColorScheme = lightColorScheme(
     onBackground = Color(0xFF191C1C),
     surface = Color(0xFFFAFDFC),
     onSurface = Color(0xFF191C1C),
-    surfaceVariant = Color(0xFFDAE5E4),
+    surfaceVariant = Color(0xFFD9E5E4), // Блок «Ваша статистика»
     onSurfaceVariant = Color(0xFF3F4949),
     outline = Color(0xFF6F7979),
     outlineVariant = Color(0xFFBEC9C8),
@@ -77,7 +77,7 @@ fun OculiTheme(
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
 
     MaterialTheme(
-        colorScheme = colorScheme,
+        colorScheme = colorScheme.copy(surfaceTint = Color.Transparent),
         typography = OculiTypography,
         shapes = OculiShapes,
         content = content

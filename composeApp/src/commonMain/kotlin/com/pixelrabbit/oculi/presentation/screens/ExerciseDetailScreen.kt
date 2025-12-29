@@ -15,6 +15,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -82,7 +83,7 @@ fun ExerciseDetailContent(exerciseId: String) {
     }
 }
 
-@OptIn(ExperimentalResourceApi::class)
+@OptIn(ExperimentalResourceApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ExerciseDetailContent(
     exercise: com.pixelrabbit.oculi.domain.models.Exercise,
@@ -116,7 +117,11 @@ fun ExerciseDetailContent(
                 }
             }
 
-            Card {
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                )
+            ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
                         text = "Описание",
@@ -131,7 +136,11 @@ fun ExerciseDetailContent(
                 }
             }
 
-            Card {
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                )
+            ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
                         text = "Инструкция",
@@ -165,7 +174,11 @@ fun ExerciseDetailContent(
                 }
 
                 painter?.let {
-                    Card {
+                    Card(
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant
+                        )
+                    ) {
                         Image(
                             painter = it,
                             contentDescription = exercise.title,
@@ -179,7 +192,10 @@ fun ExerciseDetailContent(
             }
 
             Card(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                )
             ) {
                 var timeLeft by remember { mutableStateOf(exercise.duration) }
                 var isRunning by remember { mutableStateOf(false) }

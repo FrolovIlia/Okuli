@@ -1,19 +1,7 @@
 package com.pixelrabbit.oculi.presentation.screens
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,8 +42,12 @@ fun ExerciseCompleteContent(exerciseName: String, duration: Int) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
+            // Карточка с поздравлением
             Card(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                )
             ) {
                 Column(
                     modifier = Modifier.padding(32.dp),
@@ -102,8 +94,12 @@ fun ExerciseCompleteContent(exerciseName: String, duration: Int) {
                 }
             }
 
+            // Карточка с советом
             Card(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                )
             ) {
                 Column(
                     modifier = Modifier.padding(20.dp)
@@ -123,23 +119,20 @@ fun ExerciseCompleteContent(exerciseName: String, duration: Int) {
                 }
             }
 
+            // Кнопки навигации
             Column(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Button(
-                    onClick = {
-                        navigator.pop()
-                    },
+                    onClick = { navigator.pop() },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Вернуться к упражнениям")
                 }
 
                 Button(
-                    onClick = {
-                        navigator.popUntil { it is HomeScreen }
-                    },
+                    onClick = { navigator.popUntil { it is HomeScreen } },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("На главный экран")

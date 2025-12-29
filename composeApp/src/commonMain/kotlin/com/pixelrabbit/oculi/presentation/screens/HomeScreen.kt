@@ -100,7 +100,13 @@ fun HomeContent(darkTheme: Boolean) {
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            ElevatedCard(modifier = Modifier.fillMaxWidth()) {
+            ElevatedCard(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.elevatedCardColors(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer
+                ),
+                elevation = CardDefaults.elevatedCardElevation(0.dp)
+            ) {
                 Column(modifier = Modifier.padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         text = "Быстрый старт",
@@ -125,7 +131,10 @@ fun HomeContent(darkTheme: Boolean) {
 
 @Composable
 fun StatsSection(userProgress: UserProgress) {
-    Card(modifier = Modifier.fillMaxWidth()) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+    ) {
         Column(modifier = Modifier.padding(20.dp)) {
             Text(
                 text = "Ваша статистика",

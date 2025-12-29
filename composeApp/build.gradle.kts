@@ -68,8 +68,8 @@ android {
         applicationId = "com.pixelrabbit.oculi"
         minSdk = 24
         targetSdk = 35
-        versionCode = 27
-        versionName = "1.27.0"
+        versionCode = 28
+        versionName = "1.28.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

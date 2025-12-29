@@ -69,7 +69,11 @@ fun AboutContent() {
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
         ) {
+            // Логотип и версия
             Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
@@ -113,7 +117,11 @@ fun AboutContent() {
                 }
             }
 
+            // О приложении
             Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
@@ -129,17 +137,23 @@ fun AboutContent() {
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
                         text = "Oculi - ваш персональный тренер для здоровья глаз. Приложение помогает бороться с цифровым напряжением глаз и улучшать зрение с помощью регулярных упражнений.",
-                        style = MaterialTheme.typography.bodyMedium
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = "• Упражнения для тренировки аккомодации\n• Тесты для проверки остроты зрения\n• Напоминания о перерывах\n• Отслеживание прогресса",
-                        style = MaterialTheme.typography.bodyMedium
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
             }
 
+            // Поддержка
             Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
@@ -155,7 +169,8 @@ fun AboutContent() {
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
                         text = "По вопросам и предложениям:",
-                        style = MaterialTheme.typography.bodyMedium
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         text = "pixel.rabbit.soft@gmail.com",
@@ -166,6 +181,7 @@ fun AboutContent() {
                 }
             }
 
+            // Кнопки
             Column(
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -194,6 +210,7 @@ fun AboutContent() {
                     Text("Поделиться приложением")
                 }
             }
+
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
