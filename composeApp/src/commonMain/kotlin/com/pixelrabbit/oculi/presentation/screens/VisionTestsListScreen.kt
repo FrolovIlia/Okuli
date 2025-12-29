@@ -47,7 +47,8 @@ fun VisionTestContent() {
     val testTypes = listOf(
         VisionTest("👁️ Острота зрения", "Проверка по таблице Сивцева", "2-3 минуты"),
         VisionTest("🔴 Астигматизм", "Тест на искажение зрения", "1-2 минуты"),
-        VisionTest("🎨 Цветовосприятие", "Проверка цветового зрения", "2 минуты")
+        VisionTest("🎨 Цветовосприятие", "Проверка цветового зрения", "2 минуты"),
+        VisionTest("🕵️ Контрастная чувствительность", "Проверка чувствительности к контрасту", "2 минуты")
     )
 
     Scaffold { paddingValues ->
@@ -99,6 +100,7 @@ fun VisionTestContent() {
                             "👁️ Острота зрения" -> navigator.push(AcuityTestScreen)
                             "🔴 Астигматизм" -> navigator.push(AstigmatismTestScreen)
                             "🎨 Цветовосприятие" -> navigator.push(ColorTestScreen)
+                            "🕵️ Контрастная чувствительность" -> navigator.push(ContrastSensitivityTestScreen)
                         }
                     }
                 )
