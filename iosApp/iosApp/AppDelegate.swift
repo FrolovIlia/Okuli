@@ -2,21 +2,31 @@ import UIKit
 import SwiftUI
 import shared
 import Foundation
+import YandexMobileAds
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-    private let adController = AppOpenAdController.shared
     private let notificationManager = NotificationManager.shared
     private var shouldShowAd = false
+    private let adManager = AppOpenAdManager()
 
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
 
-        // 1. Инициализация AndroidContext для iOS (важно для Realm)
+        // 1. Инициализация Яндекс рекламы
+        YMAMobileAds.enableLogging(true)
+        YMAMobileAds.initialize {
+            print("✅ Yandex Mobile Ads initialized for iOS")
+
+            // Предзагружаем рекламу после инициализации
+            self.adManager.preloadAd()
+        }
+
+        // 2. Инициализация AndroidContext для iOS
         self.initializeKMPContext()
 
         window = UIWindow(frame: UIScreen.main.bounds)
@@ -25,10 +35,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.rootViewController = UIHostingController(rootView: loadingView)
         window?.makeKeyAndVisible()
 
-        // 2. Обновляем дату последнего визита при запуске
+        // 3. Обновляем дату последнего визита при запуске
         notificationManager.updateLastVisitDate()
 
-        // 3. Запрашиваем разрешение на уведомления
+        // 4. Запрашиваем разрешение на уведомления
         notificationManager.requestPermission()
 
         DispatchQueue.global(qos: .userInitiated).async {
@@ -44,7 +54,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 DispatchQueue.main.async {
                     if self.shouldShowAd {
                         print("📱 iOS AppLaunch: Showing ad (after 3+ launches)")
-                        self.showAd()
+                        self.showAdWithKMPManager()
                     } else {
                         print("📱 iOS AppLaunch: Skipping ad (first 2 launches)")
                         self.showMainApp()
@@ -57,7 +67,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
-        // Обновляем дату последнего визита каждый раз при переходе в активное состояние
         notificationManager.updateLastVisitDate()
     }
 
@@ -70,13 +79,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print("✅ AndroidContext initialized for iOS")
     }
 
-    private func showAd() {
-        adController.loadAd()
-
+    private func showAdWithKMPManager() {
         let adLoadingView = AdLoadingView {
-            if let rootVC = self.window?.rootViewController {
-                self.adController.showIfAvailable(from: rootVC) {
-                    self.showMainApp()
+            if self.adManager.isAdAvailable() {
+                self.adManager.showIfAvailable {
+                    DispatchQueue.main.async {
+                        self.showMainApp()
+                    }
                 }
             } else {
                 self.showMainApp()
@@ -87,11 +96,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     private func showMainApp() {
-        let contentView = OculiApp()
+        let contentView = OculiApp(appOpenAdManager: adManager)
         window?.rootViewController = UIHostingController(rootView: contentView)
     }
 }
 
+// Остальные структуры остаются без изменений
 struct LoadingScreen: View {
     @Binding var shouldShowAd: Bool
     @State private var isLoading = true

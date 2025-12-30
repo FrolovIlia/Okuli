@@ -16,11 +16,13 @@ kotlin {
         }
     }
 
-    // Игнорируем iOS таргеты на Windows, чтобы не было ворнингов
-    listOf(iosX64(), iosArm64(), iosSimulatorArm64()).forEach {
-        it.binaries.framework {
-            baseName = "composeApp"
-            isStatic = true
+    // iOS таргеты создаем ТОЛЬКО если не на Windows
+    if (!System.getProperty("os.name").contains("Windows", ignoreCase = true)) {
+        listOf(iosX64(), iosArm64(), iosSimulatorArm64()).forEach {
+            it.binaries.framework {
+                baseName = "composeApp"
+                isStatic = true
+            }
         }
     }
 
@@ -34,11 +36,8 @@ kotlin {
                 implementation(compose.components.resources)
                 implementation(compose.components.uiToolingPreview)
 
-                // Realm и Дата/Время для Common
                 implementation(libs.realm.library.base)
                 implementation(libs.kotlinx.datetime)
-
-                // Навигация Voyager
                 implementation(libs.voyager.navigator)
             }
         }
@@ -47,10 +46,17 @@ kotlin {
             dependencies {
                 implementation(libs.androidx.activity.compose)
                 implementation(libs.androidx.core.ktx)
-
-                // Реклама и WorkManager (только для Android)
                 implementation(libs.yandex.mobileads)
                 implementation(libs.androidx.work.runtime.ktx)
+            }
+        }
+
+        // Создаем iosMain только если есть iOS таргеты
+        if (!System.getProperty("os.name").contains("Windows", ignoreCase = true)) {
+            val iosMain by getting {
+                dependencies {
+                    implementation(libs.mobileads.ios)
+                }
             }
         }
     }
@@ -70,8 +76,6 @@ android {
         targetSdk = 35
         versionCode = 29
         versionName = "1.29.0"
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     packaging {
