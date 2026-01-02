@@ -52,7 +52,6 @@ fun OculiApp(appOpenAdManager: AppOpenAdManager? = null) {
 
             adChecked = true
 
-            // Упрощенная проверка - без lastAdShowTime
             val canShowAd = appOpenAdManager.isAdAvailable()
 
             if (canShowAd) {
@@ -70,8 +69,6 @@ fun OculiApp(appOpenAdManager: AppOpenAdManager? = null) {
     if (isLoading) {
         LoadingScreen()
     } else if (showSplash) {
-        // SplashScreenContent() - УДАЛИ ЭТУ СТРОКУ
-        // Splash теперь только в AndroidOculiApp.kt
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
@@ -85,7 +82,6 @@ fun OculiApp(appOpenAdManager: AppOpenAdManager? = null) {
             LaunchedEffect(Unit) {
                 delay(100L)
                 appOpenAdManager.showIfAvailable {
-                    // Реклама закрыта
                 }
                 pendingAdAvailable = false
             }

@@ -16,7 +16,6 @@ kotlin {
         }
     }
 
-    // iOS таргеты создаем ТОЛЬКО если не на Windows
     if (!System.getProperty("os.name").contains("Windows", ignoreCase = true)) {
         listOf(iosX64(), iosArm64(), iosSimulatorArm64()).forEach {
             it.binaries.framework {
@@ -51,7 +50,6 @@ kotlin {
             }
         }
 
-        // Создаем iosMain только если есть iOS таргеты
         if (!System.getProperty("os.name").contains("Windows", ignoreCase = true)) {
             val iosMain by getting {
                 dependencies {
@@ -74,8 +72,8 @@ android {
         applicationId = "com.pixelrabbit.oculi"
         minSdk = 24
         targetSdk = 35
-        versionCode = 29
-        versionName = "1.29.0"
+        versionCode = 30
+        versionName = "1.30.0"
     }
 
     packaging {

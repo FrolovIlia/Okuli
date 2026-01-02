@@ -90,10 +90,17 @@ fun SettingsContent() {
                         checked = reminderEnabled,
                         onCheckedChange = { enabled ->
                             ReminderStateHolder.setEnabled(enabled)
+
                             scope.launch {
+                                // ГЛАВНОЕ ИСПРАВЛЕНИЕ
+                                ServiceLocator.manageNotificationsUseCase(
+                                    enabled = enabled,
+                                    intervalHours = 24
+                                )
+
                                 ServiceLocator.updateSettingsUseCase(
                                     darkThemeEnabled = darkTheme,
-                                    notificationsEnabled = false,
+                                    notificationsEnabled = enabled,
                                     reminderEnabled = enabled,
                                     reminderInterval = 24
                                 )
