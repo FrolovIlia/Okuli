@@ -38,6 +38,7 @@ kotlin {
                 implementation(libs.realm.library.base)
                 implementation(libs.kotlinx.datetime)
                 implementation(libs.voyager.navigator)
+                implementation(libs.voyager.screenmodel)
             }
         }
 

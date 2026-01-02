@@ -1,8 +1,9 @@
 package com.pixelrabbit.oculi.presentation.screens
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -10,102 +11,137 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.core.model.ScreenModel
+import cafe.adriel.voyager.core.model.rememberScreenModel
+import cafe.adriel.voyager.core.model.screenModelScope
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.pixelrabbit.oculi.di.ServiceLocator
+import com.pixelrabbit.oculi.domain.models.Exercise
+import kotlinx.coroutines.launch
 
-object ExercisesListScreen : Screen {
+/* ---------------- SCREEN ---------------- */
+
+data object ExercisesListScreen : Screen {
+
     @Composable
     override fun Content() {
-        ExercisesListContent()
+        val screenModel = rememberScreenModel {
+            ExercisesListScreenModel()
+        }
+        ExercisesListContent(screenModel)
     }
 }
 
+/* ---------------- SCREEN MODEL ---------------- */
+
+class ExercisesListScreenModel : ScreenModel {
+
+    val listState = LazyListState()
+
+    var exercises by mutableStateOf<List<Exercise>>(emptyList())
+        private set
+
+    init {
+        screenModelScope.launch {
+            exercises = ServiceLocator.getExercisesUseCase()
+        }
+    }
+}
+
+/* ---------------- UI ---------------- */
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ExercisesListContent() {
+fun ExercisesListContent(
+    screenModel: ExercisesListScreenModel
+) {
     val navigator = LocalNavigator.currentOrThrow
-    var exercises by remember { mutableStateOf(emptyList<com.pixelrabbit.oculi.domain.models.Exercise>()) }
-
-    LaunchedEffect(Unit) {
-        exercises = ServiceLocator.getExercisesUseCase()
-    }
 
     Scaffold { paddingValues ->
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
-                .verticalScroll(rememberScrollState())
+                .padding(paddingValues),
+            state = screenModel.listState,
+            contentPadding = PaddingValues(bottom = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-                )
-            ) {
-                Column(
-                    modifier = Modifier.padding(24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+
+            item {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    )
                 ) {
-                    Text(
-                        text = "Упражнения для глаз",
-                        style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary,
-                        textAlign = TextAlign.Center
-                    )
+                    Column(
+                        modifier = Modifier.padding(24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "Упражнения для глаз",
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary,
+                            textAlign = TextAlign.Center
+                        )
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
 
-                    Text(
-                        text = "Помогают поддерживать и улучшать зрение",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = TextAlign.Center
-                    )
+                        Text(
+                            text = "Помогают поддерживать и улучшать зрение",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 }
             }
 
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                exercises.forEach { exercise ->
-                    ExerciseCard(
-                        exercise = exercise,
-                        onClick = { navigator.push(ExerciseDetailScreen(exercise.id)) }
-                    )
-                }
+            items(
+                items = screenModel.exercises,
+                key = { it.id }
+            ) { exercise ->
+                ExerciseCard(
+                    exercise = exercise,
+                    onClick = {
+                        navigator.push(
+                            ExerciseDetailScreen(exercise.id)
+                        )
+                    }
+                )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Button(
-                onClick = { navigator.pop() },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
-            ) {
-                Text("Назад")
+            item {
+                Button(
+                    onClick = { navigator.pop() },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                ) {
+                    Text("Назад")
+                }
             }
         }
     }
 }
 
+/* ---------------- CARD ---------------- */
+
 @Composable
 fun ExerciseCard(
-    exercise: com.pixelrabbit.oculi.domain.models.Exercise,
+    exercise: Exercise,
     onClick: () -> Unit
 ) {
     Card(
         onClick = onClick,
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
         )
