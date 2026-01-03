@@ -3,15 +3,15 @@ package com.pixelrabbit.oculi.notification
 import android.content.Context
 import androidx.work.*
 import com.pixelrabbit.oculi.workers.DailyReminderWorker
-import java.util.*
+import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
 class NotificationScheduler(private val context: Context) {
 
-    fun scheduleDailyCheck() {
-        val workManager = WorkManager.getInstance(context)
+    private val workManager = WorkManager.getInstance(context)
 
-        workManager.cancelUniqueWork("daily_reminder")
+    fun scheduleDaily() {
+        cancelDaily()
 
         val calendar = Calendar.getInstance().apply {
             timeInMillis = System.currentTimeMillis()
@@ -21,16 +21,13 @@ class NotificationScheduler(private val context: Context) {
             set(Calendar.MILLISECOND, 0)
         }
 
-        var initialDelay = calendar.timeInMillis - System.currentTimeMillis()
-        if (initialDelay < 0) {
-            calendar.add(Calendar.DAY_OF_YEAR, 1)
-            initialDelay = calendar.timeInMillis - System.currentTimeMillis()
-        }
+        var delay = calendar.timeInMillis - System.currentTimeMillis()
+        if (delay < 0) delay += TimeUnit.DAYS.toMillis(1)
 
-        val request = PeriodicWorkRequestBuilder<DailyReminderWorker>(24, TimeUnit.HOURS)
-            .setInitialDelay(initialDelay, TimeUnit.MILLISECONDS)
-            .setConstraints(Constraints.NONE)
-            .addTag("daily_reminder")
+        val request = PeriodicWorkRequestBuilder<DailyReminderWorker>(
+            24, TimeUnit.HOURS
+        )
+            .setInitialDelay(delay, TimeUnit.MILLISECONDS)
             .build()
 
         workManager.enqueueUniquePeriodicWork(
@@ -38,5 +35,9 @@ class NotificationScheduler(private val context: Context) {
             ExistingPeriodicWorkPolicy.REPLACE,
             request
         )
+    }
+
+    fun cancelDaily() {
+        workManager.cancelUniqueWork("daily_reminder")
     }
 }

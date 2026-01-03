@@ -92,7 +92,7 @@ fun SettingsContent() {
                             ReminderStateHolder.setEnabled(enabled)
 
                             scope.launch {
-                                // ГЛАВНОЕ ИСПРАВЛЕНИЕ
+                                // Логика включения/выключения уведомлений
                                 ServiceLocator.manageNotificationsUseCase(
                                     enabled = enabled,
                                     intervalHours = 24
@@ -152,7 +152,7 @@ fun SettingSwitch(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = text)
+        Text(text)
         Switch(
             checked = checked,
             onCheckedChange = onCheckedChange

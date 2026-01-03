@@ -10,17 +10,17 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import com.pixelrabbit.oculi.ads.AppOpenAdManager
 import com.pixelrabbit.oculi.notification.NotificationScheduler
 import com.pixelrabbit.oculi.presentation.theme.OculiTheme
 import com.pixelrabbit.oculi.presentation.theme.ThemeController
+import com.pixelrabbit.oculi.reminder.ReminderStateHolder
 import com.pixelrabbit.oculi.utils.platform.AndroidContext
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
@@ -33,7 +33,7 @@ class MainActivity : ComponentActivity() {
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
                 Log.d(TAG, "Notification permission granted")
-                notificationScheduler.scheduleDailyCheck()
+                notificationScheduler.scheduleDaily()
             } else {
                 Log.d(TAG, "Notification permission denied")
             }
@@ -52,6 +52,14 @@ class MainActivity : ComponentActivity() {
         }
 
         requestNotificationPermissionIfNeeded()
+
+        // Подписка на ReminderStateHolder, чтобы включать/выключать уведомления
+        lifecycleScope.launch {
+            ReminderStateHolder.enabled.collect { enabled ->
+                if (enabled) notificationScheduler.scheduleDaily()
+                else notificationScheduler.cancelDaily()
+            }
+        }
 
         setContent {
             val darkTheme by ThemeController.themeState.collectAsState()
@@ -84,7 +92,7 @@ class MainActivity : ComponentActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             requestNotificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
         } else {
-            notificationScheduler.scheduleDailyCheck()
+            notificationScheduler.scheduleDaily()
         }
     }
 }
