@@ -45,7 +45,7 @@ class ExerciseRepositoryImpl : ExerciseRepository {
             id = "palming",
             title = "Пальминг",
             description = "Техника полного расслабления глаз через затемнение",
-            duration = 300,
+            duration = 180,
             type = ExerciseType.RELAXATION,
             difficulty = Difficulty.BEGINNER,
             isPremium = false,
