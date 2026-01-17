@@ -35,7 +35,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 
 import androidx.compose.ui.graphics.drawscope.withTransform
 import oculi.composeapp.generated.resources.Res
-import oculi.composeapp.generated.resources.joy_okuli
+import oculi.composeapp.generated.resources.joy_oculi
 
 
 @Composable
@@ -159,7 +159,7 @@ fun AppLogo() {
         )
 
         Image(
-            painter = painterResource(Res.drawable.joy_okuli),
+            painter = painterResource(Res.drawable.joy_oculi),
             contentDescription = "Логотип Oculi",
             modifier = Modifier.size(1000.dp),
             contentScale = ContentScale.Fit

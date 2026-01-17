@@ -1,6 +1,6 @@
-// Если оставляешь iOSApp.swift, обнови его:
+// iosApp/iosApp/iOSApp.swift
 import SwiftUI
-import ComposeApp
+import ComposeApp // Убедись, что название модуля совпадает с твоим (ComposeApp или shared)
 import YandexMobileAds
 
 @main
@@ -10,11 +10,13 @@ struct iOSApp: App {
     private let adManager = AppOpenAdManager()
 
     init() {
-        // Инициализация Яндекс рекламы
+        // 1. Инициализация ServiceLocator для уведомлений
+        ServiceLocator.shared.init(notificationManager: NotificationManager())
+
+        // 2. Инициализация Яндекс рекламы
         YMAMobileAds.enableLogging(true)
-        YMAMobileAds.initialize { 
+        YMAMobileAds.initialize {
             print("Yandex Mobile Ads initialized")
-            // Предзагружаем рекламу
             adManager.preloadAd()
         }
     }
@@ -26,19 +28,13 @@ struct iOSApp: App {
         }
         .onChange(of: scenePhase) { newPhase in
             if newPhase == .active {
-                // Проверяем интервал (2 минуты между показами)
+                // Логика показа рекламы при возврате
                 let currentTime = Date().timeIntervalSince1970 * 1000
-                let twoMinutesAgo = currentTime - (2 * 60 * 1000)
-                
-                if adManager.isAdAvailable() && currentTime > twoMinutesAgo {
-                    // Получаем rootViewController для показа
-                    if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                       let rootVC = windowScene.windows.first?.rootViewController {
-                        
-                        // Используем KMP менеджер
-                        adManager.showIfAvailable {
-                            print("App open ad dismissed")
-                        }
+                // Здесь стоит добавить сохранение времени последнего показа в переменную класса
+
+                if adManager.isAdAvailable() {
+                    adManager.showIfAvailable {
+                        print("App open ad dismissed")
                     }
                 }
             }
@@ -47,26 +43,15 @@ struct iOSApp: App {
 }
 
 struct ContentView: View {
-    private let adManager = AppOpenAdManager()
-    
     var body: some View {
         ComposeView()
-            .onAppear {
-                // Инициализация при первом показе
-                adManager.initialize {
-                    adManager.preloadAd()
-                }
-            }
     }
 }
 
 struct ComposeView: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
-        let adManager = AppOpenAdManager()
-        
-        // Создаем Compose контроллер с передачей менеджера рекламы
-        let composeVC = Main_iosKt.MainViewController()
-        return composeVC
+        // Вызываем MainViewController из твоего Kotlin кода
+        return Main_iosKt.MainViewController()
     }
     
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}

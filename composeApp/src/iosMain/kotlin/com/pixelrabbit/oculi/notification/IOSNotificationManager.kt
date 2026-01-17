@@ -1,19 +1,39 @@
+// shared/src/iosMain/kotlin/com/pixelrabbit/oculi/notification/NotificationManager.kt
 package com.pixelrabbit.oculi.notification
 
-import com.pixelrabbit.oculi.di.ServiceLocator
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import platform.UserNotifications.*
+import platform.Foundation.*
 
-class IOSNotificationManager {
+actual class NotificationManager {
 
-    fun scheduleDailyReminder() {
-        // Вызов нативной реализации в Swift
+    actual fun scheduleDaily(hour: Int, minute: Int) {
+        val center = UNUserNotificationCenter.currentNotificationCenter()
+
+        center.requestAuthorizationWithOptions(UNAuthorizationOptionAlert or UNAuthorizationOptionSound) { granted, error ->
+            if (granted) {
+                val content = UNMutableNotificationContent().apply {
+                    setTitle("Пора тренировать зрение!")
+                    setBody("Не забывайте о ежедневных упражнениях")
+                    setSound(UNNotificationSound.defaultSound())
+                }
+
+                val dateComponents = NSDateComponents().apply {
+                    this.hour = hour.toLong()
+                    this.minute = minute.toLong()
+                }
+
+                val trigger = UNCalendarNotificationTrigger.triggerWithDateMatchingComponents(dateComponents, repeats = true)
+                val request = UNNotificationRequest.requestWithIdentifier("daily_reminder", content, trigger)
+
+                center.addNotificationRequest(request) { err ->
+                    err?.let { println("iOS Notification Error: $it") }
+                }
+            }
+        }
     }
 
-    fun updateLastVisitOnAppActive() {
-        CoroutineScope(Dispatchers.Default).launch {
-            ServiceLocator.lastVisitRepository().updateLastVisit()
-        }
+    actual fun cancelAll() {
+        UNUserNotificationCenter.currentNotificationCenter().removeAllPendingNotificationRequests()
+        UNUserNotificationCenter.currentNotificationCenter().removeAllDeliveredNotifications()
     }
 }

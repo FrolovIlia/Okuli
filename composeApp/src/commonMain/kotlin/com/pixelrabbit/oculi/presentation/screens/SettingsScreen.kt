@@ -1,3 +1,4 @@
+// shared/src/commonMain/kotlin/com/pixelrabbit/oculi/presentation/screens/SettingsScreen.kt
 package com.pixelrabbit.oculi.presentation.screens
 
 import androidx.compose.foundation.layout.*
@@ -40,25 +41,13 @@ fun SettingsContent() {
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
         ) {
-
-            // --- Внешний вид ---
+            // Внешний вид
             Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-                )
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Text(
-                        text = "Внешний вид",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
+                    Text("Внешний вид", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
                     SettingSwitch(
                         text = "Темная тема",
                         checked = darkTheme,
@@ -67,37 +56,22 @@ fun SettingsContent() {
                 }
             }
 
-            // --- Напоминания ---
+            // Напоминания
             Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-                )
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Text(
-                        text = "Напоминания",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
+                    Text("Напоминания", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
                     SettingSwitch(
-                        text = "Ежедневные напоминания",
+                        text = "Ежедневные напоминания (20:00)",
                         checked = reminderEnabled,
                         onCheckedChange = { enabled ->
+                            // Только меняем стейт. MainActivity или AppDelegate подхватят изменение
+                            // и вызовут NotificationManager.schedule/cancel
                             ReminderStateHolder.setEnabled(enabled)
 
                             scope.launch {
-                                // Логика включения/выключения уведомлений
-                                ServiceLocator.manageNotificationsUseCase(
-                                    enabled = enabled,
-                                    intervalHours = 24
-                                )
-
                                 ServiceLocator.updateSettingsUseCase(
                                     darkThemeEnabled = darkTheme,
                                     notificationsEnabled = enabled,
@@ -110,28 +84,9 @@ fun SettingsContent() {
                 }
             }
 
-            // --- О приложении ---
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-                )
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(
-                        text = "Oculi v${AppInfo.versionName}",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                }
-            }
-
             Button(
                 onClick = { navigator.pop() },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
+                modifier = Modifier.fillMaxWidth().padding(16.dp)
             ) {
                 Text("Назад")
             }
@@ -140,22 +95,13 @@ fun SettingsContent() {
 }
 
 @Composable
-fun SettingSwitch(
-    text: String,
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit
-) {
+fun SettingSwitch(text: String, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 12.dp),
+        modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(text)
-        Switch(
-            checked = checked,
-            onCheckedChange = onCheckedChange
-        )
+        Switch(checked = checked, onCheckedChange = onCheckedChange)
     }
 }

@@ -10,12 +10,20 @@ plugins {
 }
 
 kotlin {
+    // 1. Подавляем предупреждение о Beta для expect/actual во всем проекте
+    compilerOptions {
+        freeCompilerArgs.add("-Xexpect-actual-classes")
+    }
+
     androidTarget {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_1_8)
+            // Дублируем флаг для Android компилятора
+            freeCompilerArgs.add("-Xexpect-actual-classes")
         }
     }
 
+    // Настройка iOS таргетов (только если не Windows)
     if (!System.getProperty("os.name").contains("Windows", ignoreCase = true)) {
         listOf(iosX64(), iosArm64(), iosSimulatorArm64()).forEach {
             it.binaries.framework {
@@ -47,10 +55,11 @@ kotlin {
                 implementation(libs.androidx.activity.compose)
                 implementation(libs.androidx.core.ktx)
                 implementation(libs.yandex.mobileads)
-                implementation(libs.androidx.work.runtime.ktx)
+                implementation(libs.androidx.work.runtime.ktx) // Необходим для NotificationManager
             }
         }
 
+        // iOS зависимости
         if (!System.getProperty("os.name").contains("Windows", ignoreCase = true)) {
             val iosMain by getting {
                 dependencies {

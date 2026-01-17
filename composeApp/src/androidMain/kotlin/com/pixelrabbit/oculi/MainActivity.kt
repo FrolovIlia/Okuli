@@ -16,9 +16,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.lifecycleScope
 import com.pixelrabbit.oculi.ads.AppOpenAdManager
-import com.pixelrabbit.oculi.notification.NotificationScheduler
-import com.pixelrabbit.oculi.presentation.theme.OculiTheme
+import com.pixelrabbit.oculi.notification.NotificationManager
 import com.pixelrabbit.oculi.presentation.theme.ThemeController
+import com.pixelrabbit.oculi.presentation.theme.OculiTheme
 import com.pixelrabbit.oculi.reminder.ReminderStateHolder
 import com.pixelrabbit.oculi.utils.platform.AndroidContext
 import com.pixelrabbit.oculi.di.ServiceLocator
@@ -27,67 +27,58 @@ import kotlinx.coroutines.launch
 class MainActivity : ComponentActivity() {
 
     companion object {
-        // 🔒 Гарантирует инкремент launchCount только 1 раз на процесс
         private var launchCountIncremented = false
     }
 
-    private val notificationScheduler by lazy { NotificationScheduler(this) }
     private val appOpenAdManager = AppOpenAdManager()
     private var isAdShownInThisSession = false
     private val TAG = "OculiDebug"
 
+    // Регистрация лаунчера разрешений
     private val requestNotificationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
                 Log.d(TAG, "Notification permission granted")
-                notificationScheduler.scheduleDaily()
+                syncNotifications()
             } else {
-                Log.d(TAG, "Notification permission denied")
+                Log.w(TAG, "Notification permission denied")
             }
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // 1. Инициализация контекста и ServiceLocator
         AndroidContext.initialize(applicationContext)
+        ServiceLocator.init(NotificationManager(this))
 
-        // ✅ ИНКРЕМЕНТ СЧЁТЧИКА — СТРОГО 1 РАЗ НА ПРОЦЕСС
+        // 2. Инкремент счетчика запусков
         if (!launchCountIncremented) {
             launchCountIncremented = true
-
             lifecycleScope.launch {
-                ServiceLocator
-                    .settingsRepository()
-                    .incrementLaunchCount()
-
-                val count = ServiceLocator
-                    .settingsRepository()
-                    .getLaunchCount()
-
-                Log.d(TAG, "Launch count incremented once per process. launchCount = $count")
+                ServiceLocator.settingsRepository().incrementLaunchCount()
             }
         }
 
-        // === РЕКЛАМА ===
+        // 3. Реклама
         appOpenAdManager.attachActivity(this)
         appOpenAdManager.initialize {
-            Log.d(TAG, "Yandex Ads SDK initialized")
             appOpenAdManager.preloadAd()
         }
 
+        // 4. Разрешения и синхронизация уведомлений
         requestNotificationPermissionIfNeeded()
 
-        // === НАПОМИНАНИЯ ===
+        // Слушаем изменения стейта, чтобы перепланировать уведомления
         lifecycleScope.launch {
-            ReminderStateHolder.enabled.collect { enabled ->
-                if (enabled) notificationScheduler.scheduleDaily()
-                else notificationScheduler.cancelDaily()
+            ReminderStateHolder.enabled.collect { isEnabled ->
+                Log.d(TAG, "Reminder state changed: $isEnabled")
+                syncNotifications()
             }
         }
 
         setContent {
             val darkTheme by ThemeController.themeState.collectAsState()
-
             OculiTheme(darkTheme = darkTheme) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -99,37 +90,35 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private fun syncNotifications() {
+        val manager = ServiceLocator.getNotificationManager()
+        if (ReminderStateHolder.enabled.value) {
+            Log.d(TAG, "Syncing notifications: Scheduling for 20:00")
+            manager.scheduleDaily(20, 0)
+        } else {
+            Log.d(TAG, "Syncing notifications: Cancelling all")
+            manager.cancelAll()
+        }
+    }
+
     override fun onResume() {
         super.onResume()
-
         lifecycleScope.launch {
-            val shouldShowAds = ServiceLocator
-                .settingsRepository()
-                .shouldShowAds()
-
-            if (!shouldShowAds) {
-                Log.d(TAG, "Ads disabled by business logic")
-                return@launch
-            }
-
-            Handler(mainLooper).postDelayed({
-                if (!isAdShownInThisSession && appOpenAdManager.isAdAvailable()) {
-                    appOpenAdManager.showIfAvailable {
-                        Log.d(TAG, "App open ad shown on resume")
-                        isAdShownInThisSession = true
+            if (ServiceLocator.settingsRepository().shouldShowAds()) {
+                Handler(mainLooper).postDelayed({
+                    if (!isAdShownInThisSession && appOpenAdManager.isAdAvailable()) {
+                        appOpenAdManager.showIfAvailable { isAdShownInThisSession = true }
                     }
-                }
-            }, 2000L)
+                }, 2000L)
+            }
         }
     }
 
     private fun requestNotificationPermissionIfNeeded() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            requestNotificationPermissionLauncher.launch(
-                android.Manifest.permission.POST_NOTIFICATIONS
-            )
+            requestNotificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
         } else {
-            notificationScheduler.scheduleDaily()
+            syncNotifications()
         }
     }
 }
