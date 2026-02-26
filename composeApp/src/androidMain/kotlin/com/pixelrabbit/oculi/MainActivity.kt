@@ -22,6 +22,8 @@ import com.pixelrabbit.oculi.presentation.theme.OculiTheme
 import com.pixelrabbit.oculi.reminder.ReminderStateHolder
 import com.pixelrabbit.oculi.utils.platform.AndroidContext
 import com.pixelrabbit.oculi.di.ServiceLocator
+import io.appmetrica.analytics.AppMetrica
+import io.appmetrica.analytics.AppMetricaConfig
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -47,6 +49,11 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Creating an extended library configuration.
+        val config = AppMetricaConfig.newConfigBuilder("59333182-46a8-43f8-bc27-7c9f8fc1d0ff").build()
+        // Initializing the AppMetrica SDK.
+        AppMetrica.activate(this, config)
 
         // 1. Инициализация контекста и ServiceLocator
         AndroidContext.initialize(applicationContext)

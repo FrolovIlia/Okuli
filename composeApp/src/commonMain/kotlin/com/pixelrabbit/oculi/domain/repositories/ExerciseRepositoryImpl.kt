@@ -62,7 +62,7 @@ class ExerciseRepositoryImpl : ExerciseRepository {
             id = "figure_eight",
             title = "Восьмерки",
             description = "Движение глаз по траектории восьмерки для улучшения подвижности",
-            duration = 120,
+            duration = 90,
             type = ExerciseType.MOBILITY,
             difficulty = Difficulty.INTERMEDIATE,
             isPremium = false,

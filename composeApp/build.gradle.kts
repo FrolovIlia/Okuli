@@ -10,7 +10,6 @@ plugins {
 }
 
 kotlin {
-    // 1. Подавляем предупреждение о Beta для expect/actual во всем проекте
     compilerOptions {
         freeCompilerArgs.add("-Xexpect-actual-classes")
     }
@@ -18,12 +17,10 @@ kotlin {
     androidTarget {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_1_8)
-            // Дублируем флаг для Android компилятора
             freeCompilerArgs.add("-Xexpect-actual-classes")
         }
     }
 
-    // Настройка iOS таргетов (только если не Windows)
     if (!System.getProperty("os.name").contains("Windows", ignoreCase = true)) {
         listOf(iosX64(), iosArm64(), iosSimulatorArm64()).forEach {
             it.binaries.framework {
@@ -55,11 +52,12 @@ kotlin {
                 implementation(libs.androidx.activity.compose)
                 implementation(libs.androidx.core.ktx)
                 implementation(libs.yandex.mobileads)
-                implementation(libs.androidx.work.runtime.ktx) // Необходим для NotificationManager
+                implementation(libs.androidx.work.runtime.ktx)
+                implementation(libs.analytics)
+
             }
         }
 
-        // iOS зависимости
         if (!System.getProperty("os.name").contains("Windows", ignoreCase = true)) {
             val iosMain by getting {
                 dependencies {
@@ -82,8 +80,8 @@ android {
         applicationId = "com.pixelrabbit.oculi"
         minSdk = 24
         targetSdk = 35
-        versionCode = 31
-        versionName = "1.31.0"
+        versionCode = 33
+        versionName = "1.33.0"
     }
 
     packaging {
