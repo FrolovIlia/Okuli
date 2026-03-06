@@ -1,15 +1,15 @@
 {
   "project_info": {
     "project_number": "503243572659",
-    "project_id": "oculi-ed814",
-    "storage_bucket": "oculi-ed814.firebasestorage.app"
+    "project_id": "backy-ed814",
+    "storage_bucket": "backy-ed814.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
         "mobilesdk_app_id": "1:503243572659:android:fe0fb84b554413ef5a37c6",
         "android_client_info": {
-          "package_name": "com.pixelrabbit.oculi"
+          "package_name": "com.pixelrabbit.backy"
         }
       },
       "oauth_client": [],

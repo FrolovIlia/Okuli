@@ -11,6 +11,7 @@ yandex-ads = "7.7.0"
 work-manager = "2.10.0"
 voyager = "1.1.0-beta03"
 kotlinx-datetime = "0.6.1"
+material3 = "1.4.0"
 
 [libraries]
 analytics = { module = "io.appmetrica.analytics:analytics", version.ref = "analytics" }
@@ -26,6 +27,7 @@ yandex-mobileads = { module = "com.yandex.android:mobileads", version.ref = "yan
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "work-manager" }
 voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
+androidx-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

@@ -32,8 +32,8 @@
 -keepclassmembers class androidx.work.** { *; }
 -dontwarn androidx.work.**
 
--keep class com.pixelrabbit.oculi.**.workers.** { *; }
--keepclassmembers class com.pixelrabbit.oculi.**.workers.** {
+-keep class com.pixelrabbit.backy.**.workers.** { *; }
+-keepclassmembers class com.pixelrabbit.backy.**.workers.** {
     <methods>;
 }
 
@@ -47,7 +47,7 @@
 #############################################
 ## Сохранить ваши app-классы (на время)
 #############################################
--keep class com.pixelrabbit.oculi.** { *; }
+-keep class com.pixelrabbit.backy.** { *; }
 
 #############################################
 ## Яндекс Реклама

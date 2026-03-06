@@ -87,7 +87,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.pixelrabbit.oculi"
+    namespace = "com.pixelrabbit.backy"
     compileSdk = 34
 
     defaultConfig {

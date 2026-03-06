@@ -1,10 +1,10 @@
-# Oculi - Тренировка зрения 👁️
+# backy - Тренировка зрения 👁️
 
 Kotlin Multiplatform приложение для улучшения зрения и снятия цифрового напряжения глаз.
 
 ## 🎯 О проекте
 
-Oculi - это персональный цифровой тренер для здоровья ваших глаз. Приложение использует доказанные методики (правило 20-20-20, упражнения для аккомодации, пальминг) для профилактики и улучшения зрения.
+backy - это персональный цифровой тренер для здоровья ваших глаз. Приложение использует доказанные методики (правило 20-20-20, упражнения для аккомодации, пальминг) для профилактики и улучшения зрения.
 
 ## ✨ Возможности
 
@@ -54,7 +54,7 @@ Oculi - это персональный цифровой тренер для з�
 ## 🏗 Архитектура проекта
 
 ``
-composeApp/src/commonMain/kotlin/com/pixelrabbit/oculi/
+composeApp/src/commonMain/kotlin/com/pixelrabbit/backy/
 ├── domain/
 │   ├── models/          # Модели данных
 │   ├── repositories/    # Интерфейсы репозиториев  
@@ -67,7 +67,7 @@ composeApp/src/commonMain/kotlin/com/pixelrabbit/oculi/
 │   └── components/      # Переиспользуемые компоненты
 ├── di/                  # Dependency Injection
 ├── utils/               # Вспомогательные утилиты
-└── OculiApp.kt         # Главный компонент
+└── backyApp.kt         # Главный компонент
 ``
 
 
@@ -88,7 +88,7 @@ composeApp/src/commonMain/kotlin/com/pixelrabbit/oculi/
 ### Установка
 ``bash
 git clone [repository-url]
-cd oculi
+cd backy
 ./gradlew build
 ``
 

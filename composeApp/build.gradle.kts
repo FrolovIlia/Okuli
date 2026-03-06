@@ -69,7 +69,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.pixelrabbit.oculi"
+    namespace = "com.pixelrabbit.backy"
     compileSdk = 35
 
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
@@ -77,11 +77,11 @@ android {
     sourceSets["main"].resources.srcDirs("src/commonMain/resources")
 
     defaultConfig {
-        applicationId = "com.pixelrabbit.oculi"
+        applicationId = "com.pixelrabbit.backy"
         minSdk = 24
         targetSdk = 35
-        versionCode = 33
-        versionName = "1.33.0"
+        versionCode = 1
+        versionName = "1.01.0"
     }
 
     packaging {

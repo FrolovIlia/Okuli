@@ -96,7 +96,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     private func showMainApp() {
-        let contentView = OculiApp(appOpenAdManager: adManager)
+        let contentView = backyApp(appOpenAdManager: adManager)
         window?.rootViewController = UIHostingController(rootView: contentView)
     }
 }
