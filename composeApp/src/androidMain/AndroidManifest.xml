@@ -16,9 +16,9 @@
         android:supportsRtl="true"
         android:theme="@android:style/Theme.Material.Light.NoActionBar">
 
-        <meta-data
-            android:name="com.yandex.mobile.ads.APPLICATION_ID"
-            android:value="17896552" />
+<!--        <meta-data-->
+<!--            android:name="com.yandex.mobile.ads.APPLICATION_ID"-->
+<!--            android:value="17896552" />-->
 
         <activity
             android:name=".MainActivity"
