@@ -109,7 +109,7 @@ fun AboutContent() {
                     )
 
                     Text(
-                        text = "Тренировка зрения и снятие цифрового напряжения",
+                        text = "Тренировка спины и шеи и снятие напряжения от работы за компьютером",
                         style = MaterialTheme.typography.bodyLarge,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(top = 8.dp)
@@ -136,13 +136,13 @@ fun AboutContent() {
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
-                        text = "Backy - ваш персональный тренер для здоровья глаз. Приложение помогает бороться с цифровым напряжением глаз и улучшать зрение с помощью регулярных упражнений.",
+                        text = "Backy — ваш персональный тренер для здоровья спины и шеи. Приложение помогает уменьшить напряжение от долгой работы за компьютером и поддерживать правильную осанку с помощью регулярных упражнений.",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "• Упражнения для тренировки аккомодации\n• Тесты для проверки остроты зрения\n• Напоминания о перерывах\n• Отслеживание прогресса",
+                        text = "• Упражнения для укрепления спины и шеи\n• Быстрые разминки при работе за компьютером\n• Напоминания о занятиях\n• Отслеживание прогресса тренировок",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface
                     )

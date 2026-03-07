@@ -79,7 +79,7 @@ fun PrivacyPolicyContent() {
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Text(
-                        text = "Политика конфиденциальности backy",
+                        text = "Политика конфиденциальности Backy",
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center,
@@ -87,7 +87,7 @@ fun PrivacyPolicyContent() {
                     )
 
                     Text(
-                        text = "Дата вступления в силу: 1 января 2024 года",
+                        text = "Дата вступления в силу: 1 января 2026 года",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -102,10 +102,10 @@ fun PrivacyPolicyContent() {
                         )
                         Text(
                             text = """
-                                Приложение backy собирает следующие типы данных:
+                                Приложение Backy собирает следующие типы данных:
                                 
                                 • Данные об использовании приложения (время тренировок, частота использования)
-                                • Результаты выполнения упражнений и тестов зрения
+                                • Результаты выполнения упражнений и тестов гибкости
                                 • Настройки пользователя и предпочтения
                                 • Техническая информация (версия ОС, модель устройства)
                                 
@@ -153,12 +153,11 @@ fun PrivacyPolicyContent() {
                             text = """
                                 Мы серьезно относимся к защите ваших данных:
                                 
-                                • Основные данные хранятся локально на вашем устройстве
-                                • Резервные копии (если включены) шифруются
+                                • Основные данные хранятся только локально на вашем устройстве
                                 • Мы не передаем ваши данные третьим лицам без вашего согласия
-                                • Используем современные методы шифрования для защиты
                                 
-                                Вы можете в любой момент удалить свои данные через настройки приложения.
+                                
+                                Вы можете в любой момент удалить свои данные через удаление самого приложения.
                             """.trimIndent(),
                             style = MaterialTheme.typography.bodyMedium,
                             lineHeight = MaterialTheme.typography.bodyMedium.lineHeight * 1.3
