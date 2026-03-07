@@ -38,7 +38,7 @@ fun AboutContent() {
     val shareManager = getShareManager()
 
     val shareText = remember {
-        "Попробуйте backy - приложение для тренировки зрения и снятия цифрового напряжения глаз! " +
+        "Попробуйте Backy - приложение для тренировки зрения и снятия цифрового напряжения глаз! " +
                 "Скачайте в Google Play: https://play.google.com/store/apps/details?id=com.pixelrabbit.backy&hl=ru"
     }
 
@@ -88,13 +88,13 @@ fun AboutContent() {
                     ) {
                         Image(
                             painter = painterResource(Res.drawable.ic_logo_standart),
-                            contentDescription = "backy Logo",
+                            contentDescription = "Backy Logo",
                             modifier = Modifier.size(50.dp),
                             contentScale = ContentScale.Fit
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "backy",
+                            text = "Backy",
                             style = MaterialTheme.typography.displayMedium,
                             color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.Bold
@@ -136,7 +136,7 @@ fun AboutContent() {
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
-                        text = "backy - ваш персональный тренер для здоровья глаз. Приложение помогает бороться с цифровым напряжением глаз и улучшать зрение с помощью регулярных упражнений.",
+                        text = "Backy - ваш персональный тренер для здоровья глаз. Приложение помогает бороться с цифровым напряжением глаз и улучшать зрение с помощью регулярных упражнений.",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface
                     )

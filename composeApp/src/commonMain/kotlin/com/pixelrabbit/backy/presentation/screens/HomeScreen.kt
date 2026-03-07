@@ -185,7 +185,7 @@ fun QuickStartCard(navigator: Navigator) {
 @Composable
 fun FeatureButtonsGrid(navigator: Navigator, navigationBarBottom: androidx.compose.ui.unit.Dp) {
     val features = listOf(
-        "Проверка зрения" to { navigator.push(VisionTestScreen) },
+        "Проверка гибкости" to { navigator.push(VisionTestScreen) },
         "Мой прогресс" to { navigator.push(ProgressScreen) },
         "Достижения" to { navigator.push(AchievementsScreen) },
         "Настройки" to { navigator.push(SettingsScreen) },
