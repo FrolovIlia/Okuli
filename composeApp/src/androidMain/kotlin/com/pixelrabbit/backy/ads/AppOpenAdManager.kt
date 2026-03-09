@@ -21,7 +21,7 @@ actual class AppOpenAdManager actual constructor() {
     private var appOpenAd: AppOpenAd? = null
     private var isLoading = false
     private var isShowingAd = AtomicBoolean(false)
-    private val adUnitId = "R-M-17896552-1"
+    private val adUnitId = "R-M-18885638-1"
     private val tag = "AppOpenAdManager"
     private var activity: Activity? = null
     private var _lastAdShowTime: Long = 0L

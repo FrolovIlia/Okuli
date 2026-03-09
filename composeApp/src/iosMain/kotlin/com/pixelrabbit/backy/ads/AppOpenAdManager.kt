@@ -19,7 +19,7 @@ actual class AppOpenAdManager actual constructor() {
     private var appOpenAd: YMAAppOpenAd? = null
     private val isLoading = AtomicInt(0)
     private val isShowingAd = AtomicInt(0)
-    private val adUnitId = "R-M-17896552-1" // Тот же ID что и на Android
+    private val adUnitId = "R-M-18885638-1" // Тот же ID что и на Android
 
     actual var lastAdShowTime: Long = 0L
         private set
