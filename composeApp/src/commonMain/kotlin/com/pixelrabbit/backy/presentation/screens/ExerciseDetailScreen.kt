@@ -246,16 +246,16 @@ fun ExerciseDetailContent(
 
             exercise.imageName?.let { name ->
                 val painter = when (name) {
-//                    "sledovanie_za" -> painterResource(Res.drawable.sledovanie_za)
-//                    "focus" -> painterResource(Res.drawable.focus)
-//                    "palming" -> painterResource(Res.drawable.palming)
-//                    "vosmerka" -> painterResource(Res.drawable.vosmerka)
-//                    "window_mark" -> painterResource(Res.drawable.window_mark)
-//                    "squeeze_eyes" -> painterResource(Res.drawable.squeeze_eyes)
-//                    "blinking" -> painterResource(Res.drawable.blinking)
-//                    "acupressure" -> painterResource(Res.drawable.acupressure)
-//                    "peripheral_vision" -> painterResource(Res.drawable.peripheral_vision)
-//                    "soft_solarization" -> painterResource(Res.drawable.soft_solarization)
+                    "neck_tilts" -> painterResource(Res.drawable.neck_tilts)
+                    "neck_rotation" -> painterResource(Res.drawable.neck_rotation)
+                    "shoulder_rolls" -> painterResource(Res.drawable.shoulder_rolls)
+                    "shoulder_blades" -> painterResource(Res.drawable.shoulder_blades)
+                    "chin_tuck" -> painterResource(Res.drawable.chin_tuck)
+                    "cat_cow" -> painterResource(Res.drawable.cat_cow)
+                    "side_stretch" -> painterResource(Res.drawable.side_stretch)
+                    "desk_shoulder_open" -> painterResource(Res.drawable.desk_shoulder_open)
+                    "thoracic_twist" -> painterResource(Res.drawable.thoracic_twist)
+                    "trap_stretch" -> painterResource(Res.drawable.trap_stretch)
                     else -> null
                 }
 

@@ -23,7 +23,7 @@ class ExerciseRepositoryImpl : ExerciseRepository {
                 "Повторите влево",
                 "Сделайте 8–10 повторений"
             ),
-            imageName = null
+            imageName = "neck_tilts"
         ),
 
         Exercise(
@@ -41,7 +41,7 @@ class ExerciseRepositoryImpl : ExerciseRepository {
                 "Поверните голову влево",
                 "Сделайте 8–10 повторений"
             ),
-            imageName = null
+            imageName = "neck_rotation"
         ),
 
         Exercise(
@@ -58,7 +58,7 @@ class ExerciseRepositoryImpl : ExerciseRepository {
                 "Отведите назад и опустите",
                 "Сделайте 10 кругов назад, затем 10 вперёд"
             ),
-            imageName = null
+            imageName = "shoulder_rolls"
         ),
 
         Exercise(
@@ -76,7 +76,7 @@ class ExerciseRepositoryImpl : ExerciseRepository {
                 "Удерживайте 5 секунд",
                 "Повторите 10 раз"
             ),
-            imageName = null
+            imageName = "shoulder_blades"
         ),
 
         Exercise(
@@ -94,7 +94,7 @@ class ExerciseRepositoryImpl : ExerciseRepository {
                 "Удерживайте 5 секунд",
                 "Повторите 10 раз"
             ),
-            imageName = null
+            imageName = "chin_tuck"
         ),
 
         Exercise(
@@ -111,7 +111,7 @@ class ExerciseRepositoryImpl : ExerciseRepository {
                 "На выдохе округлите спину и опустите голову",
                 "Повторите 10–12 раз"
             ),
-            imageName = null
+            imageName = "cat_cow"
         ),
 
         Exercise(
@@ -129,7 +129,7 @@ class ExerciseRepositoryImpl : ExerciseRepository {
                 "Повторите на другую сторону",
                 "Сделайте 8 повторений"
             ),
-            imageName = null
+            imageName = "side_stretch"
         ),
 
         Exercise(
@@ -146,7 +146,7 @@ class ExerciseRepositoryImpl : ExerciseRepository {
                 "Задержитесь 5 секунд",
                 "Повторите 5–7 раз"
             ),
-            imageName = null
+            imageName = "desk_shoulder_open"
         ),
 
         Exercise(
@@ -164,7 +164,7 @@ class ExerciseRepositoryImpl : ExerciseRepository {
                 "Поверните влево",
                 "Повторите 8–10 раз"
             ),
-            imageName = null
+            imageName = "thoracic_twist"
         ),
 
         Exercise(
@@ -182,7 +182,7 @@ class ExerciseRepositoryImpl : ExerciseRepository {
                 "Повторите на другую сторону",
                 "Сделайте 2–3 подхода"
             ),
-            imageName = null
+            imageName = "trap_stretch"
         )
     )
 
