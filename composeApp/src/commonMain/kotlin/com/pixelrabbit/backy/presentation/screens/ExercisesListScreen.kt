@@ -83,7 +83,7 @@ fun ExercisesListContent(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "Упражнения для глаз",
+                            text = "Упражнения для спины",
                             style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.primary,
@@ -93,7 +93,7 @@ fun ExercisesListContent(
                         Spacer(modifier = Modifier.height(8.dp))
 
                         Text(
-                            text = "Помогают поддерживать и улучшать зрение",
+                            text = "Помогают поддерживать гибкость и улучшать подвижность",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center

@@ -246,16 +246,16 @@ fun ExerciseDetailContent(
 
             exercise.imageName?.let { name ->
                 val painter = when (name) {
-                    "sledovanie_za" -> painterResource(Res.drawable.sledovanie_za)
-                    "focus" -> painterResource(Res.drawable.focus)
-                    "palming" -> painterResource(Res.drawable.palming)
-                    "vosmerka" -> painterResource(Res.drawable.vosmerka)
-                    "window_mark" -> painterResource(Res.drawable.window_mark)
-                    "squeeze_eyes" -> painterResource(Res.drawable.squeeze_eyes)
-                    "blinking" -> painterResource(Res.drawable.blinking)
-                    "acupressure" -> painterResource(Res.drawable.acupressure)
-                    "peripheral_vision" -> painterResource(Res.drawable.peripheral_vision)
-                    "soft_solarization" -> painterResource(Res.drawable.soft_solarization)
+//                    "sledovanie_za" -> painterResource(Res.drawable.sledovanie_za)
+//                    "focus" -> painterResource(Res.drawable.focus)
+//                    "palming" -> painterResource(Res.drawable.palming)
+//                    "vosmerka" -> painterResource(Res.drawable.vosmerka)
+//                    "window_mark" -> painterResource(Res.drawable.window_mark)
+//                    "squeeze_eyes" -> painterResource(Res.drawable.squeeze_eyes)
+//                    "blinking" -> painterResource(Res.drawable.blinking)
+//                    "acupressure" -> painterResource(Res.drawable.acupressure)
+//                    "peripheral_vision" -> painterResource(Res.drawable.peripheral_vision)
+//                    "soft_solarization" -> painterResource(Res.drawable.soft_solarization)
                     else -> null
                 }
 

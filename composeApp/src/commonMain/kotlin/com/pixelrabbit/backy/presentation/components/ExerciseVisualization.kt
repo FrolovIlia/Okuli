@@ -15,101 +15,77 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import kotlin.math.cos
 import kotlin.math.sin
 
 @Composable
-fun ExerciseVisualization(exerciseId: String, isRunning: Boolean) {
+fun ExerciseVisualization(
+    exerciseId: String,
+    isRunning: Boolean
+) {
+
     when (exerciseId) {
-        "follow_target" -> MovingTargetVisualization(isRunning)
-        "focus_shift" -> FocusShiftVisualization(isRunning)
-        "palming" -> PalmingVisualization(isRunning)
-        "figure_eight" -> FigureEightVisualization(isRunning)
+
+        "neck_tilts" -> NeckTiltVisualization(isRunning)
+
+        "neck_rotation" -> NeckRotationVisualization(isRunning)
+
+        "shoulder_rolls" -> ShoulderRollVisualization(isRunning)
+
+        "shoulder_blades" -> ShoulderBladeVisualization(isRunning)
+
         else -> DefaultVisualization(isRunning)
     }
 }
 
 @Composable
-fun MovingTargetVisualization(isRunning: Boolean) {
+fun NeckTiltVisualization(isRunning: Boolean) {
+
     val animation = remember { Animatable(0f) }
 
     LaunchedEffect(isRunning) {
+
         if (isRunning) {
             animation.animateTo(
-                targetValue = 1f,
-                animationSpec = infiniteRepeatable(
+                1f,
+                infiniteRepeatable(
+                    animation = tween(1500),
+                    repeatMode = RepeatMode.Reverse
+                )
+            )
+        } else {
+            animation.stop()
+        }
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+
+        Canvas(modifier = Modifier.size(200.dp)) {
+
+            val center = Offset(size.width / 2, size.height / 2)
+            val offset = size.width / 4 * (animation.value * 2 - 1)
+
+            drawCircle(
+                color = Color(0xFF006A6B),
+                radius = 30f,
+                center = Offset(center.x + offset, center.y)
+            )
+        }
+    }
+}
+
+@Composable
+fun NeckRotationVisualization(isRunning: Boolean) {
+
+    val animation = remember { Animatable(0f) }
+
+    LaunchedEffect(isRunning) {
+
+        if (isRunning) {
+            animation.animateTo(
+                1f,
+                infiniteRepeatable(
                     animation = tween(2000),
-                    repeatMode = RepeatMode.Reverse
-                )
-            )
-        } else {
-            animation.stop()
-        }
-    }
-
-    Box(modifier = Modifier.fillMaxSize()) {
-        Canvas(modifier = Modifier.size(200.dp)) {
-            val center = Offset(size.width / 2, size.height / 2)
-            val radius = size.minDimension / 4
-            val x = center.x + (size.width / 2 - radius) * (animation.value * 2 - 1)
-
-            drawCircle(
-                color = Color(0xFF006A6B),
-                center = Offset(x, center.y),
-                radius = radius
-            )
-        }
-    }
-}
-
-@Composable
-fun FocusShiftVisualization(isRunning: Boolean) {
-    val animation = remember { Animatable(0f) }
-
-    LaunchedEffect(isRunning) {
-        if (isRunning) {
-            animation.animateTo(
-                targetValue = 1f,
-                animationSpec = infiniteRepeatable(
-                    animation = tween(1000),
-                    repeatMode = RepeatMode.Reverse
-                )
-            )
-        } else {
-            animation.stop()
-        }
-    }
-
-    Box(modifier = Modifier.fillMaxSize()) {
-        Canvas(modifier = Modifier.size(200.dp)) {
-            val center = Offset(size.width / 2, size.height / 2)
-            val baseRadius = size.minDimension / 8
-            val animatedRadius = baseRadius * (1 + animation.value * 0.5f)
-
-            drawCircle(
-                color = Color(0xFF006A6B),
-                center = center,
-                radius = animatedRadius
-            )
-
-            drawCircle(
-                color = Color(0xFF4A6363),
-                center = Offset(center.x, center.y - size.height / 3),
-                radius = baseRadius * (1 + (1 - animation.value) * 0.5f)
-            )
-        }
-    }
-}
-
-@Composable
-fun FigureEightVisualization(isRunning: Boolean) {
-    val animation = remember { Animatable(0f) }
-
-    LaunchedEffect(isRunning) {
-        if (isRunning) {
-            animation.animateTo(
-                targetValue = 1f,
-                animationSpec = infiniteRepeatable(
-                    animation = tween(3000),
                     repeatMode = RepeatMode.Restart
                 )
             )
@@ -119,34 +95,79 @@ fun FigureEightVisualization(isRunning: Boolean) {
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        Canvas(modifier = Modifier.size(200.dp)) {
-            val center = Offset(size.width / 2, size.height / 2)
-            val a = size.minDimension / 4
-            val b = size.minDimension / 6
 
-            val progress = animation.value * 2 * kotlin.math.PI.toFloat()
-            val x = center.x + a * sin(progress)
-            val y = center.y + b * sin(2 * progress)
+        Canvas(modifier = Modifier.size(200.dp)) {
+
+            val center = Offset(size.width / 2, size.height / 2)
+            val radius = size.minDimension / 3
+
+            val angle = animation.value * 2 * Math.PI
+
+            val x = center.x + radius * cos(angle).toFloat()
+            val y = center.y + radius * sin(angle).toFloat()
 
             drawCircle(
                 color = Color(0xFF006A6B),
-                center = Offset(x, y),
-                radius = size.minDimension / 12
+                radius = 25f,
+                center = Offset(x, y)
             )
         }
     }
 }
 
 @Composable
-fun PalmingVisualization(isRunning: Boolean) {
+fun ShoulderRollVisualization(isRunning: Boolean) {
+
     val animation = remember { Animatable(0f) }
 
     LaunchedEffect(isRunning) {
+
         if (isRunning) {
             animation.animateTo(
-                targetValue = 1f,
-                animationSpec = infiniteRepeatable(
-                    animation = tween(2000),
+                1f,
+                infiniteRepeatable(
+                    animation = tween(2500),
+                    repeatMode = RepeatMode.Restart
+                )
+            )
+        } else {
+            animation.stop()
+        }
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+
+        Canvas(modifier = Modifier.size(200.dp)) {
+
+            val center = Offset(size.width / 2, size.height / 2)
+            val radius = size.minDimension / 4
+
+            val angle = animation.value * 2 * Math.PI
+
+            val x = center.x + radius * cos(angle).toFloat()
+            val y = center.y + radius * sin(angle).toFloat()
+
+            drawCircle(
+                color = Color(0xFF4A6363),
+                radius = 20f,
+                center = Offset(x, y)
+            )
+        }
+    }
+}
+
+@Composable
+fun ShoulderBladeVisualization(isRunning: Boolean) {
+
+    val animation = remember { Animatable(0f) }
+
+    LaunchedEffect(isRunning) {
+
+        if (isRunning) {
+            animation.animateTo(
+                1f,
+                infiniteRepeatable(
+                    animation = tween(1500),
                     repeatMode = RepeatMode.Reverse
                 )
             )
@@ -156,27 +177,23 @@ fun PalmingVisualization(isRunning: Boolean) {
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
+
         Canvas(modifier = Modifier.size(200.dp)) {
+
             val center = Offset(size.width / 2, size.height / 2)
-            val maxRadius = size.minDimension / 2
-            val currentRadius = maxRadius * animation.value
+
+            val offset = size.width / 4 * animation.value
 
             drawCircle(
-                color = Color(0xFF006A6B).copy(alpha = 0.3f),
-                center = center,
-                radius = currentRadius
+                color = Color(0xFF006A6B),
+                radius = 20f,
+                center = Offset(center.x - offset, center.y)
             )
 
             drawCircle(
-                color = Color(0xFF4A6363),
-                center = Offset(center.x - size.width / 4, center.y),
-                radius = size.minDimension / 6
-            )
-
-            drawCircle(
-                color = Color(0xFF4A6363),
-                center = Offset(center.x + size.width / 4, center.y),
-                radius = size.minDimension / 6
+                color = Color(0xFF006A6B),
+                radius = 20f,
+                center = Offset(center.x + offset, center.y)
             )
         }
     }
@@ -184,16 +201,21 @@ fun PalmingVisualization(isRunning: Boolean) {
 
 @Composable
 fun DefaultVisualization(isRunning: Boolean) {
-    val color = if (isRunning) Color(0xFF006A6B) else Color.Gray.copy(alpha = 0.5f)
+
+    val color =
+        if (isRunning) Color(0xFF006A6B)
+        else Color.Gray.copy(alpha = 0.5f)
 
     Box(modifier = Modifier.fillMaxSize()) {
+
         Canvas(modifier = Modifier.size(200.dp)) {
+
             val center = Offset(size.width / 2, size.height / 2)
 
             drawCircle(
                 color = color,
-                center = center,
-                radius = size.minDimension / 4
+                radius = size.minDimension / 4,
+                center = center
             )
         }
     }

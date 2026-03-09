@@ -14,11 +14,22 @@ data class Exercise(
 )
 
 enum class ExerciseType {
-    ACCOMMODATION,
-    RELAXATION,
-    MOBILITY
+
+    // Подвижность суставов
+    MOBILITY,
+
+    // Растяжка мышц
+    STRETCH,
+
+    // Укрепление мышц
+    STRENGTH,
+
+    // Расслабление
+    RELAXATION
 }
 
 enum class Difficulty {
-    BEGINNER, INTERMEDIATE, ADVANCED
+    BEGINNER,
+    INTERMEDIATE,
+    ADVANCED
 }

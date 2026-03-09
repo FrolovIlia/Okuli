@@ -73,7 +73,7 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
         center.removePendingNotificationRequests(withIdentifiers: ["daily_reminder"])
 
         let content = UNMutableNotificationContent()
-        content.title = "Пора тренировать зрение!"
+        content.title = "Пора тренировать осанку!"
         content.body = "Не забывайте о ежедневных упражнениях"
         content.sound = .default
 
