@@ -94,31 +94,6 @@ fun ExerciseCompleteContent(exerciseName: String, duration: Int) {
                 }
             }
 
-            // Карточка с советом
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-                )
-            ) {
-                Column(
-                    modifier = Modifier.padding(20.dp)
-                ) {
-                    Text(
-                        text = "Совет",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Text(
-                        text = "Дайте глазам отдохнуть 1-2 минуты перед следующим упражнением. Поморгайте часто в течение 30 секунд.",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-            }
-
             // Кнопки навигации
             Column(
                 verticalArrangement = Arrangement.spacedBy(12.dp),

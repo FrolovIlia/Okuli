@@ -38,7 +38,7 @@ fun AboutContent() {
     val shareManager = getShareManager()
 
     val shareText = remember {
-        "Попробуйте Backy - приложение для тренировки зрения и снятия цифрового напряжения глаз! " +
+        "Попробуйте Backy - приложение для поддержания гибкости спины и шеи! " +
                 "Скачайте в Google Play: https://play.google.com/store/apps/details?id=com.pixelrabbit.backy&hl=ru"
     }
 

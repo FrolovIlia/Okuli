@@ -358,7 +358,6 @@ fun ExerciseDetailContent(
                                     isSaved = false
                                     showCelebration = false
                                     newlyUnlockedAchievement = null
-                                    // НЕ сбрасываем lastUnlockTime!
                                 },
                                 modifier = Modifier.weight(1f)
                             ) {

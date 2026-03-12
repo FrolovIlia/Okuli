@@ -42,28 +42,28 @@ fun FlexibilityTestListContent() {
             title = "Гибкость шеи",
             description = "Диапазон движений шеи и вращение головы",
             emoji = "🧍‍♂️",
-            durationMinutes = 5,
+            durationMinutes = 2,
             screen = NeckFlexibilityTestScreen
         ),
         FlexibilityTest(
             title = "Подвижность плеч",
             description = "Подвижность плечевых суставов и верхней части спины",
             emoji = "💪",
-            durationMinutes = 7,
+            durationMinutes = 2,
             screen = ShoulderFlexibilityTestScreen
         ),
         FlexibilityTest(
             title = "Гибкость поясницы",
             description = "Сгибание, разгибание и вращение поясницы",
             emoji = "🧘",
-            durationMinutes = 6,
+            durationMinutes = 2,
             screen = SpineFlexibilityTestScreen
         ),
         FlexibilityTest(
             title = "Скручивание туловища",
             description = "Подвижность грудного отдела и боковое скручивание",
             emoji = "🤸",
-            durationMinutes = 8,
+            durationMinutes = 3,
             screen = NeckSpineTestScreen
         )
     )
