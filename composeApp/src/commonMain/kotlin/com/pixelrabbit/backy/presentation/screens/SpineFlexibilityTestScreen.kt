@@ -36,9 +36,9 @@ fun SpineFlexibilityTestContent() {
     val spineSteps: List<String> = listOf(
         "Наклонитесь вперед, коснитесь пальцами пола",
         "Наклонитесь назад, прогнитесь максимально",
-        "Наклонитесь влево",
-        "Наклонитесь вправо",
-        "Повернитесь туловищем влево и вправо"
+        "Наклонитесь влево, вытягивая правую руку",
+        "Наклонитесь вправо, вытягивая левую руку",
+        "Повернитесь туловищем равномерно влево и вправо"
     )
 
     fun nextStep() {
@@ -94,22 +94,22 @@ fun SpineFlexibilityTestContent() {
                         Spacer(Modifier.height(16.dp))
                         Text(spineSteps[currentStep], style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
                         Spacer(Modifier.height(24.dp))
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(150.dp)
-                                .background(Color.Gray),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text("🎯 Placeholder для визуальной подсказки", color = Color.White, textAlign = TextAlign.Center)
-                        }
-                        Spacer(Modifier.height(24.dp))
+//                        Box(
+//                            modifier = Modifier
+//                                .fillMaxWidth()
+//                                .height(150.dp)
+//                                .background(Color.Gray),
+//                            contentAlignment = Alignment.Center
+//                        ) {
+//                            Text("🎯 Placeholder для визуальной подсказки", color = Color.White, textAlign = TextAlign.Center)
+//                        }
+//                        Spacer(Modifier.height(24.dp))
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                             Button(modifier = Modifier.weight(1f), onClick = { movementSucceeded = true; nextStep() }) {
-                                Text("Выполнил")
+                                Text("Получилось")
                             }
                             Button(modifier = Modifier.weight(1f), onClick = { nextStep() }) {
-                                Text("Не смог")
+                                Text("Не получается")
                             }
                         }
                     }

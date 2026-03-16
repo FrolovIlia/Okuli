@@ -58,13 +58,6 @@ fun FlexibilityTestListContent() {
             emoji = "🧘",
             durationMinutes = 2,
             screen = SpineFlexibilityTestScreen
-        ),
-        FlexibilityTest(
-            title = "Скручивание туловища",
-            description = "Подвижность грудного отдела и боковое скручивание",
-            emoji = "🤸",
-            durationMinutes = 3,
-            screen = NeckSpineTestScreen
         )
     )
 

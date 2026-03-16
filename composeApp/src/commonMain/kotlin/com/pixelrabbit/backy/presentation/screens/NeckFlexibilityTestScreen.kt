@@ -108,16 +108,16 @@ fun NeckFlexibilityTestContent() {
                             textAlign = TextAlign.Center
                         )
                         Spacer(modifier = Modifier.height(24.dp))
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(150.dp)
-                                .background(Color.Gray),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text("🎯 Placeholder для визуальной подсказки движения", color = Color.White, textAlign = TextAlign.Center)
-                        }
-                        Spacer(modifier = Modifier.height(24.dp))
+//                        Box(
+//                            modifier = Modifier
+//                                .fillMaxWidth()
+//                                .height(150.dp)
+//                                .background(Color.Gray),
+//                            contentAlignment = Alignment.Center
+//                        ) {
+//                            Text("🎯 Placeholder для визуальной подсказки движения", color = Color.White, textAlign = TextAlign.Center)
+//                        }
+//                        Spacer(modifier = Modifier.height(24.dp))
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -129,13 +129,13 @@ fun NeckFlexibilityTestContent() {
                                     nextStep()
                                 }
                             ) {
-                                Text("Выполнил")
+                                Text("Получилось")
                             }
                             Button(
                                 modifier = Modifier.weight(1f),
                                 onClick = { nextStep() }
                             ) {
-                                Text("Не смог")
+                                Text("Не получается")
                             }
                         }
                     }

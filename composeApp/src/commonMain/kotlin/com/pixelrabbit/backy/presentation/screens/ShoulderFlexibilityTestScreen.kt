@@ -36,10 +36,10 @@ fun ShoulderFlexibilityTestContent() {
     var correctMovements by remember { mutableStateOf(0) }
 
     val steps = listOf(
-        ShoulderMovement.FRONT_RAISE to "Поднимите руки вперед и вверх",
-        ShoulderMovement.BACK_RAISE to "Поднимите руки назад и вверх",
-        ShoulderMovement.ARM_CIRCLE to "Вращайте руки по кругу вперед",
-        ShoulderMovement.CROSS_OVER to "Сведите руки перед грудью и разведите назад"
+        ShoulderMovement.FRONT_RAISE to "Поднимите руки снизу вверх перед собой",
+        ShoulderMovement.BACK_RAISE to "Поднимите руки снизу вверх, стараясь отводить их назад",
+        ShoulderMovement.ARM_CIRCLE to "Вращайте вытянутые руки по кругу вперед, а затем назад",
+        ShoulderMovement.CROSS_OVER to "Сведите согнутые в локтях руки перед грудью и равномерно разведите назад"
     )
 
     fun nextStep() {
@@ -106,16 +106,16 @@ fun ShoulderFlexibilityTestContent() {
                             textAlign = TextAlign.Center
                         )
                         Spacer(modifier = Modifier.height(24.dp))
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(150.dp)
-                                .background(Color.Gray),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text("🎯 Placeholder для визуальной подсказки", color = Color.White, textAlign = TextAlign.Center)
-                        }
-                        Spacer(modifier = Modifier.height(24.dp))
+//                        Box(
+//                            modifier = Modifier
+//                                .fillMaxWidth()
+//                                .height(150.dp)
+//                                .background(Color.Gray),
+//                            contentAlignment = Alignment.Center
+//                        ) {
+//                            Text("🎯 Placeholder для визуальной подсказки", color = Color.White, textAlign = TextAlign.Center)
+//                        }
+//                        Spacer(modifier = Modifier.height(24.dp))
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -127,13 +127,13 @@ fun ShoulderFlexibilityTestContent() {
                                     nextStep()
                                 }
                             ) {
-                                Text("Выполнил")
+                                Text("Получилось")
                             }
                             Button(
                                 modifier = Modifier.weight(1f),
                                 onClick = { nextStep() }
                             ) {
-                                Text("Не смог")
+                                Text("Не получается")
                             }
                         }
                     }
