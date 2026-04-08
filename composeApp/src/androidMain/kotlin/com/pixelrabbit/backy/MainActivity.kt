@@ -51,7 +51,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         // Creating an extended library configuration.
-        val config = AppMetricaConfig.newConfigBuilder("59333182-46a8-43f8-bc27-7c9f8fc1d0ff").build()
+        val config = AppMetricaConfig.newConfigBuilder("b524cd64-b8a1-4134-8169-e50cb665c359").build()
         // Initializing the AppMetrica SDK.
         AppMetrica.activate(this, config)
 
