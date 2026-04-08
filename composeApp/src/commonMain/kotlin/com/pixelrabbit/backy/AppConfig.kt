@@ -1,7 +1,7 @@
 package com.pixelrabbit.backy
 
 object AppConfig {
-    const val VERSION_NAME = "1.01.0"
+    const val VERSION_NAME = "1.02.0"
     const val VERSION_CODE = 34
     const val APP_NAME = "Backy"
 }
