@@ -1,13 +1,16 @@
-// shared/src/commonMain/kotlin/com/pixelrabbit/backy/di/ServiceLocator.kt
 package com.pixelrabbit.backy.di
 
-import com.pixelrabbit.backy.data.repositories.*
+import com.pixelrabbit.backy.data.repositories.LastVisitRepository
+import com.pixelrabbit.backy.data.repositories.LastVisitRepositoryImpl
+import com.pixelrabbit.backy.data.repositories.RealAchievementRepository
+import com.pixelrabbit.backy.data.repositories.RealStatsRepository
 import com.pixelrabbit.backy.domain.repositories.*
 import com.pixelrabbit.backy.domain.use_cases.*
 import com.pixelrabbit.backy.notification.NotificationManager
 
+expect fun createSettingsRepository(): SettingsRepository
+
 object ServiceLocator {
-    // Платформенные зависимости
     private var _notificationManager: NotificationManager? = null
 
     fun init(notificationManager: NotificationManager) {
@@ -18,14 +21,12 @@ object ServiceLocator {
         return _notificationManager ?: error("ServiceLocator не инициализирован. Вызовите init()")
     }
 
-    // Приватные репозитории
     private val _exerciseRepository: ExerciseRepository by lazy { ExerciseRepositoryImpl() }
     private val _statsRepository: StatsRepository by lazy { RealStatsRepository() }
     private val _achievementRepository: AchievementRepository by lazy { RealAchievementRepository() }
-    private val _settingsRepository: SettingsRepository by lazy { SettingsRepositoryImpl() }
+    private val _settingsRepository: SettingsRepository by lazy { createSettingsRepository() }
     private val _lastVisitRepository: LastVisitRepository by lazy { LastVisitRepositoryImpl() }
 
-    // Публичные Use Cases
     val getExercisesUseCase: GetExercisesUseCase by lazy { GetExercisesUseCase(_exerciseRepository) }
     val startExerciseUseCase: StartExerciseUseCase by lazy {
         StartExerciseUseCase(_exerciseRepository, _statsRepository)
@@ -39,7 +40,6 @@ object ServiceLocator {
     val adUseCase: AdUseCase by lazy { AdUseCase(_settingsRepository) }
     val checkDailyVisitUseCase: CheckDailyVisitUseCase by lazy { CheckDailyVisitUseCase(_lastVisitRepository) }
 
-    // Методы доступа для исправления ошибок компиляции
     fun statsRepository(): StatsRepository = _statsRepository
     fun achievementRepository(): AchievementRepository = _achievementRepository
     fun exerciseRepository(): ExerciseRepository = _exerciseRepository

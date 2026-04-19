@@ -1,4 +1,3 @@
-// commonMain/kotlin/com/pixelrabbit/backy/ads/AppOpenAdManager.kt
 package com.pixelrabbit.backy.ads
 
 expect class AppOpenAdManager() {

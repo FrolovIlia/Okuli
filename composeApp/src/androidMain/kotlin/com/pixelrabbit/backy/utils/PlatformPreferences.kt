@@ -1,6 +1,5 @@
 package com.pixelrabbit.backy.utils
 
-import android.content.Context
 import com.pixelrabbit.backy.utils.platform.AndroidContext
 
 actual object PlatformPreferences {
@@ -21,5 +20,12 @@ actual object PlatformPreferences {
 
     actual fun setInt(key: String, value: Int) {
         sharedPreferences.edit().putInt(key, value).apply()
+    }
+
+    actual fun getString(key: String, defaultValue: String?): String? =
+        sharedPreferences.getString(key, defaultValue)
+
+    actual fun setString(key: String, value: String?) {
+        sharedPreferences.edit().putString(key, value).apply()
     }
 }

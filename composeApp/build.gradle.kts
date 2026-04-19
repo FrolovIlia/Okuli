@@ -55,6 +55,10 @@ kotlin {
                 implementation(libs.androidx.work.runtime.ktx)
                 implementation(libs.analytics)
 
+                implementation(libs.yookassa.sdk)
+                implementation(libs.okhttp)
+                implementation(libs.gson)
+
             }
         }
 

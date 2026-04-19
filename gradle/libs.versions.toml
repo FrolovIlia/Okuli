@@ -2,16 +2,19 @@
 analytics = "7.3.0"
 kotlin = "2.0.21"
 compose = "1.7.1"
-agp = "8.5.2"
+agp = "8.13.2"
 realm = "3.0.0"
 androidx-activityCompose = "1.9.3"
 androidx-core-ktx = "1.15.0"
 voyagerScreenmodel = "1.0.1"
-yandex-ads = "7.7.0"
+yandex-ads = "7.18.5"
 work-manager = "2.10.0"
 voyager = "1.1.0-beta03"
 kotlinx-datetime = "0.6.1"
 material3 = "1.4.0"
+sdk = "8.3.0"
+okhttp = "4.12.0"
+gson = "2.10.1"
 
 [libraries]
 analytics = { module = "io.appmetrica.analytics:analytics", version.ref = "analytics" }
@@ -20,6 +23,9 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 mobileads-ios = { module = "com.yandex.android:mobileads-ios", version.ref = "yandex-ads" }
 realm-library-base = { module = "io.realm.kotlin:library-base", version.ref = "realm" }
+yookassa-sdk = { module = "ru.yoomoney.sdk.kassa.payments:yookassa-android-sdk", version.ref = "sdk" }
+okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 
 # Библиотеки для устранения Unresolved reference
 voyager-screenmodel = { module = "cafe.adriel.voyager:voyager-screenmodel", version.ref = "voyagerScreenmodel" }

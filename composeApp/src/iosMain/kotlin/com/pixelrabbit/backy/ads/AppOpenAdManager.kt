@@ -1,4 +1,3 @@
-// iosMain/kotlin/com/pixelrabbit/backy/ads/AppOpenAdManager.kt
 package com.pixelrabbit.backy.ads
 
 import cocoapods.YandexMobileAds.YMAAdError
