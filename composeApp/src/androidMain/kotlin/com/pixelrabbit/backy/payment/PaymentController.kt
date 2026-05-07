@@ -96,7 +96,7 @@ actual class PaymentController {
         val json = JSONObject().apply {
             put("payment_token", token)
             put("amount", JSONObject().apply {
-                put("value", "249.00")
+                put("value", "99.00")
                 put("currency", "RUB")
             })
             put("capture", true)

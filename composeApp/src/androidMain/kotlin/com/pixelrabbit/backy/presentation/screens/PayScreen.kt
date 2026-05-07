@@ -272,7 +272,7 @@ fun PayContent() {
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                text = "249 ₽",
+                                text = "99 ₽",
                                 style = MaterialTheme.typography.displayMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -294,7 +294,7 @@ fun PayContent() {
                                     errorMessage = null
 
                                     paymentController.startPayment(
-                                        amount = "249.00",
+                                        amount = "99.00",
                                         description = "Отключение рекламы в Backy",
                                         onSuccess = { transactionId ->
                                             Log.d("!!!PAYMENT!!!", "onSuccess: $transactionId")
