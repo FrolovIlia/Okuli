@@ -17,26 +17,26 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import org.jetbrains.compose.resources.painterResource
 import backy.composeapp.generated.resources.Res
+import backy.composeapp.generated.resources.neck_rotation
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.layout.FlowRow
-import backy.composeapp.generated.resources.forward_bend
 
-object SpineFlexibilityTestScreen : Screen {
+object NeckRotationTestScreen : Screen {
     @Composable
-    override fun Content() = SpineFlexibilityTestContent()
+    override fun Content() = NeckRotationTestContent()
 }
 
-private enum class SpineState { IDLE, RESULT }
+private enum class NeckState { IDLE, RESULT }
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun SpineFlexibilityTestContent() {
+fun NeckRotationTestContent() {
 
     val navigator = LocalNavigator.currentOrThrow
 
     var degree by rememberSaveable { mutableIntStateOf(0) }
-    var state by rememberSaveable { mutableStateOf(SpineState.IDLE) }
+    var state by rememberSaveable { mutableStateOf(NeckState.IDLE) }
 
     val options = listOf(20, 30, 40, 50, 60, 70, 80, 90)
 
@@ -53,13 +53,13 @@ fun SpineFlexibilityTestContent() {
         ) {
 
             Text(
-                "🦴 Подвижность позвоночника",
+                "🔄 Поворот шеи",
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold
             )
 
             Image(
-                painter = painterResource(Res.drawable.forward_bend),
+                painter = painterResource(Res.drawable.neck_rotation),
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -69,11 +69,11 @@ fun SpineFlexibilityTestContent() {
             )
 
             Text(
-                "Наклонитесь вперёд и выберите комфортный угол.",
+                "Поверните голову до комфортного предела и выберите угол.",
                 style = MaterialTheme.typography.bodyMedium
             )
 
-            if (state == SpineState.IDLE) {
+            if (state == NeckState.IDLE) {
 
                 FlowRow(
                     modifier = Modifier.fillMaxWidth(),
@@ -108,7 +108,7 @@ fun SpineFlexibilityTestContent() {
                 }
 
                 Button(
-                    onClick = { state = SpineState.RESULT },
+                    onClick = { state = NeckState.RESULT },
                     modifier = Modifier.fillMaxWidth(),
                     enabled = degree != 0
                 ) {
@@ -116,35 +116,38 @@ fun SpineFlexibilityTestContent() {
                 }
             }
 
-            if (state == SpineState.RESULT) {
+            if (state == NeckState.RESULT) {
 
                 val resultText = when {
                     degree >= 80 ->
-                        "Отличная гибкость позвоночника. Движения свободные, мышечные ограничения минимальны."
+                        "Отличная подвижность шеи. Диапазон движений полный, суставы работают без ограничений."
 
                     degree >= 60 ->
-                        "Хорошая гибкость. Есть лёгкие ограничения, но функционально норма."
+                        "Хорошая подвижность. Есть небольшие ограничения, но функционально шея здорова."
 
                     degree >= 40 ->
-                        "Средняя гибкость. Присутствует напряжение мышц задней цепи и поясницы."
+                        "Средняя подвижность. Возможны мышечные зажимы и недостаток регулярной разминки."
 
                     else ->
-                        "Низкая гибкость. Вероятна скованность поясничного отдела и недостаток растяжки."
+                        "Низкая подвижность. Вероятна скованность шейного отдела и перегрузка мышц."
                 }
 
                 val advice = """
                     Рекомендации:
-                    • ежедневные наклоны вперёд без рывков
-                    • растяжка задней поверхности бедра
-                    • укрепление мышц кора
-                    • избегать длительного сидения
+                    • делайте мягкие вращения шеи ежедневно
+                    • избегайте длительного наклона головы вперёд (телефон/ноутбук)
+                    • добавьте растяжку трапециевидных мышц
+                    • следите за осанкой в течение дня
                 """.trimIndent()
 
                 Card {
                     Column(Modifier.padding(16.dp)) {
-                        Text("Результат: $degree°",
+
+                        Text(
+                            "Результат: $degree°",
                             style = MaterialTheme.typography.headlineSmall,
-                            fontWeight = FontWeight.Bold)
+                            fontWeight = FontWeight.Bold
+                        )
 
                         Spacer(Modifier.height(8.dp))
 

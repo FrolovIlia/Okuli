@@ -20,25 +20,25 @@ import backy.composeapp.generated.resources.Res
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.layout.FlowRow
-import backy.composeapp.generated.resources.forward_bend
+import backy.composeapp.generated.resources.spine_flexibility
 
-object SpineFlexibilityTestScreen : Screen {
+object ForwardBendTestScreen : Screen {
     @Composable
-    override fun Content() = SpineFlexibilityTestContent()
+    override fun Content() = ForwardBendTestContent()
 }
 
-private enum class SpineState { IDLE, RESULT }
+private enum class BendState { IDLE, RESULT }
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun SpineFlexibilityTestContent() {
+fun ForwardBendTestContent() {
 
     val navigator = LocalNavigator.currentOrThrow
 
-    var degree by rememberSaveable { mutableIntStateOf(0) }
-    var state by rememberSaveable { mutableStateOf(SpineState.IDLE) }
+    var distanceCm by rememberSaveable { mutableIntStateOf(0) }
+    var state by rememberSaveable { mutableStateOf(BendState.IDLE) }
 
-    val options = listOf(20, 30, 40, 50, 60, 70, 80, 90)
+    val options = listOf(0, 5, 10, 15, 20, 25, 30)
 
     Scaffold { padding ->
 
@@ -53,13 +53,13 @@ fun SpineFlexibilityTestContent() {
         ) {
 
             Text(
-                "🦴 Подвижность позвоночника",
+                "📏 Наклон вперёд",
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold
             )
 
             Image(
-                painter = painterResource(Res.drawable.forward_bend),
+                painter = painterResource(Res.drawable.spine_flexibility),
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -69,11 +69,11 @@ fun SpineFlexibilityTestContent() {
             )
 
             Text(
-                "Наклонитесь вперёд и выберите комфортный угол.",
+                "Наклонитесь вперёд и оцените расстояние до пола.",
                 style = MaterialTheme.typography.bodyMedium
             )
 
-            if (state == SpineState.IDLE) {
+            if (state == BendState.IDLE) {
 
                 FlowRow(
                     modifier = Modifier.fillMaxWidth(),
@@ -84,10 +84,10 @@ fun SpineFlexibilityTestContent() {
 
                     options.forEach { value ->
 
-                        val selected = degree == value
+                        val selected = distanceCm == value
 
                         Button(
-                            onClick = { degree = value },
+                            onClick = { distanceCm = value },
                             modifier = Modifier.weight(1f),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor =
@@ -102,49 +102,52 @@ fun SpineFlexibilityTestContent() {
                                         MaterialTheme.colorScheme.onSurface
                             )
                         ) {
-                            Text("$value°", fontWeight = FontWeight.Bold)
+                            Text("$value см", fontWeight = FontWeight.Bold)
                         }
                     }
                 }
 
                 Button(
-                    onClick = { state = SpineState.RESULT },
+                    onClick = { state = BendState.RESULT },
                     modifier = Modifier.fillMaxWidth(),
-                    enabled = degree != 0
+                    enabled = distanceCm != 0
                 ) {
                     Text("Узнать результат")
                 }
             }
 
-            if (state == SpineState.RESULT) {
+            if (state == BendState.RESULT) {
 
                 val resultText = when {
-                    degree >= 80 ->
-                        "Отличная гибкость позвоночника. Движения свободные, мышечные ограничения минимальны."
+                    distanceCm <= 5 ->
+                        "Отличная гибкость. Позвоночник и задняя линия тела работают свободно."
 
-                    degree >= 60 ->
-                        "Хорошая гибкость. Есть лёгкие ограничения, но функционально норма."
+                    distanceCm <= 15 ->
+                        "Хорошая гибкость. Есть небольшое ограничение, но функционально норма."
 
-                    degree >= 40 ->
-                        "Средняя гибкость. Присутствует напряжение мышц задней цепи и поясницы."
+                    distanceCm <= 25 ->
+                        "Средняя гибкость. Присутствует мышечное напряжение задней поверхности."
 
                     else ->
-                        "Низкая гибкость. Вероятна скованность поясничного отдела и недостаток растяжки."
+                        "Низкая гибкость. Возможна скованность поясницы и задней цепи мышц."
                 }
 
                 val advice = """
                     Рекомендации:
-                    • ежедневные наклоны вперёд без рывков
-                    • растяжка задней поверхности бедра
+                    • ежедневная растяжка задней поверхности бедра
+                    • упражнения на наклоны вперёд без рывков
                     • укрепление мышц кора
-                    • избегать длительного сидения
+                    • избегать длительного сидения без движения
                 """.trimIndent()
 
                 Card {
                     Column(Modifier.padding(16.dp)) {
-                        Text("Результат: $degree°",
+
+                        Text(
+                            "Результат: $distanceCm см",
                             style = MaterialTheme.typography.headlineSmall,
-                            fontWeight = FontWeight.Bold)
+                            fontWeight = FontWeight.Bold
+                        )
 
                         Spacer(Modifier.height(8.dp))
 
