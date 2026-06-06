@@ -4,11 +4,13 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -18,8 +20,6 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import org.jetbrains.compose.resources.painterResource
 import backy.composeapp.generated.resources.Res
 import backy.composeapp.generated.resources.posture_check
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.draw.clip
 
 object PostureTestScreen : Screen {
     @Composable
@@ -28,22 +28,29 @@ object PostureTestScreen : Screen {
 
 private enum class PostureState { IDLE, RESULT }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun PostureTestContent() {
 
     val navigator = LocalNavigator.currentOrThrow
 
-    var answers by rememberSaveable { mutableStateOf(List(4) { 0 }) }
+    var answers by rememberSaveable { mutableStateOf(List(8) { 0 }) }
     var state by rememberSaveable { mutableStateOf(PostureState.IDLE) }
 
     val questions = listOf(
         "Подбородок выдвинут вперёд?",
         "Плечи округлены вперёд?",
-        "Голова наклонена?",
-        "Есть дискомфорт в шее?"
+        "Голова наклонена при работе?",
+        "Есть дискомфорт в шее?",
+        "Есть напряжение между лопатками?",
+        "Сутулитесь при сидении?",
+        "Быстро устает спина?",
+        "Сложно держать ровную осанку длительно?"
     )
 
     val options = listOf("Нет" to 0, "Иногда" to 1, "Да" to 2)
+
+    val totalScore = answers.sum()
 
     Scaffold { padding ->
 
@@ -69,55 +76,93 @@ fun PostureTestContent() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(16f / 9f)
-                    .clip(RoundedCornerShape(16.dp)),
+                    .clip(RoundedCornerShape(20.dp)),
                 contentScale = ContentScale.Crop
-            )
-
-            Text(
-                "Ответьте честно на вопросы ниже.",
-                style = MaterialTheme.typography.bodyMedium
             )
 
             if (state == PostureState.IDLE) {
 
-                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                ElevatedCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(20.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    )
+                ) {
 
-                    questions.forEachIndexed { idx, q ->
+                    Column(
+                        Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
 
-                        Column {
+                        Text(
+                            "Как пройти тест",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
 
-                            Text(q, fontWeight = FontWeight.Medium)
+                        Text(
+                            "Оцените своё состояние осанки в повседневной жизни. " +
+                                    "Отвечайте честно — это влияет на точность результата."
+                        )
+                    }
+                }
 
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
+                ElevatedCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(20.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    )
+                ) {
 
-                                options.forEach { (label, score) ->
+                    Column(
+                        Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(20.dp)
+                    ) {
 
-                                    val selected = answers[idx] == score
+                        questions.forEachIndexed { idx, q ->
 
-                                    Button(
-                                        onClick = {
-                                            answers = answers.toMutableList().apply {
-                                                set(idx, score)
-                                            }
-                                        },
-                                        modifier = Modifier.weight(1f),
-                                        colors = ButtonDefaults.buttonColors(
-                                            containerColor =
-                                                if (selected)
-                                                    MaterialTheme.colorScheme.primary
-                                                else
-                                                    MaterialTheme.colorScheme.surfaceVariant,
-                                            contentColor =
-                                                if (selected)
-                                                    MaterialTheme.colorScheme.onPrimary
-                                                else
-                                                    MaterialTheme.colorScheme.onSurface
-                                        )
-                                    ) {
-                                        Text(label)
+                            Column {
+
+                                Text(
+                                    text = "${idx + 1}. $q",
+                                    fontWeight = FontWeight.SemiBold
+                                )
+
+                                Spacer(Modifier.height(10.dp))
+
+                                FlowRow(
+                                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                                ) {
+
+                                    options.forEach { (label, score) ->
+
+                                        val selected = answers[idx] == score
+
+                                        Button(
+                                            onClick = {
+                                                answers = answers.toMutableList().apply {
+                                                    set(idx, score)
+                                                }
+                                            },
+                                            shape = RoundedCornerShape(16.dp),
+                                            colors = ButtonDefaults.buttonColors(
+                                                containerColor =
+                                                    if (selected)
+                                                        MaterialTheme.colorScheme.primary
+                                                    else
+                                                        MaterialTheme.colorScheme.secondaryContainer,
+                                                contentColor =
+                                                    if (selected)
+                                                        MaterialTheme.colorScheme.onPrimary
+                                                    else
+                                                        MaterialTheme.colorScheme.onSecondaryContainer
+                                            )
+                                        ) {
+                                            Text(label)
+                                        }
                                     }
                                 }
                             }
@@ -139,49 +184,78 @@ fun PostureTestContent() {
 
                 val resultText = when {
                     total <= 1 ->
-                        "Хорошая осанка. Мышечный баланс сохранён, выраженных нарушений нет."
+                        "Хорошая осанка. Мышечный баланс сохранён."
 
                     total <= 3 ->
-                        "Незначительные нарушения осанки. Возможны мышечные зажимы и усталость."
+                        "Лёгкие признаки нарушения осанки."
+
+                    total <= 5 ->
+                        "Умеренные нарушения осанки."
+
+                    total <= 7 ->
+                        "Выраженные нарушения осанки."
 
                     else ->
-                        "Выраженные нарушения осанки. Вероятна перегрузка шейного и грудного отдела."
+                        "Сильные нарушения осанки и перегрузка шейно-грудного отдела."
                 }
 
-                val advice = """
-                    Рекомендации:
-                    • следите за положением головы при работе за телефоном
-                    • делайте перерывы каждые 30–40 минут
-                    • добавьте упражнения на раскрытие грудного отдела
-                    • укрепляйте мышцы спины
-                """.trimIndent()
+                val recommendations = listOf(
+                    "Следите за положением головы при работе с телефоном",
+                    "Делайте перерывы каждые 30–40 минут",
+                    "Добавьте упражнения на раскрытие грудного отдела",
+                    "Укрепляйте мышцы спины и кора",
+                    "Контролируйте положение плеч в течение дня"
+                )
 
-                Card {
-                    Column(Modifier.padding(16.dp)) {
+                ElevatedCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(20.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    )
+                ) {
+
+                    Column(
+                        Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
 
                         Text(
-                            "Результат",
-                            style = MaterialTheme.typography.headlineSmall,
+                            "Ваш результат",
+                            style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold
                         )
 
-                        Spacer(Modifier.height(8.dp))
+                        HorizontalDivider()
 
-                        Text(resultText, style = MaterialTheme.typography.bodyMedium)
+                        Text(resultText)
 
-                        Spacer(Modifier.height(12.dp))
+                        HorizontalDivider()
 
-                        Text("Рекомендации", fontWeight = FontWeight.Bold)
-                        Text(advice, style = MaterialTheme.typography.bodyMedium)
+                        Text(
+                            "Рекомендации",
+                            fontWeight = FontWeight.Bold
+                        )
+
+                        recommendations.forEach {
+                            Text("• $it")
+                        }
                     }
                 }
-            }
 
-            Button(
-                onClick = { navigator.pop() },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Назад")
+                Button(
+                    onClick = { state = PostureState.IDLE },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Пройти заново")
+                }
+
+                Button(
+                    onClick = { navigator.pop() },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Назад")
+                }
             }
         }
     }

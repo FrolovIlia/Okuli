@@ -3,12 +3,14 @@ package com.pixelrabbit.backy.presentation.screens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -18,8 +20,6 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import org.jetbrains.compose.resources.painterResource
 import backy.composeapp.generated.resources.Res
 import backy.composeapp.generated.resources.neck_rotation
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.layout.FlowRow
 
 object NeckRotationTestScreen : Screen {
@@ -64,45 +64,82 @@ fun NeckRotationTestContent() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(16f / 9f)
-                    .clip(RoundedCornerShape(16.dp)),
+                    .clip(RoundedCornerShape(20.dp)),
                 contentScale = ContentScale.Crop
             )
 
-            Text(
-                "Поверните голову до комфортного предела и выберите угол.",
-                style = MaterialTheme.typography.bodyMedium
-            )
+            ElevatedCard(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                )
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        "Как выполнять",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Text(
+                        "Поверните голову до комфортного предела и выберите угол."
+                    )
+                }
+            }
 
             if (state == NeckState.IDLE) {
 
-                FlowRow(
+                ElevatedCard(
                     modifier = Modifier.fillMaxWidth(),
-                    maxItemsInEachRow = 2,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    shape = RoundedCornerShape(20.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    )
                 ) {
 
-                    options.forEach { value ->
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
 
-                        val selected = degree == value
+                        Text(
+                            "Выберите угол поворота",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
 
-                        Button(
-                            onClick = { degree = value },
-                            modifier = Modifier.weight(1f),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor =
-                                    if (selected)
-                                        MaterialTheme.colorScheme.primary
-                                    else
-                                        MaterialTheme.colorScheme.surfaceVariant,
-                                contentColor =
-                                    if (selected)
-                                        MaterialTheme.colorScheme.onPrimary
-                                    else
-                                        MaterialTheme.colorScheme.onSurface
-                            )
+                        FlowRow(
+                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                            verticalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
-                            Text("$value°", fontWeight = FontWeight.Bold)
+
+                            options.forEach { value ->
+
+                                val selected = degree == value
+
+                                Button(
+                                    onClick = { degree = value },
+                                    shape = RoundedCornerShape(16.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor =
+                                            if (selected)
+                                                MaterialTheme.colorScheme.primary
+                                            else
+                                                MaterialTheme.colorScheme.secondaryContainer,
+                                        contentColor =
+                                            if (selected)
+                                                MaterialTheme.colorScheme.onPrimary
+                                            else
+                                                MaterialTheme.colorScheme.onSecondaryContainer
+                                    )
+                                ) {
+                                    Text("$value°", fontWeight = FontWeight.Bold)
+                                }
+                            }
                         }
                     }
                 }
@@ -110,7 +147,7 @@ fun NeckRotationTestContent() {
                 Button(
                     onClick = { state = NeckState.RESULT },
                     modifier = Modifier.fillMaxWidth(),
-                    enabled = degree != 0
+                    enabled = degree > 0
                 ) {
                     Text("Узнать результат")
                 }
@@ -120,28 +157,43 @@ fun NeckRotationTestContent() {
 
                 val resultText = when {
                     degree >= 80 ->
-                        "Отличная подвижность шеи. Диапазон движений полный, суставы работают без ограничений."
+                        "Отличная подвижность шеи. Полный функциональный диапазон."
+
+                    degree >= 70 ->
+                        "Очень хорошая подвижность. Минимальные ограничения."
 
                     degree >= 60 ->
-                        "Хорошая подвижность. Есть небольшие ограничения, но функционально шея здорова."
+                        "Хорошая подвижность. Лёгкие мышечные зажимы возможны."
 
-                    degree >= 40 ->
-                        "Средняя подвижность. Возможны мышечные зажимы и недостаток регулярной разминки."
+                    degree >= 45 ->
+                        "Умеренная подвижность. Признаки напряжения шейного отдела."
+
+                    degree >= 30 ->
+                        "Сниженная подвижность. Выраженные мышечные ограничения."
 
                     else ->
-                        "Низкая подвижность. Вероятна скованность шейного отдела и перегрузка мышц."
+                        "Сильная скованность шеи. Требуется работа над мобильностью."
                 }
 
-                val advice = """
-                    Рекомендации:
-                    • делайте мягкие вращения шеи ежедневно
-                    • избегайте длительного наклона головы вперёд (телефон/ноутбук)
-                    • добавьте растяжку трапециевидных мышц
-                    • следите за осанкой в течение дня
-                """.trimIndent()
+                val recommendations = listOf(
+                    "Мягкие вращения шеи ежедневно",
+                    "Контроль положения головы при работе за экраном",
+                    "Растяжка трапециевидных мышц",
+                    "Избегать длительного наклона головы вперёд"
+                )
 
-                Card {
-                    Column(Modifier.padding(16.dp)) {
+                ElevatedCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(20.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    )
+                ) {
+
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
 
                         Text(
                             "Результат: $degree°",
@@ -149,23 +201,30 @@ fun NeckRotationTestContent() {
                             fontWeight = FontWeight.Bold
                         )
 
-                        Spacer(Modifier.height(8.dp))
+                        HorizontalDivider()
 
-                        Text(resultText, style = MaterialTheme.typography.bodyMedium)
+                        Text(resultText)
 
-                        Spacer(Modifier.height(12.dp))
+                        HorizontalDivider()
 
-                        Text("Рекомендации", fontWeight = FontWeight.Bold)
-                        Text(advice, style = MaterialTheme.typography.bodyMedium)
+                        Text(
+                            "Рекомендации",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+
+                        recommendations.forEach {
+                            Text("• $it")
+                        }
                     }
                 }
-            }
 
-            Button(
-                onClick = { navigator.pop() },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Назад")
+                Button(
+                    onClick = { navigator.pop() },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Назад")
+                }
             }
         }
     }

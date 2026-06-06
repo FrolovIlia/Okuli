@@ -3,12 +3,14 @@ package com.pixelrabbit.backy.presentation.screens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -17,10 +19,8 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import org.jetbrains.compose.resources.painterResource
 import backy.composeapp.generated.resources.Res
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.draw.clip
-import androidx.compose.foundation.layout.FlowRow
 import backy.composeapp.generated.resources.spine_flexibility
+import androidx.compose.foundation.layout.FlowRow
 
 object ForwardBendTestScreen : Screen {
     @Composable
@@ -64,45 +64,82 @@ fun ForwardBendTestContent() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(16f / 9f)
-                    .clip(RoundedCornerShape(16.dp)),
+                    .clip(RoundedCornerShape(20.dp)),
                 contentScale = ContentScale.Crop
             )
 
-            Text(
-                "Наклонитесь вперёд и оцените расстояние до пола.",
-                style = MaterialTheme.typography.bodyMedium
-            )
+            ElevatedCard(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                )
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        "Как выполнять",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Text(
+                        "Наклонитесь вперёд и оцените расстояние от пальцев до пола."
+                    )
+                }
+            }
 
             if (state == BendState.IDLE) {
 
-                FlowRow(
+                ElevatedCard(
                     modifier = Modifier.fillMaxWidth(),
-                    maxItemsInEachRow = 2,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    shape = RoundedCornerShape(20.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    )
                 ) {
 
-                    options.forEach { value ->
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
 
-                        val selected = distanceCm == value
+                        Text(
+                            "Выберите расстояние",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
 
-                        Button(
-                            onClick = { distanceCm = value },
-                            modifier = Modifier.weight(1f),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor =
-                                    if (selected)
-                                        MaterialTheme.colorScheme.primary
-                                    else
-                                        MaterialTheme.colorScheme.surfaceVariant,
-                                contentColor =
-                                    if (selected)
-                                        MaterialTheme.colorScheme.onPrimary
-                                    else
-                                        MaterialTheme.colorScheme.onSurface
-                            )
+                        FlowRow(
+                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                            verticalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
-                            Text("$value см", fontWeight = FontWeight.Bold)
+
+                            options.forEach { value ->
+
+                                val selected = distanceCm == value
+
+                                Button(
+                                    onClick = { distanceCm = value },
+                                    shape = RoundedCornerShape(16.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor =
+                                            if (selected)
+                                                MaterialTheme.colorScheme.primary
+                                            else
+                                                MaterialTheme.colorScheme.secondaryContainer,
+                                        contentColor =
+                                            if (selected)
+                                                MaterialTheme.colorScheme.onPrimary
+                                            else
+                                                MaterialTheme.colorScheme.onSecondaryContainer
+                                    )
+                                ) {
+                                    Text("$value см", fontWeight = FontWeight.Bold)
+                                }
+                            }
                         }
                     }
                 }
@@ -110,7 +147,7 @@ fun ForwardBendTestContent() {
                 Button(
                     onClick = { state = BendState.RESULT },
                     modifier = Modifier.fillMaxWidth(),
-                    enabled = distanceCm != 0
+                    enabled = distanceCm > 0
                 ) {
                     Text("Узнать результат")
                 }
@@ -119,29 +156,44 @@ fun ForwardBendTestContent() {
             if (state == BendState.RESULT) {
 
                 val resultText = when {
-                    distanceCm <= 5 ->
-                        "Отличная гибкость. Позвоночник и задняя линия тела работают свободно."
+                    distanceCm <= 0 ->
+                        "Отличная гибкость. Полное касание пола без ограничений."
 
-                    distanceCm <= 15 ->
-                        "Хорошая гибкость. Есть небольшое ограничение, но функционально норма."
+                    distanceCm <= 3 ->
+                        "Очень высокая гибкость. Задняя цепь мышц в отличном состоянии."
 
-                    distanceCm <= 25 ->
-                        "Средняя гибкость. Присутствует мышечное напряжение задней поверхности."
+                    distanceCm <= 7 ->
+                        "Хорошая гибкость. Минимальные ограничения."
+
+                    distanceCm <= 12 ->
+                        "Умеренная гибкость. Есть напряжение задней поверхности бедра."
+
+                    distanceCm <= 20 ->
+                        "Сниженная гибкость. Выраженное укорочение задней цепи."
 
                     else ->
-                        "Низкая гибкость. Возможна скованность поясницы и задней цепи мышц."
+                        "Низкая гибкость. Существенная скованность и дефицит растяжки."
                 }
 
-                val advice = """
-                    Рекомендации:
-                    • ежедневная растяжка задней поверхности бедра
-                    • упражнения на наклоны вперёд без рывков
-                    • укрепление мышц кора
-                    • избегать длительного сидения без движения
-                """.trimIndent()
+                val recommendations = listOf(
+                    "Растяжка задней поверхности бедра ежедневно",
+                    "Наклоны вперёд без рывков",
+                    "Укрепление мышц кора",
+                    "Избегать длительного сидения"
+                )
 
-                Card {
-                    Column(Modifier.padding(16.dp)) {
+                ElevatedCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(20.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    )
+                ) {
+
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
 
                         Text(
                             "Результат: $distanceCm см",
@@ -149,23 +201,30 @@ fun ForwardBendTestContent() {
                             fontWeight = FontWeight.Bold
                         )
 
-                        Spacer(Modifier.height(8.dp))
+                        HorizontalDivider()
 
-                        Text(resultText, style = MaterialTheme.typography.bodyMedium)
+                        Text(resultText)
 
-                        Spacer(Modifier.height(12.dp))
+                        HorizontalDivider()
 
-                        Text("Рекомендации", fontWeight = FontWeight.Bold)
-                        Text(advice, style = MaterialTheme.typography.bodyMedium)
+                        Text(
+                            "Рекомендации",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+
+                        recommendations.forEach {
+                            Text("• $it")
+                        }
                     }
                 }
-            }
 
-            Button(
-                onClick = { navigator.pop() },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Назад")
+                Button(
+                    onClick = { navigator.pop() },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Назад")
+                }
             }
         }
     }
