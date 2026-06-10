@@ -84,8 +84,8 @@ android {
         applicationId = "com.pixelrabbit.backy"
         minSdk = 24
         targetSdk = 35
-        versionCode = 6
-        versionName = "1.06.0"
+        versionCode = 7
+        versionName = "1.07.0"
     }
 
     packaging {
